@@ -119,6 +119,7 @@
       </div>
 
       <form id="wine-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+        <div id="form-error" class="hidden bg-rose-900/50 border border-rose-700 text-rose-200 text-xs p-3 rounded-lg font-medium"></div>
         <input type="hidden" id="form-doc-id" value="" />
         <input type="hidden" id="existing-image-url" value="" />
 
@@ -332,6 +333,9 @@
     // Modal Control & Form Handling
     window.openWineModal = function(wineObj = null) {
       document.getElementById('wine-form').reset();
+      const formErr = document.getElementById('form-error');
+      if (formErr) formErr.classList.add('hidden');
+
       const modalHeader = document.getElementById('modal-header-title');
       const docIdInput = document.getElementById('form-doc-id');
       const existingImageInput = document.getElementById('existing-image-url');
@@ -371,13 +375,16 @@
           showToast(`Deleted ${name}`);
         } catch (err) {
           console.error("Delete error:", err);
-          showToast("Failed to delete item", true);
+          showToast("Failed to delete item: " + err.message, true);
         }
       }
     };
 
     window.handleFormSubmit = async function(e) {
-      e.preventDefault();
+      if (e) e.preventDefault();
+      const formErr = document.getElementById('form-error');
+      if (formErr) formErr.classList.add('hidden');
+
       const saveBtn = document.getElementById('save-submit-btn');
       const saveBtnText = document.getElementById('save-btn-text');
       saveBtn.disabled = true;
@@ -425,6 +432,10 @@
         showToast(isEditMode ? "Wine details updated!" : "New wine added successfully!");
       } catch (err) {
         console.error("Save error:", err);
+        if (formErr) {
+          formErr.textContent = "Error saving wine: " + (err.message || err);
+          formErr.classList.remove('hidden');
+        }
         showToast("Error saving wine: " + err.message, true);
       } finally {
         saveBtn.disabled = false;
