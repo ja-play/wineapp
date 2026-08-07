@@ -16,11 +16,22 @@ import {
   getDownloadURL 
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
 
-const firebaseConfig = {
+// Fetch hosting config if available, or use project config
+let firebaseConfig = {
   projectId: "wine-catalog-belgium",
   authDomain: "wine-catalog-belgium.firebaseapp.com",
   storageBucket: "wine-catalog-belgium.appspot.com"
 };
+
+try {
+  const initRes = await fetch('/__/firebase/init.json');
+  if (initRes.ok) {
+    const hostedConfig = await initRes.json();
+    firebaseConfig = { ...firebaseConfig, ...hostedConfig };
+  }
+} catch (e) {
+  console.log("Not running on Firebase Hosting init endpoint, using default config");
+}
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);

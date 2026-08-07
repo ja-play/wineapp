@@ -156,18 +156,22 @@
       }
     }
 
-    // Try listening to Firestore; if empty or error, use wines.json fallback
-    onSnapshot(collection(db, "wines"), (snapshot) => {
-      if (snapshot.empty) {
-        loadFallbackJson();
-      } else {
-        const wines = snapshot.docs.map(doc => doc.data());
-        renderGrid(wines);
-      }
-    }, (err) => {
-      console.warn("Firestore offline or empty, switching to local wines.json fallback:", err);
-      loadFallbackJson();
-    });
+    // Render initial catalog from wines.json immediately for zero-wait UI
+    loadFallbackJson();
+
+    // Listen to live Firestore collection updates
+    try {
+      onSnapshot(collection(db, "wines"), (snapshot) => {
+        if (!snapshot.empty) {
+          const wines = snapshot.docs.map(doc => doc.data());
+          renderGrid(wines);
+        }
+      }, (err) => {
+        console.warn("Firestore stream unavailable, keeping local catalog:", err);
+      });
+    } catch (e) {
+      console.warn("Firestore setup error:", e);
+    }
   </script>
 </body>
 
