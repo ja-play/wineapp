@@ -15,6 +15,12 @@ import {
   uploadBytes, 
   getDownloadURL 
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
+import { 
+  getAuth, 
+  signInWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged 
+} from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 // Fetch hosting config if available, or use project config
 let firebaseConfig = {
@@ -37,10 +43,13 @@ try {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
+const auth = getAuth(app);
 
 export { 
+  app,
   db, 
   storage, 
+  auth,
   collection, 
   getDocs, 
   setDoc, 
@@ -49,5 +58,8 @@ export {
   onSnapshot, 
   ref, 
   uploadBytes, 
-  getDownloadURL 
+  getDownloadURL,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
 };
