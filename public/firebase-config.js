@@ -39,6 +39,9 @@ try {
   console.log("Not running on Firebase Hosting init endpoint, using default config");
 }
 
+// Force the CORS-configured Google Cloud Storage bucket domain
+firebaseConfig.storageBucket = "wine-catalog-belgium.appspot.com";
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
