@@ -1,0 +1,92 @@
+[
+  {
+    "sku": "OK-CABMER-2023-750",
+    "name": "Oude Kaap Cabernet Sauvignon Merlot",
+    "region": "Franschhoek, Western Cape, South Africa",
+    "vintage": "2023",
+    "priceBottle": "€5.50",
+    "priceCase": "€33.00 (Case of 6)",
+    "image": "images/34172 DGB Oude kaap_Cab Merlot.png",
+    "description": "A smooth, approachable South African red blend featuring intense aromas of ripe cassis, dark plum, and red berries with soft tannins and a velvety finish."
+  },
+  {
+    "sku": "OK-ELEGWIT-2024-750",
+    "name": "Oude Kaap Elegant Wit",
+    "region": "Franschhoek, Western Cape, South Africa",
+    "vintage": "2024",
+    "priceBottle": "€4.90",
+    "priceCase": "€29.40 (Case of 6)",
+    "image": "images/34172 DGB Oude kaap_Elegant Wit.png",
+    "description": "An elegant semi-sweet white wine highlighting soft aromas of tropical fruit, ripe melon, and sweet floral blossoms with a well-balanced refreshing acidity."
+  },
+  {
+    "sku": "OK-KLASWIT-2024-750",
+    "name": "Oude Kaap Klassiek Wit",
+    "region": "Franschhoek, Western Cape, South Africa",
+    "vintage": "2024",
+    "priceBottle": "€4.80",
+    "priceCase": "€28.80 (Case of 6)",
+    "image": "images/34172 DGB Oude kaap_Klassiek Wit.png",
+    "description": "A crisp and fruity blend of Chenin Blanc and Colombard, boasting lively notes of green apple, guava, and vibrant citrus zest."
+  },
+  {
+    "sku": "OK-MOSC-2024-750",
+    "name": "Oude Kaap Moscato",
+    "region": "Franschhoek, Western Cape, South Africa",
+    "vintage": "2024",
+    "priceBottle": "€5.20",
+    "priceCase": "€31.20 (Case of 6)",
+    "image": "images/34172 DGB Oude kaap_Moscato.png",
+    "description": "A delightfully sweet, light-bodied white wine with aromatic scents of orange blossom, fresh grape, honeyed peach, and a delicate spritz."
+  },
+  {
+    "sku": "OK-PINOTG-2023-750",
+    "name": "Oude Kaap Pinot Grigio",
+    "region": "Franschhoek, Western Cape, South Africa",
+    "vintage": "2023",
+    "priceBottle": "€5.80",
+    "priceCase": "€34.80 (Case of 6)",
+    "image": "images/34172 DGB Oude kaap_Pinot Grigio.png",
+    "description": "A dry, lively white wine with fragrant citrus aromas, juicy white peach, green pear, and a clean, mineral finish."
+  },
+  {
+    "sku": "OK-RESCAB-2022-750",
+    "name": "Oude Kaap Reserve Cabernet Sauvignon",
+    "region": "Franschhoek, Western Cape, South Africa",
+    "vintage": "2022",
+    "priceBottle": "€6.90",
+    "priceCase": "€41.40 (Case of 6)",
+    "image": "images/34172 DGB Oude kaap_Reserve Cab Sauv.png",
+    "description": "A bold, full-bodied Reserve red wine matured in oak, showing rich layers of blackberry, cassis, cedarwood, and subtle vanilla spice."
+  },
+  {
+    "sku": "OK-RESCHARD-2023-750",
+    "name": "Oude Kaap Reserve Chardonnay",
+    "region": "Franschhoek, Western Cape, South Africa",
+    "vintage": "2023",
+    "priceBottle": "€6.50",
+    "priceCase": "€39.00 (Case of 6)",
+    "image": "images/34172 DGB Oude kaap_Reserve Chardonnay.png",
+    "description": "A well-structured Reserve white offering expressive aromas of pineapple, ripe mango, citrus blossom, and creamy toasted oak complexity."
+  },
+  {
+    "sku": "OK-RESPIN-2022-750",
+    "name": "Oude Kaap Reserve Pinotage",
+    "region": "Franschhoek, Western Cape, South Africa",
+    "vintage": "2022",
+    "priceBottle": "€6.80",
+    "priceCase": "€40.80 (Case of 6)",
+    "image": "images/34172 DGB Oude kaap_Reserve Pinotage.png",
+    "description": "South Africa's signature red grape crafted into a rich Reserve wine with ripe plum, dark chocolate, smoky spice, and smooth, refined tannins."
+  },
+  {
+    "sku": "OK-ROSE-2024-750",
+    "name": "Oude Kaap Rosé",
+    "region": "Franschhoek, Western Cape, South Africa",
+    "vintage": "2024",
+    "priceBottle": "€4.90",
+    "priceCase": "€29.40 (Case of 6)",
+    "image": "images/34172 DGB Oude kaap_Rose.png",
+    "description": "A charming salmon-pink rosé packed with juicy strawberry, fresh raspberry, and crisp watermelon notes, delivering a bright, crisp finish."
+  }
+]
