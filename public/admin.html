@@ -417,9 +417,10 @@
           updatedAt: new Date().toISOString()
         };
 
+        const isEditMode = Boolean(document.getElementById('form-doc-id').value);
         await setDoc(doc(db, "wines", docId), wineData, { merge: true });
         closeWineModal();
-        showToast(docIdInput.value ? "Wine details updated!" : "New wine added successfully!");
+        showToast(isEditMode ? "Wine details updated!" : "New wine added successfully!");
       } catch (err) {
         console.error("Save error:", err);
         showToast("Error saving wine: " + err.message, true);
