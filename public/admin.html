@@ -400,9 +400,18 @@
         if (fileInput.files && fileInput.files[0]) {
           const file = fileInput.files[0];
           saveBtnText.textContent = "Uploading image...";
-          const fileRef = ref(storage, `wines/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`);
-          const snapshot = await uploadBytes(fileRef, file);
-          imageUrl = await getDownloadURL(snapshot.ref);
+          try {
+            const fileRef = ref(storage, `wines/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`);
+            const snapshot = await uploadBytes(fileRef, file);
+            imageUrl = await getDownloadURL(snapshot.ref);
+          } catch (storageErr) {
+            console.warn("Storage upload failed or blocked by CORS, using direct Data URL fallback:", storageErr);
+            imageUrl = await new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onload = (e) => resolve(e.target.result);
+              reader.readAsDataURL(file);
+            });
+          }
         }
 
         const wineData = {
