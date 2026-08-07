@@ -16,10 +16,17 @@
         <h1 class="text-2xl font-bold tracking-tight text-amber-500">Wine Select</h1>
         <p class="text-xs text-slate-400">Belgium B2B Wholesale Selection</p>
       </div>
-      <a href="tel:+32 488 28 93 45"
-        class="bg-amber-600 hover:bg-amber-500 text-white text-sm px-4 py-2 rounded-lg font-medium transition">
-        Contact Evaluator
-      </a>
+      <div class="flex items-center gap-3">
+        <a href="admin.html"
+          class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 text-xs px-3 py-2 rounded-lg font-semibold transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+          Admin Portal
+        </a>
+        <a href="tel:+32 488 28 93 45"
+          class="bg-amber-600 hover:bg-amber-500 text-white text-sm px-4 py-2 rounded-lg font-medium transition">
+          Contact Evaluator
+        </a>
+      </div>
     </div>
   </header>
 
@@ -65,13 +72,15 @@
     <p>&copy; 2026 Wine Distribution Belgium. Client Wholesale Portal.</p>
   </footer>
 
-  <script>
+  <script type="module">
+    import { db, collection, onSnapshot } from './firebase-config.js';
+
     const modal = document.getElementById('image-modal');
     const modalImg = document.getElementById('modal-img');
     const modalTitle = document.getElementById('modal-title');
     const modalCaption = document.getElementById('modal-caption');
 
-    function openModal(imgSrc, title, sku) {
+    window.openModal = function(imgSrc, title, sku) {
       modalImg.src = imgSrc;
       modalImg.alt = title;
       modalTitle.textContent = title;
@@ -83,9 +92,9 @@
         modalImg.classList.add('scale-100');
       }, 10);
       document.body.style.overflow = 'hidden';
-    }
+    };
 
-    function closeModal(event) {
+    window.closeModal = function(event) {
       modal.classList.add('opacity-0');
       modalImg.classList.remove('scale-100');
       modalImg.classList.add('scale-95');
@@ -93,7 +102,7 @@
         modal.classList.add('hidden');
         document.body.style.overflow = '';
       }, 200);
-    }
+    };
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
@@ -101,50 +110,64 @@
       }
     });
 
-    async function loadCatalog() {
-      try {
-        const response = await fetch('./wines.json');
-        const wines = await response.json();
-        const grid = document.getElementById('catalog-grid');
-
-        grid.innerHTML = wines.map(wine => `
-          <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
-            <div class="relative overflow-hidden cursor-pointer group bg-slate-100 flex items-center justify-center h-56 p-2" onclick="openModal('${wine.image.replace(/'/g, "\\'")}', '${wine.name.replace(/'/g, "\\'")}', '${wine.sku.replace(/'/g, "\\'")}')">
-              <img src="${wine.image}" alt="${wine.name}" class="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" />
-              <div class="absolute inset-0 bg-slate-900/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-                <span class="bg-amber-600/90 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
-                  View Full Image
-                </span>
-              </div>
+    function renderGrid(wines) {
+      const grid = document.getElementById('catalog-grid');
+      grid.innerHTML = wines.map(wine => `
+        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
+          <div class="relative overflow-hidden cursor-pointer group bg-slate-100 flex items-center justify-center h-56 p-2" onclick="openModal('${(wine.image || '').replace(/'/g, "\\'")}', '${(wine.name || '').replace(/'/g, "\\'")}', '${(wine.sku || '').replace(/'/g, "\\'")}')">
+            <img src="${wine.image}" alt="${wine.name}" class="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" />
+            <div class="absolute inset-0 bg-slate-900/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+              <span class="bg-amber-600/90 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                View Full Image
+              </span>
             </div>
-            <div class="p-5 flex flex-col flex-grow">
-              <div class="flex justify-between items-start mb-2">
-                <span class="text-xs font-semibold px-2 py-1 bg-amber-100 text-amber-800 rounded">${wine.vintage}</span>
-                <span class="text-xs text-slate-400 font-mono">${wine.sku}</span>
+          </div>
+          <div class="p-5 flex flex-col flex-grow">
+            <div class="flex justify-between items-start mb-2">
+              <span class="text-xs font-semibold px-2 py-1 bg-amber-100 text-amber-800 rounded">${wine.vintage}</span>
+              <span class="text-xs text-slate-400 font-mono">${wine.sku}</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">${wine.name}</h3>
+            <p class="text-xs text-slate-500 mb-3">${wine.region}</p>
+            <p class="text-sm text-slate-600 mb-4 flex-grow">${wine.description || ''}</p>
+            <div class="border-t border-slate-100 pt-3 mt-auto">
+              <div class="flex justify-between text-xs text-slate-500 mb-1">
+                <span>Bottle Price:</span>
+                <span class="font-bold text-slate-800">${wine.priceBottle}</span>
               </div>
-              <h3 class="text-lg font-bold text-slate-900">${wine.name}</h3>
-              <p class="text-xs text-slate-500 mb-3">${wine.region}</p>
-              <p class="text-sm text-slate-600 mb-4 flex-grow">${wine.description}</p>
-              <div class="border-t border-slate-100 pt-3 mt-auto">
-                <div class="flex justify-between text-xs text-slate-500 mb-1">
-                  <span>Bottle Price:</span>
-                  <span class="font-bold text-slate-800">${wine.priceBottle}</span>
-                </div>
-                <div class="flex justify-between text-xs text-slate-500">
-                  <span>Case Price:</span>
-                  <span class="font-bold text-amber-700">${wine.priceCase}</span>
-                </div>
+              <div class="flex justify-between text-xs text-slate-500">
+                <span>Case Price:</span>
+                <span class="font-bold text-amber-700">${wine.priceCase}</span>
               </div>
             </div>
           </div>
-        `).join('');
+        </div>
+      `).join('');
+    }
+
+    async function loadFallbackJson() {
+      try {
+        const response = await fetch('./wines.json');
+        const wines = await response.json();
+        renderGrid(wines);
       } catch (err) {
-        console.error('Error loading wine catalog:', err);
+        console.error('Error loading fallback wine catalog:', err);
       }
     }
 
-    loadCatalog();
+    // Try listening to Firestore; if empty or error, use wines.json fallback
+    onSnapshot(collection(db, "wines"), (snapshot) => {
+      if (snapshot.empty) {
+        loadFallbackJson();
+      } else {
+        const wines = snapshot.docs.map(doc => doc.data());
+        renderGrid(wines);
+      }
+    }, (err) => {
+      console.warn("Firestore offline or empty, switching to local wines.json fallback:", err);
+      loadFallbackJson();
+    });
   </script>
 </body>
 

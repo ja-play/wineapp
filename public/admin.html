@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wine Distribution Belgium - Admin Catalog Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- Navigation Header -->
+  <header class="bg-slate-950 text-white shadow-lg border-b border-slate-800 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-amber-500 hover:text-amber-400 font-bold text-xl tracking-tight">Wine Select</a>
+        <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2.5 py-1 rounded-full font-semibold">Admin Manager</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="seed-btn" onclick="seedDatabase()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold px-3 py-2 rounded-lg transition border border-slate-700 flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+          Seed from JSON
+        </button>
+        <a href="index.html" class="bg-amber-600 hover:bg-amber-500 text-white text-xs font-semibold px-4 py-2 rounded-lg transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+          View Live Catalog
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Banner -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-16 opacity-0 transition-all duration-300 pointer-events-none bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 font-medium text-sm">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+    <span id="toast-message">Success</span>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+    <!-- Top Action Bar -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 backdrop-blur-sm">
+      <div>
+        <h2 class="text-2xl font-extrabold text-white">Wine Inventory & Pricing</h2>
+        <p class="text-slate-400 text-sm mt-1">Add new wines, update bottle/case pricing, or upload bottle images.</p>
+      </div>
+      <button onclick="openWineModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+        Add New Wine
+      </button>
+    </div>
+
+    <!-- Wine Table / Grid -->
+    <div id="loading-state" class="text-center py-16">
+      <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-amber-500 border-t-transparent mb-3"></div>
+      <p class="text-slate-400 text-sm">Connecting to Firestore...</p>
+    </div>
+
+    <div id="wines-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
+      <!-- Wine cards injected dynamically -->
+    </div>
+
+    <div id="empty-state" class="hidden text-center py-16 bg-slate-800/40 rounded-2xl border border-slate-800">
+      <p class="text-slate-300 font-semibold text-lg">No wines found in Firestore</p>
+      <p class="text-slate-400 text-sm mt-1 mb-4">Click "Seed from JSON" above to import initial volume wines.</p>
+      <button onclick="seedDatabase()" class="bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs px-4 py-2 rounded-lg transition">
+        Import Initial JSON Catalog
+      </button>
+    </div>
+  </main>
+
+  <!-- Add / Edit Wine Modal -->
+  <div id="wine-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="relative bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8">
+      <div class="flex justify-between items-center pb-4 border-b border-slate-700 mb-6">
+        <h3 id="modal-header-title" class="text-xl font-bold text-amber-400">Add New Wine</h3>
+        <button onclick="closeWineModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-700 transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <form id="wine-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+        <input type="hidden" id="form-doc-id" value="" />
+        <input type="hidden" id="existing-image-url" value="" />
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">SKU *</label>
+            <input type="text" id="form-sku" required placeholder="e.g. OK-CABMER-2023-750" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Vintage *</label>
+            <input type="text" id="form-vintage" required placeholder="e.g. 2024" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Wine Name *</label>
+          <input type="text" id="form-name" required placeholder="e.g. Oude Kaap Cabernet Sauvignon" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Region *</label>
+          <input type="text" id="form-region" required placeholder="e.g. Franschhoek, Western Cape, South Africa" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Bottle Price *</label>
+            <input type="text" id="form-price-bottle" required placeholder="e.g. €5.50" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Case Price *</label>
+            <input type="text" id="form-price-case" required placeholder="e.g. €33.00 (Case of 6)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Description</label>
+          <textarea id="form-description" rows="3" placeholder="Brief tasting notes and flavor profile..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Wine Bottle Image</label>
+          <div class="flex items-center gap-4">
+            <input type="file" id="form-image-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-400 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-500" />
+          </div>
+          <p class="text-xs text-slate-500 mt-1">Upload a PNG or JPG file. If left blank when editing, current image is kept.</p>
+        </div>
+
+        <div class="pt-4 border-t border-slate-700 flex justify-end gap-3">
+          <button type="button" onclick="closeWineModal()" class="px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white transition">Cancel</button>
+          <button type="submit" id="save-submit-btn" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm px-6 py-2 rounded-lg transition flex items-center gap-2">
+            <span id="save-btn-text">Save Wine</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="bg-slate-950 text-slate-500 text-xs py-6 text-center border-t border-slate-800 mt-auto">
+    <p>&copy; 2026 Wine Distribution Belgium. Client Catalog Admin System.</p>
+  </footer>
+
+  <script type="module">
+    import { db, storage, collection, getDocs, setDoc, doc, deleteDoc, onSnapshot, ref, uploadBytes, getDownloadURL } from './firebase-config.js';
+
+    let currentWines = [];
+
+    // Real-time listener for wines collection
+    onSnapshot(collection(db, "wines"), (snapshot) => {
+      document.getElementById('loading-state').classList.add('hidden');
+      currentWines = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      const container = document.getElementById('wines-container');
+      const emptyState = document.getElementById('empty-state');
+
+      if (currentWines.length === 0) {
+        container.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        container.classList.remove('hidden');
+        renderWines(currentWines);
+      }
+    }, (error) => {
+      console.error("Firestore snapshot error:", error);
+      document.getElementById('loading-state').innerHTML = `<p class="text-rose-400 text-sm">Failed to connect to Firestore. Check console or security rules.</p>`;
+    });
+
+    function renderWines(wines) {
+      const container = document.getElementById('wines-container');
+      container.innerHTML = wines.map(w => `
+        <div class="bg-slate-800 border border-slate-700/80 rounded-2xl overflow-hidden shadow-lg flex flex-col hover:border-slate-600 transition">
+          <div class="h-48 bg-slate-900/60 p-3 relative flex items-center justify-center border-b border-slate-700/50">
+            <img src="${w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain drop-shadow-md" />
+            <span class="absolute top-3 left-3 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded font-mono font-semibold">${w.vintage}</span>
+          </div>
+          <div class="p-5 flex flex-col flex-grow">
+            <div class="flex justify-between items-start mb-1">
+              <h3 class="text-base font-bold text-white leading-snug">${w.name}</h3>
+            </div>
+            <p class="text-xs font-mono text-slate-400 mb-2">${w.sku}</p>
+            <p class="text-xs text-slate-400 mb-4 line-clamp-2">${w.description || ''}</p>
+            <div class="mt-auto border-t border-slate-700/60 pt-3 space-y-1 text-xs">
+              <div class="flex justify-between text-slate-300">
+                <span>Bottle Price:</span>
+                <span class="font-bold text-amber-400">${w.priceBottle}</span>
+              </div>
+              <div class="flex justify-between text-slate-300">
+                <span>Case Price:</span>
+                <span class="font-bold text-emerald-400">${w.priceCase}</span>
+              </div>
+            </div>
+            <div class="mt-4 pt-3 border-t border-slate-700/60 flex gap-2">
+              <button onclick="editWine('${w.id}')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold py-1.5 px-3 rounded-lg transition flex items-center justify-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                Edit
+              </button>
+              <button onclick="deleteWine('${w.id}', '${w.name.replace(/'/g, "\\'")}')" class="bg-rose-900/40 hover:bg-rose-800/60 text-rose-300 text-xs font-semibold py-1.5 px-3 rounded-lg transition flex items-center justify-center gap-1 border border-rose-800/40">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Seed database from local wines.json
+    window.seedDatabase = async function() {
+      const btn = document.getElementById('seed-btn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="animate-spin inline-block h-3.5 w-3.5 border-2 border-slate-300 border-t-transparent rounded-full mr-1"></span> Seeding...`;
+      try {
+        const res = await fetch('wines.json');
+        const defaultWines = await res.json();
+        for (const w of defaultWines) {
+          const docId = w.sku.replace(/[^a-zA-Z0-9_-]/g, '_');
+          await setDoc(doc(db, "wines", docId), w, { merge: true });
+        }
+        showToast("Successfully seeded database from JSON catalog!");
+      } catch (err) {
+        console.error("Seeding error:", err);
+        showToast("Failed to seed database", true);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> Seed from JSON`;
+      }
+    };
+
+    // Modal Control & Form Handling
+    window.openWineModal = function(wineObj = null) {
+      document.getElementById('wine-form').reset();
+      const modalHeader = document.getElementById('modal-header-title');
+      const docIdInput = document.getElementById('form-doc-id');
+      const existingImageInput = document.getElementById('existing-image-url');
+
+      if (wineObj) {
+        modalHeader.textContent = "Edit Wine Details";
+        docIdInput.value = wineObj.id;
+        document.getElementById('form-sku').value = wineObj.sku || '';
+        document.getElementById('form-vintage').value = wineObj.vintage || '';
+        document.getElementById('form-name').value = wineObj.name || '';
+        document.getElementById('form-region').value = wineObj.region || '';
+        document.getElementById('form-price-bottle').value = wineObj.priceBottle || '';
+        document.getElementById('form-price-case').value = wineObj.priceCase || '';
+        document.getElementById('form-description').value = wineObj.description || '';
+        existingImageInput.value = wineObj.image || '';
+      } else {
+        modalHeader.textContent = "Add New Wine";
+        docIdInput.value = "";
+        existingImageInput.value = "";
+      }
+      document.getElementById('wine-modal').classList.remove('hidden');
+    };
+
+    window.closeWineModal = function() {
+      document.getElementById('wine-modal').classList.add('hidden');
+    };
+
+    window.editWine = function(id) {
+      const w = currentWines.find(x => x.id === id);
+      if (w) openWineModal(w);
+    };
+
+    window.deleteWine = async function(id, name) {
+      if (confirm(`Are you sure you want to delete "${name}"?`)) {
+        try {
+          await deleteDoc(doc(db, "wines", id));
+          showToast(`Deleted ${name}`);
+        } catch (err) {
+          console.error("Delete error:", err);
+          showToast("Failed to delete item", true);
+        }
+      }
+    };
+
+    window.handleFormSubmit = async function(e) {
+      e.preventDefault();
+      const saveBtn = document.getElementById('save-submit-btn');
+      const saveBtnText = document.getElementById('save-btn-text');
+      saveBtn.disabled = true;
+      saveBtnText.textContent = "Saving...";
+
+      try {
+        const sku = document.getElementById('form-sku').value.trim();
+        const vintage = document.getElementById('form-vintage').value.trim();
+        const name = document.getElementById('form-name').value.trim();
+        const region = document.getElementById('form-region').value.trim();
+        const priceBottle = document.getElementById('form-price-bottle').value.trim();
+        const priceCase = document.getElementById('form-price-case').value.trim();
+        const description = document.getElementById('form-description').value.trim();
+        const docId = document.getElementById('form-doc-id').value || sku.replace(/[^a-zA-Z0-9_-]/g, '_');
+        const fileInput = document.getElementById('form-image-file');
+
+        let imageUrl = document.getElementById('existing-image-url').value || 'images/34172 DGB Oude kaap_Cab Merlot.png';
+
+        // Check if user uploaded a new image
+        if (fileInput.files && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          saveBtnText.textContent = "Uploading image...";
+          const fileRef = ref(storage, `wines/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`);
+          const snapshot = await uploadBytes(fileRef, file);
+          imageUrl = await getDownloadURL(snapshot.ref);
+        }
+
+        const wineData = {
+          sku,
+          vintage,
+          name,
+          region,
+          priceBottle,
+          priceCase,
+          description,
+          image: imageUrl,
+          updatedAt: new Date().toISOString()
+        };
+
+        await setDoc(doc(db, "wines", docId), wineData, { merge: true });
+        closeWineModal();
+        showToast(docIdInput.value ? "Wine details updated!" : "New wine added successfully!");
+      } catch (err) {
+        console.error("Save error:", err);
+        showToast("Error saving wine: " + err.message, true);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtnText.textContent = "Save Wine";
+      }
+    };
+
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      toastMsg.textContent = msg;
+      toast.className = `fixed bottom-5 right-5 z-50 transition-all duration-300 font-medium text-sm px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-white ${isError ? 'bg-rose-600' : 'bg-emerald-600'}`;
+      toast.classList.remove('opacity-0', 'translate-y-16');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-16');
+      }, 3500);
+    }
+  </script>
+</body>
+
+</html>
