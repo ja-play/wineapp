@@ -26,7 +26,7 @@ import {
 let firebaseConfig = {
   projectId: "wine-catalog-belgium",
   authDomain: "wine-catalog-belgium.firebaseapp.com",
-  storageBucket: "wine-catalog-belgium.appspot.com"
+  storageBucket: "wine-catalog-belgium.firebasestorage.app"
 };
 
 try {
