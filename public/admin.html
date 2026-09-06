@@ -1266,7 +1266,7 @@
             }
           </style>
         </head>
-        <body>
+        <body onload="window.print()">
           <div class="header">
             <div>
               <div class="title">🍷 Aurellion Wine Distribution</div>
@@ -1317,10 +1317,6 @@
             <div class="totals-row">Vidanges (Crates Deposit): <strong>€${totals.totalVidanges ? totals.totalVidanges.toFixed(2) : '0.00'}</strong></div>
             <div class="grand-total">Total Payable (TTC): €${totals.totalTTC ? totals.totalTTC.toFixed(2) : '0.00'}</div>
           </div>
-
-          <script>
-            window.onload = function() { window.print(); }
-          </script>
         </body>
         </html>
       `);
