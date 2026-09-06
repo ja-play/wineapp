@@ -141,12 +141,24 @@
 
   <script type="module">
     import { db, auth, collection, onSnapshot, query, where, addDoc, serverTimestamp, onAuthStateChanged } from './firebase-config.js';
-    import { BELGIAN_CLIENT_SHOPS, getUserRole, setupAuthUI } from './auth-guard.js';
+    import { getShops, getUserRole, setupAuthUI } from './auth-guard.js';
 
     let currentWines = [];
     let cart = {}; // sku -> qty
     let selectedClient = null;
     let currentUser = null;
+    let availableShops = [];
+
+    // Populate Client Selector dynamically from Firestore
+    async function loadClientShops() {
+      availableShops = await getShops();
+      const shopSelect = document.getElementById('client-shop-select');
+      shopSelect.innerHTML = `
+        <option value="" disabled selected>-- Select Belgian Customer Shop --</option>
+        ${availableShops.map(s => `<option value="${s.id}">${s.name} - ${s.vat}</option>`).join('')}
+      `;
+    }
+    loadClientShops();
 
     // Initialize Auth UI Guard
     onAuthStateChanged(auth, async (user) => {
@@ -159,7 +171,7 @@
     const shopSelect = document.getElementById('client-shop-select');
     shopSelect.addEventListener('change', (e) => {
       const shopId = e.target.value;
-      selectedClient = BELGIAN_CLIENT_SHOPS.find(s => s.id === shopId) || null;
+      selectedClient = availableShops.find(s => s.id === shopId) || null;
       
       const infoBox = document.getElementById('selected-client-info');
       if (selectedClient) {

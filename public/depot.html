@@ -98,7 +98,7 @@
       const depotSec = document.getElementById('depot-content');
       const accessDenied = document.getElementById('access-denied-sec');
 
-      if (user && (role === 'depot' || role === 'admin' || user.email.includes('depot') || user.email.includes('admin'))) {
+      if (user && (role === 'depot' || role === 'admin')) {
         accessDenied.classList.add('hidden');
         depotSec.classList.remove('hidden');
 
