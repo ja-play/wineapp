@@ -7,6 +7,45 @@
   <title>Aurellion Wine - Depot Packing & Dispatch Queue</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+      }
+      body {
+        background: white !important;
+        color: black !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      header, main, footer, .no-print {
+        display: none !important;
+      }
+      #delivery-note-modal {
+        position: static !important;
+        display: block !important;
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        box-shadow: none !important;
+      }
+      #printable-note-container {
+        position: static !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        background: white !important;
+      }
+    }
+  </style>
 </head>
 
 <body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
@@ -37,59 +76,136 @@
       </div>
       <h2 class="text-2xl font-bold text-white mb-2">Depot Access Required</h2>
       <p class="text-xs text-slate-300 mb-6">Your account role does not have Depot Dispatch permissions. Please sign in with Depot staff or Admin credentials.</p>
-      <button onclick="window.showDemoLoginModal()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl transition shadow">
+      <button onclick="window.showLoginModal()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl transition shadow">
         Sign In as Depot Staff
       </button>
     </div>
 
     <!-- Depot Dispatch View Content -->
     <div id="depot-content">
-      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl backdrop-blur-sm">
-        <div>
-          <h2 class="text-2xl font-extrabold text-white flex items-center gap-3">
-            <span>📦 Incoming Wholesale Dispatch Queue</span>
-            <span id="order-count-badge" class="bg-sky-500/20 text-sky-400 border border-sky-500/40 text-xs font-mono px-2.5 py-0.5 rounded-full">0 Orders</span>
-          </h2>
-          <p class="text-slate-400 text-xs sm:text-sm mt-1">Real-time Firestore snapshot feed of evaluator orders ready for picking, packing, and Belgian Note d'Envoi printing.</p>
-        </div>
-
-        <button onclick="window.location.reload()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-600 transition flex items-center gap-1.5">
-          🔄 Refresh Stream
+      
+      <!-- Depot Navigation Tabs -->
+      <div class="flex items-center gap-2 border-b border-slate-800 mb-8 overflow-x-auto pb-2">
+        <button id="tab-btn-queue" onclick="switchDepotTab('queue')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-sky-500 text-slate-950 shadow">
+          <span>📦 Active Dispatch Queue</span>
+        </button>
+        <button id="tab-btn-scanner" onclick="switchDepotTab('scanner')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+          <span>📱 Barcode & Inventory Scanner</span>
+        </button>
+        <button id="tab-btn-history" onclick="switchDepotTab('history')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+          <span>✅ Completed Deliveries</span>
         </button>
       </div>
 
-      <!-- Loading State -->
-      <div id="orders-loading" class="text-center py-16">
-        <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-sky-500 border-t-transparent mb-3"></div>
-        <p class="text-slate-400 text-sm">Listening for incoming orders from Firestore...</p>
+      <!-- TAB 1: ACTIVE DISPATCH QUEUE -->
+      <div id="tab-sec-queue">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl backdrop-blur-sm">
+          <div>
+            <h2 class="text-2xl font-extrabold text-white flex items-center gap-3">
+              <span>📦 Incoming Wholesale Dispatch Queue</span>
+              <span id="order-count-badge" class="bg-sky-500/20 text-sky-400 border border-sky-500/40 text-xs font-mono px-2.5 py-0.5 rounded-full">0 Orders</span>
+            </h2>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Real-time Firestore feed. Advance orders through picking, packing, dispatch, and delivery completion.</p>
+          </div>
+
+          <button onclick="window.location.reload()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-600 transition flex items-center gap-1.5">
+            🔄 Refresh Stream
+          </button>
+        </div>
+
+        <!-- Loading State -->
+        <div id="orders-loading" class="text-center py-16">
+          <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-sky-500 border-t-transparent mb-3"></div>
+          <p class="text-slate-400 text-sm">Listening for incoming orders from Firestore...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="orders-empty" class="hidden text-center py-16 bg-slate-800/40 rounded-2xl border border-slate-800">
+          <div class="text-4xl mb-3">📋</div>
+          <p class="text-slate-300 font-semibold text-lg">No active dispatch orders</p>
+          <p class="text-slate-400 text-sm mt-1 mb-4">Orders submitted by Field Evaluators will appear here in real-time.</p>
+        </div>
+
+        <!-- Active Orders Feed -->
+        <div id="orders-feed" class="space-y-6 hidden">
+          <!-- Order Cards Injected Dynamically -->
+        </div>
       </div>
 
-      <!-- Empty State -->
-      <div id="orders-empty" class="hidden text-center py-16 bg-slate-800/40 rounded-2xl border border-slate-800">
-        <div class="text-4xl mb-3">📋</div>
-        <p class="text-slate-300 font-semibold text-lg">No orders placed yet</p>
-        <p class="text-slate-400 text-sm mt-1 mb-4">Orders submitted by Field Evaluators in the ordering flow will appear here live.</p>
-        <a href="index.html" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl transition inline-block">
-          Go to Field Ordering Flow
-        </a>
+      <!-- TAB 2: BARCODE & INVENTORY SCANNER -->
+      <div id="tab-sec-scanner" class="hidden">
+        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl mb-8">
+          <h2 class="text-2xl font-extrabold text-white flex items-center gap-3">
+            <span>📱 Barcode & Inventory Scanner</span>
+            <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs px-2.5 py-0.5 rounded-full font-mono">Scanner Ready</span>
+          </h2>
+          <p class="text-slate-400 text-xs sm:text-sm mt-1">Scan bottle/case barcodes with handheld guns or enter SKU code to adjust warehouse case stock levels.</p>
+        </div>
+
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl mb-8">
+          <label class="block text-xs font-bold uppercase tracking-wider text-sky-400 mb-2">Scan Barcode / Enter SKU Code:</label>
+          <div class="flex gap-3">
+            <input type="text" id="depot-scanner-input" placeholder="Scan barcode or enter SKU (e.g. OK-CABMER-2023-750)..." class="flex-1 bg-slate-950 border border-sky-500/50 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-sky-400 shadow-inner" onkeydown="if(event.key==='Enter') lookupDepotSKU()" />
+            <button onclick="lookupDepotSKU()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs px-6 py-3 rounded-xl shadow transition">
+              🔍 Look Up Product
+            </button>
+          </div>
+        </div>
+
+        <div id="depot-scanner-result" class="hidden">
+          <!-- Result card injected dynamically -->
+        </div>
       </div>
 
-      <!-- Real-time Orders Feed -->
-      <div id="orders-feed" class="space-y-6 hidden">
-        <!-- Order Cards Injected Dynamically -->
+      <!-- TAB 3: COMPLETED DELIVERIES -->
+      <div id="tab-sec-history" class="hidden">
+        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl mb-8">
+          <h2 class="text-2xl font-extrabold text-white">✅ Completed Deliveries Archive</h2>
+          <p class="text-slate-400 text-xs sm:text-sm mt-1">Archive of orders marked as delivered and signed by wholesale clients.</p>
+        </div>
+
+        <div id="completed-orders-feed" class="space-y-6">
+          <!-- Completed orders injected dynamically -->
+        </div>
       </div>
+
     </div>
   </main>
+
+  <!-- Printable Delivery Note Modal -->
+  <div id="delivery-note-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="relative max-w-4xl w-full my-8">
+      <div class="flex justify-between items-center mb-4 no-print">
+        <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">📄 Belgian Note d'Envoi Preview</span>
+        <div class="flex items-center gap-3">
+          <button onclick="window.printDeliveryNote()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+            🖨️ Print Delivery Note (A4)
+          </button>
+          <button onclick="window.closeNoteModal()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl border border-slate-700 transition">
+            ✕ Close
+          </button>
+        </div>
+      </div>
+
+      <div id="printable-note-container" class="bg-white text-slate-900 rounded-2xl p-8 shadow-2xl border border-slate-200">
+        <div id="note-modal-content">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
 
   <footer class="bg-slate-950 text-slate-500 text-xs py-6 text-center border-t border-slate-800 mt-auto">
     <p>&copy; 2026 Aurellion Wine Distribution Belgium. Depot Logistics System.</p>
   </footer>
 
   <script type="module">
-    import { db, auth, collection, onSnapshot, query, orderBy, onAuthStateChanged } from './firebase-config.js';
+    import { db, auth, collection, doc, updateDoc, onSnapshot, query, orderBy, onAuthStateChanged } from './firebase-config.js';
     import { getUserRole, setupAuthUI } from './auth-guard.js';
 
     let snapshotUnsubscribe = null;
+    let currentOrders = [];
+    let currentWines = [];
 
     onAuthStateChanged(auth, async (user) => {
       const role = await getUserRole(user);
@@ -102,20 +218,25 @@
         accessDenied.classList.add('hidden');
         depotSec.classList.remove('hidden');
 
+        // Subscribe to Wines for barcode scanner
+        onSnapshot(collection(db, "wines"), (snap) => {
+          currentWines = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        });
+
+        // Subscribe to Orders
         if (!snapshotUnsubscribe) {
           try {
             const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
             snapshotUnsubscribe = onSnapshot(q, (snapshot) => {
               document.getElementById('orders-loading').classList.add('hidden');
-              const orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-              renderOrdersFeed(orders);
+              currentOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+              renderOrdersFeed(currentOrders);
             }, (err) => {
-              console.warn("Ordered snapshot failed (indexes building), fallback to default collection:", err);
               snapshotUnsubscribe = onSnapshot(collection(db, "orders"), (snapFallback) => {
                 document.getElementById('orders-loading').classList.add('hidden');
-                const orders = snapFallback.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                orders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-                renderOrdersFeed(orders);
+                currentOrders = snapFallback.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                currentOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                renderOrdersFeed(currentOrders);
               });
             });
           } catch (err) {
@@ -132,144 +253,382 @@
       }
     });
 
+    window.switchDepotTab = function(tabName) {
+      ['queue', 'scanner', 'history'].forEach(t => {
+        const sec = document.getElementById(`tab-sec-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tabName) {
+          sec.classList.remove('hidden');
+          btn.className = "px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-sky-500 text-slate-950 shadow";
+          if (t === 'scanner') {
+            setTimeout(() => {
+              const input = document.getElementById('depot-scanner-input');
+              if (input) input.focus();
+            }, 100);
+          }
+        } else {
+          sec.classList.add('hidden');
+          btn.className = "px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700";
+        }
+      });
+    };
+
     function renderOrdersFeed(orders) {
-      const countBadge = document.getElementById('order-count-badge');
+      const activeOrders = orders.filter(o => o.status !== 'delivered');
+      const completedOrders = orders.filter(o => o.status === 'delivered');
+
+      document.getElementById('order-count-badge').textContent = `${activeOrders.length} Active Order${activeOrders.length === 1 ? '' : 's'}`;
+
       const emptyState = document.getElementById('orders-empty');
       const feedContainer = document.getElementById('orders-feed');
 
-      countBadge.textContent = `${orders.length} Order${orders.length === 1 ? '' : 's'}`;
-
-      if (!orders || orders.length === 0) {
+      if (activeOrders.length === 0) {
         feedContainer.classList.add('hidden');
         emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        feedContainer.classList.remove('hidden');
+        feedContainer.innerHTML = activeOrders.map(order => renderOrderCard(order)).join('');
+      }
+
+      // Render completed orders tab
+      const historyContainer = document.getElementById('completed-orders-feed');
+      if (completedOrders.length === 0) {
+        historyContainer.innerHTML = `<p class="text-center py-8 text-slate-400 text-xs">No completed deliveries yet.</p>`;
+      } else {
+        historyContainer.innerHTML = completedOrders.map(order => renderOrderCard(order, true)).join('');
+      }
+    }
+
+    function renderOrderCard(order, isCompleted = false) {
+      const client = order.client || { name: 'Shop Client', vat: 'BE 0000000000', clientNo: 'N/A', address: 'Belgique' };
+      const totals = order.totals || { totalHT: 0, totalVidanges: 0, totalTVA: 0, totalTTC: 0 };
+      const items = order.items || [];
+      const status = order.status || 'submitted';
+
+      const statusBadges = {
+        submitted: '<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs px-3 py-1 rounded-full font-bold">📋 Submitted (New)</span>',
+        packing: '<span class="bg-sky-500/20 text-sky-300 border border-sky-500/40 text-xs px-3 py-1 rounded-full font-bold">📦 Packing in Progress</span>',
+        dispatched: '<span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-xs px-3 py-1 rounded-full font-bold">🚚 Dispatched on Truck</span>',
+        delivered: '<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs px-3 py-1 rounded-full font-bold">✅ Delivered & Signed</span>'
+      };
+
+      const dateStr = order.createdAt && order.createdAt.toDate 
+        ? order.createdAt.toDate().toLocaleString('fr-BE') 
+        : (order.createdAt ? new Date(order.createdAt).toLocaleString('fr-BE') : 'Just now');
+
+      const totalCases = items.reduce((sum, item) => sum + (item.qty || 0), 0);
+
+      return `
+        <div class="bg-slate-800 border ${isCompleted ? 'border-slate-700/60 opacity-90' : 'border-slate-700'} rounded-2xl overflow-hidden shadow-xl hover:border-slate-600 transition">
+          <!-- Order Card Header -->
+          <div class="bg-slate-950 p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-xl flex items-center justify-center font-bold text-sm font-mono">
+                📦
+              </div>
+              <div>
+                <div class="text-sm font-bold text-white font-mono flex items-center gap-2">
+                  <span>Order #${order.id}</span>
+                </div>
+                <div class="text-xs text-slate-400">Placed on ${dateStr}</div>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+              ${statusBadges[status] || statusBadges.submitted}
+
+              <!-- Status Action Stepper -->
+              ${!isCompleted ? `
+                ${status === 'submitted' ? `
+                  <button onclick="window.updateOrderStatus('${order.id}', 'packing')" class="bg-sky-600 hover:bg-sky-500 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg transition">
+                    ▶ Start Packing
+                  </button>
+                ` : ''}
+                ${status === 'packing' ? `
+                  <button onclick="window.updateOrderStatus('${order.id}', 'dispatched')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg transition">
+                    🚚 Dispatch Truck
+                  </button>
+                ` : ''}
+                ${status === 'dispatched' ? `
+                  <button onclick="window.updateOrderStatus('${order.id}', 'delivered')" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-lg transition">
+                    ✅ Mark Delivered
+                  </button>
+                ` : ''}
+              ` : ''}
+
+              <button onclick="window.viewNoteModal('${order.id}')" class="bg-slate-700 hover:bg-slate-600 text-sky-300 border border-slate-600 text-xs px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1">
+                🖨️ Note d'Envoi
+              </button>
+            </div>
+          </div>
+
+          <!-- Order Details Body -->
+          <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <!-- Client Info Card -->
+              <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4 text-xs space-y-1.5">
+                <div class="text-amber-400 font-bold uppercase tracking-wider text-[11px] mb-1">Customer Shop Info</div>
+                <div class="text-sm font-bold text-white">${client.name}</div>
+                <div class="text-slate-300">${client.address || 'Address not provided'}</div>
+                <div class="text-slate-400 font-mono">N° TVA: ${client.vat || 'N/A'} | N° Client: ${client.clientNo || 'N/A'}</div>
+              </div>
+
+              <!-- Price & Case Summary -->
+              <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4 text-xs space-y-1.5">
+                <div class="text-sky-400 font-bold uppercase tracking-wider text-[11px] mb-1">Order Totals (${totalCases} Cases)</div>
+                <div class="flex justify-between text-slate-300">
+                  <span>Subtotal H.TVA:</span>
+                  <span class="font-mono font-bold text-white">€${Number(totals.totalHT || 0).toFixed(2)}</span>
+                </div>
+                <div class="flex justify-between text-slate-300">
+                  <span>Vidanges Consignées:</span>
+                  <span class="font-mono font-bold text-amber-400">€${Number(totals.totalVidanges || 0).toFixed(2)}</span>
+                </div>
+                <div class="flex justify-between text-slate-300">
+                  <span>Belgian VAT (21%):</span>
+                  <span class="font-mono font-bold text-slate-200">€${Number(totals.totalTVA || 0).toFixed(2)}</span>
+                </div>
+                <div class="flex justify-between pt-1 border-t border-slate-800 text-sm font-extrabold">
+                  <span class="text-white">TOTAL TTC:</span>
+                  <span class="text-amber-400 font-mono">€${Number(totals.totalTTC || 0).toFixed(2)}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Line Items Table -->
+            <div class="border border-slate-700/80 rounded-xl overflow-hidden">
+              <table class="w-full text-left text-xs">
+                <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-700/80">
+                  <tr>
+                    <th class="py-2.5 px-4">SKU</th>
+                    <th class="py-2.5 px-4">Wine Description</th>
+                    <th class="py-2.5 px-4 text-center">Colis</th>
+                    <th class="py-2.5 px-4 text-center">Quantité (Cases)</th>
+                    <th class="py-2.5 px-4 text-right">Prix HT</th>
+                    <th class="py-2.5 px-4 text-right">Montant HT</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-700/50 text-slate-200 font-mono">
+                  ${items.map(item => `
+                    <tr class="hover:bg-slate-750">
+                      <td class="py-2.5 px-4 text-slate-400 text-[11px]">${item.sku || '-'}</td>
+                      <td class="py-2.5 px-4 font-sans font-semibold text-white">${item.description || 'Wine SKU'}</td>
+                      <td class="py-2.5 px-4 text-center">${item.colis || '1x6'}</td>
+                      <td class="py-2.5 px-4 text-center font-bold text-amber-400">${item.qty || 1}</td>
+                      <td class="py-2.5 px-4 text-right">€${Number(item.priceHT || 0).toFixed(2)}</td>
+                      <td class="py-2.5 px-4 text-right font-bold">€${Number(item.montantHT || 0).toFixed(2)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    window.updateOrderStatus = async function(orderId, newStatus) {
+      try {
+        await updateDoc(doc(db, "orders", orderId), {
+          status: newStatus,
+          updatedAt: new Date().toISOString()
+        });
+      } catch (err) {
+        alert("Failed to update status: " + err.message);
+      }
+    };
+
+    window.lookupDepotSKU = function() {
+      const input = document.getElementById('depot-scanner-input');
+      const queryStr = (input.value || '').trim().toLowerCase();
+      const resContainer = document.getElementById('depot-scanner-result');
+
+      if (!queryStr) return;
+
+      const found = currentWines.find(w => w.sku.toLowerCase() === queryStr || w.id.toLowerCase() === queryStr || (w.name && w.name.toLowerCase().includes(queryStr)));
+      if (!found) {
+        resContainer.innerHTML = `
+          <div class="bg-rose-950/40 border border-rose-800 p-6 rounded-2xl text-center text-rose-300">
+            ❌ SKU / Barcode "${input.value}" not found in warehouse catalog.
+          </div>
+        `;
+        resContainer.classList.remove('hidden');
         return;
       }
 
-      emptyState.classList.add('hidden');
-      feedContainer.classList.remove('hidden');
+      const stockQty = typeof found.stockQuantity === 'number' ? found.stockQuantity : 50;
+      const isLowStock = stockQty < 10 && stockQty > 0;
 
-      feedContainer.innerHTML = orders.map(order => {
-        const client = order.client || { name: 'Shop Client', vat: 'BE 0000000000', clientNo: 'N/A', address: 'Belgique' };
-        const totals = order.totals || { totalHT: 0, totalVidanges: 0, totalTVA: 0, totalTTC: 0 };
-        const items = order.items || [];
+      resContainer.innerHTML = `
+        <div class="bg-slate-800 border ${isLowStock ? 'border-amber-500/60' : 'border-slate-700'} rounded-2xl p-6 shadow-xl flex flex-col md:flex-row gap-6 items-center">
+          <div class="w-32 h-40 bg-slate-900/80 p-2 rounded-xl border border-slate-700 flex items-center justify-center relative">
+            <img src="${found.imageUrl || found.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" class="h-full object-contain" />
+          </div>
 
-        const isReady = order.status === 'ready_for_dispatch' || Boolean(order.invoicePdfUrl);
-        const pdfUrl = order.invoicePdfUrl;
+          <div class="flex-1 space-y-2">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xs font-mono font-bold bg-sky-500/20 text-sky-400 border border-sky-500/30 px-2 py-0.5 rounded">${found.sku}</span>
+              <span class="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded font-bold">${found.vintage || '2024'}</span>
+              ${isLowStock ? `<span class="text-xs bg-amber-500/30 text-amber-300 border border-amber-500/60 font-bold px-2 py-0.5 rounded animate-pulse">⚠️ Low Stock Warning</span>` : ''}
+            </div>
+            <h3 class="text-xl font-bold text-white">${found.name}</h3>
+            <p class="text-xs text-slate-400">${found.region || 'Belgique'} | Case Size: 1x${found.caseSize || 6}</p>
 
-        const dateStr = order.createdAt && order.createdAt.toDate 
-          ? order.createdAt.toDate().toLocaleString('fr-BE') 
-          : (order.createdAt ? new Date(order.createdAt).toLocaleString('fr-BE') : 'Just now');
-
-        const totalCases = items.reduce((sum, item) => sum + (item.qty || 0), 0);
-
-        return `
-          <div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden shadow-xl hover:border-slate-600 transition">
-            <!-- Order Card Header -->
-            <div class="bg-slate-950 p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-xl flex items-center justify-center font-bold text-sm font-mono">
-                  📦
-                </div>
-                <div>
-                  <div class="text-sm font-bold text-white font-mono flex items-center gap-2">
-                    <span>Order #${order.id}</span>
-                  </div>
-                  <div class="text-xs text-slate-400">Placed on ${dateStr}</div>
-                </div>
-              </div>
-
-              <div class="flex items-center gap-3 flex-wrap">
-                <!-- Status Badge -->
-                ${isReady ? `
-                  <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Ready for Dispatch
-                  </span>
-                ` : `
-                  <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1.5">
-                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
-                    Generating Note d'Envoi...
-                  </span>
-                `}
-
-                <!-- Print Note d'Envoi Button -->
-                ${pdfUrl ? `
-                  <a href="${pdfUrl}" target="_blank" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-xs px-4 py-2 rounded-xl shadow-lg transition flex items-center gap-1.5">
-                    🖨️ Print Note d'Envoi PDF
-                  </a>
-                ` : `
-                  <button onclick="window.viewNoteModal('${order.id}')" class="bg-slate-700 hover:bg-slate-600 text-sky-300 border border-slate-600 text-xs px-4 py-2 rounded-xl font-bold transition flex items-center gap-1.5">
-                    📄 View Delivery Note
-                  </button>
-                `}
-              </div>
+            <div class="pt-2 flex items-center gap-4 text-sm font-mono">
+              <span class="text-slate-300">Depot Case Stock:</span>
+              <span class="text-2xl font-extrabold ${isLowStock ? 'text-amber-400 animate-pulse' : 'text-amber-400'}">${stockQty} Cases ${isLowStock ? '(Low Stock)' : ''}</span>
             </div>
 
-            <!-- Order Details Body -->
-            <div class="p-6">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <!-- Client Info Card -->
-                <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4 text-xs space-y-1.5">
-                  <div class="text-amber-400 font-bold uppercase tracking-wider text-[11px] mb-1">Customer Shop Info</div>
-                  <div class="text-sm font-bold text-white">${client.name}</div>
-                  <div class="text-slate-300">${client.address || 'Address not provided'}</div>
-                  <div class="text-slate-400 font-mono">N° TVA: ${client.vat || 'N/A'} | N° Client: ${client.clientNo || 'N/A'}</div>
-                </div>
-
-                <!-- Price & Case Summary -->
-                <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4 text-xs space-y-1.5">
-                  <div class="text-sky-400 font-bold uppercase tracking-wider text-[11px] mb-1">Order Totals (${totalCases} Cases)</div>
-                  <div class="flex justify-between text-slate-300">
-                    <span>Subtotal H.TVA:</span>
-                    <span class="font-mono font-bold text-white">€${Number(totals.totalHT || 0).toFixed(2)}</span>
-                  </div>
-                  <div class="flex justify-between text-slate-300">
-                    <span>Vidanges Consignées:</span>
-                    <span class="font-mono font-bold text-amber-400">€${Number(totals.totalVidanges || 0).toFixed(2)}</span>
-                  </div>
-                  <div class="flex justify-between text-slate-300">
-                    <span>Belgian VAT (21%):</span>
-                    <span class="font-mono font-bold text-slate-200">€${Number(totals.totalTVA || 0).toFixed(2)}</span>
-                  </div>
-                  <div class="flex justify-between pt-1 border-t border-slate-800 text-sm font-extrabold">
-                    <span class="text-white">TOTAL TTC:</span>
-                    <span class="text-amber-400 font-mono">€${Number(totals.totalTTC || 0).toFixed(2)}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Line Items Table -->
-              <div class="border border-slate-700/80 rounded-xl overflow-hidden">
-                <table class="w-full text-left text-xs">
-                  <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-700/80">
-                    <tr>
-                      <th class="py-2.5 px-4">SKU</th>
-                      <th class="py-2.5 px-4">Wine Description</th>
-                      <th class="py-2.5 px-4 text-center">Colis</th>
-                      <th class="py-2.5 px-4 text-center">Quantité (Cases)</th>
-                      <th class="py-2.5 px-4 text-right">Prix HT</th>
-                      <th class="py-2.5 px-4 text-right">Montant HT</th>
-                    </tr>
-                  </thead>
-                  <tbody class="divide-y divide-slate-700/50 text-slate-200 font-mono">
-                    ${items.map(item => `
-                      <tr class="hover:bg-slate-750">
-                        <td class="py-2.5 px-4 text-slate-400 text-[11px]">${item.sku || '-'}</td>
-                        <td class="py-2.5 px-4 font-sans font-semibold text-white">${item.description || 'Wine SKU'}</td>
-                        <td class="py-2.5 px-4 text-center">${item.colis || '1x6'}</td>
-                        <td class="py-2.5 px-4 text-center font-bold text-amber-400">${item.qty || 1}</td>
-                        <td class="py-2.5 px-4 text-right">€${Number(item.priceHT || 0).toFixed(2)}</td>
-                        <td class="py-2.5 px-4 text-right font-bold">€${Number(item.montantHT || 0).toFixed(2)}</td>
-                      </tr>
-                    `).join('')}
-                  </tbody>
-                </table>
-              </div>
+            <!-- Quick Adjuster -->
+            <div class="pt-4 flex flex-wrap items-center gap-3">
+              <span class="text-xs font-bold text-slate-300 uppercase">Adjust Inventory:</span>
+              <button onclick="window.adjustDepotStock('${found.id}', 5)" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg transition">+5 Cases</button>
+              <button onclick="window.adjustDepotStock('${found.id}', 10)" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg transition">+10 Cases</button>
+              <button onclick="window.adjustDepotStock('${found.id}', -1)" class="bg-slate-700 hover:bg-slate-600 text-rose-300 font-bold text-xs px-3 py-2 rounded-lg transition">-1 Case</button>
             </div>
           </div>
-        `;
-      }).join('');
-    }
+        </div>
+      `;
+      resContainer.classList.remove('hidden');
+    };
+
+    window.adjustDepotStock = async function(docId, delta) {
+      const w = currentWines.find(x => x.id === docId);
+      if (!w) return;
+      const currentQty = typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
+      const nextQty = Math.max(0, currentQty + delta);
+
+      try {
+        await updateDoc(doc(db, "wines", docId), {
+          stockQuantity: nextQty,
+          stockAvailable: nextQty > 0,
+          updatedAt: new Date().toISOString()
+        });
+        lookupDepotSKU();
+      } catch (err) {
+        alert("Failed to adjust stock: " + err.message);
+      }
+    };
+
+    // Printable Belgian NOTE D'ENVOI Delivery Note Modal
+    window.viewNoteModal = function(orderId) {
+      const order = currentOrders.find(o => o.id === orderId);
+      if (!order) {
+        alert("Order details not found!");
+        return;
+      }
+
+      const client = order.client || { name: 'Food City Bruxelles', vat: 'BE 0707843840', clientNo: '2340', address: 'Place Saint-Pierre 12, 1040 Bruxelles' };
+      const totals = order.totals || { totalHT: 0, totalVidanges: 0, totalTVA: 0, totalTTC: 0 };
+      const items = order.items || [];
+      const dateStr = order.createdAt && order.createdAt.toDate 
+        ? order.createdAt.toDate().toLocaleDateString('fr-BE') 
+        : new Date().toLocaleDateString('fr-BE');
+
+      const modalContent = document.getElementById('note-modal-content');
+      modalContent.innerHTML = `
+        <div class="flex justify-between items-start border-b border-slate-300 pb-4 mb-4">
+          <div>
+            <h1 class="text-xl font-black text-slate-900 tracking-tight">🍷 Aurellion Wine Distribution</h1>
+            <p class="text-[11px] text-slate-600">N.V. Aurellion Wines Belux S.A. | Avenue Louise 250, 1050 Bruxelles</p>
+            <p class="text-[11px] text-slate-600">N° TVA: BE 0412 876 543 | RPM Bruxelles</p>
+          </div>
+          <div class="text-right">
+            <h2 class="text-lg font-extrabold text-sky-700 uppercase tracking-wide">NOTE D'ENVOI</h2>
+            <div class="text-[11px] font-mono font-bold text-slate-800">N° Document: NE-${order.id.substring(0, 8).toUpperCase()}</div>
+            <div class="text-[11px] text-slate-600">Date: ${dateStr}</div>
+            <div class="text-[11px] text-slate-600">Statut: ${order.status || 'Prêt pour expédition'}</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200 mb-4 text-[11px]">
+          <div>
+            <span class="font-bold uppercase text-slate-500 text-[9px] block mb-0.5">Destinataire / Client</span>
+            <div class="font-bold text-xs text-slate-900">${client.name}</div>
+            <div class="text-slate-700">${client.address}</div>
+            <div class="font-mono text-slate-600">N° TVA Client: ${client.vat} | N° Client: ${client.clientNo}</div>
+          </div>
+          <div>
+            <span class="font-bold uppercase text-slate-500 text-[9px] block mb-0.5">Dépôt d'Expédition</span>
+            <div class="font-bold text-xs text-slate-900">Dépôt Central Logistique Belux</div>
+            <div class="text-slate-700">Port de Bruxelles, Quai des Usines 112</div>
+            <div class="font-mono text-slate-600">Mode: Camion Frigorifique | Ref: ${order.id}</div>
+          </div>
+        </div>
+
+        <table class="w-full text-left text-[11px] mb-4 border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 uppercase font-bold text-[9px] border-b border-slate-300">
+              <th class="py-1.5 px-2.5">Code SKU</th>
+              <th class="py-1.5 px-2.5">Description du Produit</th>
+              <th class="py-1.5 px-2.5 text-center">Colisage</th>
+              <th class="py-1.5 px-2.5 text-center">Quantité (Colis)</th>
+              <th class="py-1.5 px-2.5 text-right">Prix H.TVA</th>
+              <th class="py-1.5 px-2.5 text-right">Total H.TVA</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 font-mono text-slate-800">
+            ${items.map(item => `
+              <tr>
+                <td class="py-1.5 px-2.5 font-semibold text-slate-600">${item.sku || '-'}</td>
+                <td class="py-1.5 px-2.5 font-sans font-bold text-slate-900">${item.description || 'Vin de Réserve'}</td>
+                <td class="py-1.5 px-2.5 text-center">${item.colis || '1x6'}</td>
+                <td class="py-1.5 px-2.5 text-center font-extrabold text-slate-900">${item.qty}</td>
+                <td class="py-1.5 px-2.5 text-right">€${Number(item.priceHT || 0).toFixed(2)}</td>
+                <td class="py-1.5 px-2.5 text-right font-bold">€${Number(item.montantHT || 0).toFixed(2)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <div class="flex justify-between items-start pt-3 border-t border-slate-300 mb-4">
+          <div class="text-[10px] text-slate-500 max-w-xs">
+            <p class="font-bold text-slate-700 mb-0.5">Conditions de Livraison & Consignes:</p>
+            <p>Les vidanges et alvéoles consignées restent la propriété de N.V. Aurellion Wines. Remboursables lors des retours de vidanges.</p>
+          </div>
+          <div class="w-60 bg-slate-50 p-3 rounded-lg border border-slate-200 text-[11px] space-y-1">
+            <div class="flex justify-between text-slate-700">
+              <span>Sous-total H.TVA:</span>
+              <span class="font-mono font-bold">€${Number(totals.totalHT || 0).toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between text-slate-700">
+              <span>Vidanges Consignées:</span>
+              <span class="font-mono font-bold text-amber-700">€${Number(totals.totalVidanges || 0).toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between text-slate-700">
+              <span>T.V.A. Belge (21%):</span>
+              <span class="font-mono font-bold">€${Number(totals.totalTVA || 0).toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between pt-1.5 border-t border-slate-300 text-xs font-black text-slate-900">
+              <span>TOTAL T.T.C.:</span>
+              <span class="font-mono text-sky-800">€${Number(totals.totalTTC || 0).toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 pt-4 border-t border-slate-300 text-[10px] text-slate-600">
+          <div>
+            <p class="font-bold text-slate-800 mb-6">Pour le Dépôt d'Expédition (Chauffeur):</p>
+            <p class="border-t border-slate-400 pt-0.5 font-mono">Date et Signature: _______________________</p>
+          </div>
+          <div>
+            <p class="font-bold text-slate-800 mb-6">Pour Réception Client (Magasin):</p>
+            <p class="border-t border-slate-400 pt-0.5 font-mono">Date et Signature: _______________________</p>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('delivery-note-modal').classList.remove('hidden');
+    };
+
+    window.closeNoteModal = function() {
+      document.getElementById('delivery-note-modal').classList.add('hidden');
+    };
+
+    window.printDeliveryNote = function() {
+      window.print();
+    };
   </script>
 </body>
 

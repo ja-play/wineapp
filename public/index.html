@@ -7,6 +7,45 @@
   <title>Aurellion Wine - Evaluator Field Ordering</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍷</text></svg>">
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+      }
+      body {
+        background: white !important;
+        color: black !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      header, main, footer, #order-drawer, #client-shop-bar, .no-print {
+        display: none !important;
+      }
+      #delivery-note-modal {
+        position: static !important;
+        display: block !important;
+        background: white !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        box-shadow: none !important;
+      }
+      #printable-note-container {
+        position: static !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        background: white !important;
+      }
+    }
+  </style>
 </head>
 
 <body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col pb-36">
@@ -21,22 +60,24 @@
         <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs px-2.5 py-1 rounded-full font-semibold">Field Ordering</span>
       </div>
 
-      <div id="auth-bar-container" class="flex items-center gap-2">
-        <!-- Auth widget injected here -->
+      <div class="flex items-center gap-3">
+        <button onclick="openEvaluatorOrdersModal()" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 text-xs px-3 py-1.5 rounded-lg border border-slate-700 font-medium transition flex items-center gap-1.5">
+          <span>📋 My Placed Orders</span>
+        </button>
+        <div id="auth-bar-container" class="flex items-center gap-2">
+          <!-- Auth widget injected here -->
+        </div>
       </div>
     </div>
   </header>
 
   <!-- Client Shop Selector Sticky Sub-Header -->
-  <div class="bg-slate-800 border-b border-slate-700/80 px-4 py-3 sticky top-[57px] z-30 shadow-md">
+  <div id="client-shop-bar" class="bg-slate-800 border-b border-slate-700/80 px-4 py-3 sticky top-[57px] z-30 shadow-md">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
       <div class="flex items-center gap-2 w-full sm:w-auto">
         <span class="text-xs font-bold uppercase tracking-wider text-amber-400 whitespace-nowrap">🏪 Client Shop:</span>
         <select id="client-shop-select" class="w-full sm:w-80 bg-slate-900 border border-amber-500/40 text-white text-xs font-semibold px-3 py-2 rounded-xl focus:outline-none focus:border-amber-400 cursor-pointer shadow">
-          <option value="" disabled selected>-- Select Belgian Customer Shop --</option>
-          <option value="shop-001">Food City Bruxelles - BE 0707843840</option>
-          <option value="shop-002">Wine Boutique Gent - BE 0812345678</option>
-          <option value="shop-003">Le Caveau Liège - BE 0987654321</option>
+          <option value="" disabled selected>-- Loading Client Shops... --</option>
         </select>
       </div>
 
@@ -75,6 +116,42 @@
       <div class="mt-4 text-center">
         <h3 id="modal-title" class="text-xl font-bold text-amber-400"></h3>
         <p id="modal-caption" class="text-xs text-slate-400 font-mono mt-1"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Evaluator Orders History Modal -->
+  <div id="evaluator-orders-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="relative max-w-3xl w-full bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl my-8">
+      <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-6">
+        <h3 class="text-xl font-bold text-emerald-400">📋 My Placed Orders & Delivery Notes</h3>
+        <button onclick="closeEvaluatorOrdersModal()" class="text-slate-400 hover:text-white p-1">✕</button>
+      </div>
+      <div id="evaluator-orders-list" class="space-y-4 max-h-[60vh] overflow-y-auto">
+        <!-- Order cards injected dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Printable Delivery Note Modal -->
+  <div id="delivery-note-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="relative max-w-4xl w-full my-8">
+      <div class="flex justify-between items-center mb-4 no-print">
+        <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">📄 Belgian Note d'Envoi Preview</span>
+        <div class="flex items-center gap-3">
+          <button onclick="window.print()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+            🖨️ Print Delivery Note (A4)
+          </button>
+          <button onclick="document.getElementById('delivery-note-modal').classList.add('hidden')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl border border-slate-700 transition">
+            ✕ Close
+          </button>
+        </div>
+      </div>
+
+      <div id="printable-note-container" class="bg-white text-slate-900 rounded-2xl p-8 shadow-2xl border border-slate-200">
+        <div id="note-modal-content">
+          <!-- Injected dynamically -->
+        </div>
       </div>
     </div>
   </div>
@@ -140,7 +217,7 @@
   </div>
 
   <script type="module">
-    import { db, auth, collection, onSnapshot, query, where, addDoc, serverTimestamp, onAuthStateChanged } from './firebase-config.js';
+    import { db, auth, collection, doc, getDocs, updateDoc, onSnapshot, query, where, addDoc, serverTimestamp, onAuthStateChanged } from './firebase-config.js';
     import { getShops, getUserRole, setupAuthUI } from './auth-guard.js';
 
     let currentWines = [];
@@ -148,6 +225,7 @@
     let selectedClient = null;
     let currentUser = null;
     let availableShops = [];
+    let evaluatorOrders = [];
 
     // Populate Client Selector dynamically from Firestore
     async function loadClientShops() {
@@ -193,7 +271,6 @@
       onSnapshot(q, (snapshot) => {
         document.getElementById('catalog-loading').classList.add('hidden');
         if (snapshot.empty) {
-          // Fallback to fetch all wines if filtering returns empty during initial seed
           onSnapshot(collection(db, "wines"), (snapAll) => {
             currentWines = snapAll.docs.map(d => ({ id: d.id, ...d.data() })).filter(w => w.stockAvailable !== false);
             renderCatalog(currentWines);
@@ -202,9 +279,6 @@
           currentWines = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
           renderCatalog(currentWines);
         }
-      }, (err) => {
-        console.error("Firestore catalog subscription error:", err);
-        document.getElementById('catalog-loading').innerHTML = `<p class="text-rose-400 text-sm">Failed to connect to Firestore catalog.</p>`;
       });
     } catch (e) {
       console.error(e);
@@ -225,17 +299,30 @@
 
       grid.innerHTML = wines.map(w => {
         const qty = cart[w.sku] || 0;
+        const stockQty = typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
+        const isLowStock = stockQty < 10 && stockQty > 0;
         const bottlePriceHT = typeof w.priceBottleHT === 'number' ? w.priceBottleHT : (parseFloat((w.priceBottle || '').replace(/[^0-9.]/g, '')) || 5.50);
         const casePriceHT = typeof w.priceCaseHT === 'number' ? w.priceCaseHT : (parseFloat((w.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
         const caseConfig = w.caseSize ? `1x${w.caseSize}` : '1x6';
         const depositCase = w.depositCase || 1.35;
         const isClientSelected = Boolean(selectedClient);
 
+        const stockBadgeClass = isLowStock 
+          ? 'bg-amber-500/30 text-amber-300 border-amber-500/60 animate-pulse font-extrabold' 
+          : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+
+        const stockBadgeText = isLowStock 
+          ? `⚠️ Low Stock: ${stockQty} Cases left` 
+          : `In Stock: ${stockQty} Cases`;
+
         return `
-          <div class="bg-slate-800 border border-slate-700/80 rounded-2xl overflow-hidden shadow-lg flex flex-col hover:border-amber-500/50 transition group">
+          <div class="bg-slate-800 border ${isLowStock ? 'border-amber-500/60' : 'border-slate-700/80'} rounded-2xl overflow-hidden shadow-lg flex flex-col hover:border-amber-500/50 transition group">
             <div class="relative overflow-hidden cursor-pointer bg-slate-900/60 flex items-center justify-center h-48 p-3 border-b border-slate-700/50" onclick="window.openModal('${(w.imageUrl || w.image || '').replace(/'/g, "\\'")}', '${(w.name || '').replace(/'/g, "\\'")}', '${(w.sku || '').replace(/'/g, "\\'")}')">
               <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md" />
               <span class="absolute top-3 left-3 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded font-mono font-semibold">${w.vintage || '2024'}</span>
+              <span class="absolute top-3 right-3 text-[11px] px-2 py-0.5 rounded font-mono font-bold border ${stockBadgeClass}">
+                ${stockBadgeText}
+              </span>
             </div>
 
             <div class="p-4 flex flex-col flex-grow">
@@ -271,7 +358,7 @@
                     -
                   </button>
                   <span class="w-7 text-center text-sm font-extrabold text-amber-400 font-mono">${qty}</span>
-                  <button onclick="updateQty('${w.sku}', 1)" ${!isClientSelected ? 'disabled' : ''} class="w-8 h-8 rounded-lg bg-amber-500 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-amber-400 text-slate-950 font-bold text-sm transition flex items-center justify-center">
+                  <button onclick="updateQty('${w.sku}', 1)" ${!isClientSelected || qty >= stockQty ? 'disabled' : ''} class="w-8 h-8 rounded-lg bg-amber-500 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-amber-400 text-slate-950 font-bold text-sm transition flex items-center justify-center">
                     +
                   </button>
                 </div>
@@ -287,8 +374,11 @@
         showToast("Please select a client shop first", true);
         return;
       }
+      const wine = currentWines.find(w => w.sku === sku);
+      const stockQty = wine && typeof wine.stockQuantity === 'number' ? wine.stockQuantity : 50;
       const current = cart[sku] || 0;
-      const next = Math.max(0, current + delta);
+      const next = Math.max(0, Math.min(stockQty, current + delta));
+
       if (next === 0) delete cart[sku];
       else cart[sku] = next;
 
@@ -340,7 +430,6 @@
       const submitBtn = document.getElementById('submit-order-btn');
       submitBtn.disabled = !selectedClient || totalCases === 0;
 
-      // Render cart line items
       const cartItemsContainer = document.getElementById('cart-items-list');
       if (itemsList.length === 0) {
         cartItemsContainer.innerHTML = `<div class="text-slate-500 text-xs italic">No items selected yet.</div>`;
@@ -409,6 +498,14 @@
             montantHT: lineHT,
             tvaRate: 21
           });
+
+          // Deduct stock quantity in Firestore
+          const currentQty = typeof wine.stockQuantity === 'number' ? wine.stockQuantity : 50;
+          const nextQty = Math.max(0, currentQty - qty);
+          await updateDoc(doc(db, "wines", wine.id), {
+            stockQuantity: nextQty,
+            stockAvailable: nextQty > 0
+          });
         }
 
         const totalTVA = totalHT * 0.21;
@@ -437,18 +534,15 @@
 
         const docRef = await addDoc(collection(db, "orders"), orderPayload);
         
-        // Reset cart
         cart = {};
         renderCatalog(currentWines);
         updateCartTotals();
 
-        showToast(`Order submitted successfully! Doc ID: ${docRef.id}`);
+        showToast(`Order submitted! Stock auto-deducted.`);
         
         setTimeout(() => {
-          if (confirm("Order submitted! Would you like to view the Depot Dispatch Queue?")) {
-            window.location.href = "depot.html";
-          }
-        }, 800);
+          window.printEvaluatorOrder(docRef.id, orderPayload);
+        }, 500);
       } catch (err) {
         console.error("Order submission error:", err);
         showToast("Order submission failed: " + err.message, true);
@@ -456,6 +550,155 @@
         submitBtn.disabled = false;
         submitBtn.innerHTML = `<span>Submit Wholesale Order</span>`;
       }
+    };
+
+    window.openEvaluatorOrdersModal = async function() {
+      const modal = document.getElementById('evaluator-orders-modal');
+      const container = document.getElementById('evaluator-orders-list');
+      container.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">Loading placed orders...</p>`;
+      modal.classList.remove('hidden');
+
+      try {
+        const snap = await getDocs(collection(db, "orders"));
+        evaluatorOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        evaluatorOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+        if (evaluatorOrders.length === 0) {
+          container.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">No placed orders found.</p>`;
+          return;
+        }
+
+        container.innerHTML = evaluatorOrders.map(o => {
+          const client = o.client || { name: 'Shop Client' };
+          const totals = o.totals || { totalTTC: 0 };
+          const dateStr = o.createdAt && o.createdAt.toDate ? o.createdAt.toDate().toLocaleString('fr-BE') : 'Recent';
+          return `
+            <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl flex items-center justify-between gap-4">
+              <div>
+                <div class="text-sm font-bold text-white">${client.name}</div>
+                <div class="text-xs text-slate-400">Order #${o.id} • ${dateStr}</div>
+                <div class="text-xs text-amber-400 font-mono font-bold mt-1">Total TTC: €${Number(totals.totalTTC || 0).toFixed(2)}</div>
+              </div>
+              <button onclick="window.printEvaluatorOrder('${o.id}')" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs px-4 py-2 rounded-lg transition">
+                🖨️ Note d'Envoi
+              </button>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        container.innerHTML = `<p class="text-xs text-rose-400 py-4 text-center">Failed to load orders: ${err.message}</p>`;
+      }
+    };
+
+    window.closeEvaluatorOrdersModal = function() {
+      document.getElementById('evaluator-orders-modal').classList.add('hidden');
+    };
+
+    window.printEvaluatorOrder = function(orderId, directPayload = null) {
+      const order = directPayload ? { id: orderId, ...directPayload } : evaluatorOrders.find(o => o.id === orderId);
+      if (!order) {
+        showToast("Order details loading...", true);
+        return;
+      }
+
+      const client = order.client || { name: 'Food City Bruxelles', vat: 'BE 0707843840', clientNo: '2340', address: 'Place Saint-Pierre 12, 1040 Bruxelles' };
+      const totals = order.totals || { totalHT: 0, totalVidanges: 0, totalTVA: 0, totalTTC: 0 };
+      const items = order.items || [];
+      const dateStr = new Date().toLocaleDateString('fr-BE');
+
+      const modalContent = document.getElementById('note-modal-content');
+      modalContent.innerHTML = `
+        <div class="flex justify-between items-start border-b border-slate-300 pb-4 mb-4">
+          <div>
+            <h1 class="text-xl font-black text-slate-900 tracking-tight">🍷 Aurellion Wine Distribution</h1>
+            <p class="text-[11px] text-slate-600">N.V. Aurellion Wines Belux S.A. | Avenue Louise 250, 1050 Bruxelles</p>
+            <p class="text-[11px] text-slate-600">N° TVA: BE 0412 876 543 | RPM Bruxelles</p>
+          </div>
+          <div class="text-right">
+            <h2 class="text-lg font-extrabold text-sky-700 uppercase tracking-wide">NOTE D'ENVOI</h2>
+            <div class="text-[11px] font-mono font-bold text-slate-800">N° Document: NE-${order.id.substring(0, 8).toUpperCase()}</div>
+            <div class="text-[11px] text-slate-600">Date: ${dateStr}</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 bg-slate-50 p-3 rounded-lg border border-slate-200 mb-4 text-[11px]">
+          <div>
+            <span class="font-bold uppercase text-slate-500 text-[9px] block mb-0.5">Destinataire / Client</span>
+            <div class="font-bold text-xs text-slate-900">${client.name}</div>
+            <div class="text-slate-700">${client.address}</div>
+            <div class="font-mono text-slate-600">N° TVA Client: ${client.vat} | N° Client: ${client.clientNo}</div>
+          </div>
+          <div>
+            <span class="font-bold uppercase text-slate-500 text-[9px] block mb-0.5">Dépôt d'Expédition</span>
+            <div class="font-bold text-xs text-slate-900">Dépôt Central Logistique Belux</div>
+            <div class="text-slate-700">Port de Bruxelles, Quai des Usines 112</div>
+          </div>
+        </div>
+
+        <table class="w-full text-left text-[11px] mb-4 border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 uppercase font-bold text-[9px] border-b border-slate-300">
+              <th class="py-1.5 px-2.5">Code SKU</th>
+              <th class="py-1.5 px-2.5">Description du Produit</th>
+              <th class="py-1.5 px-2.5 text-center">Colisage</th>
+              <th class="py-1.5 px-2.5 text-center">Quantité (Colis)</th>
+              <th class="py-1.5 px-2.5 text-right">Prix H.TVA</th>
+              <th class="py-1.5 px-2.5 text-right">Total H.TVA</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 font-mono text-slate-800">
+            ${items.map(item => `
+              <tr>
+                <td class="py-1.5 px-2.5 font-semibold text-slate-600">${item.sku || '-'}</td>
+                <td class="py-1.5 px-2.5 font-sans font-bold text-slate-900">${item.description || 'Vin de Réserve'}</td>
+                <td class="py-1.5 px-2.5 text-center">${item.colis || '1x6'}</td>
+                <td class="py-1.5 px-2.5 text-center font-extrabold text-slate-900">${item.qty}</td>
+                <td class="py-1.5 px-2.5 text-right">€${Number(item.priceHT || 0).toFixed(2)}</td>
+                <td class="py-1.5 px-2.5 text-right font-bold">€${Number(item.montantHT || 0).toFixed(2)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <div class="flex justify-between items-start pt-3 border-t border-slate-300 mb-4">
+          <div class="text-[10px] text-slate-500 max-w-xs">
+            <p class="font-bold text-slate-700 mb-0.5">Conditions de Livraison & Consignes:</p>
+            <p>Les vidanges et alvéoles consignées restent la propriété de N.V. Aurellion Wines. Remboursables lors des retours.</p>
+          </div>
+          <div class="w-60 bg-slate-50 p-3 rounded-lg border border-slate-200 text-[11px] space-y-1">
+            <div class="flex justify-between text-slate-700">
+              <span>Sous-total H.TVA:</span>
+              <span class="font-mono font-bold">€${Number(totals.totalHT || 0).toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between text-slate-700">
+              <span>Vidanges Consignées:</span>
+              <span class="font-mono font-bold text-amber-700">€${Number(totals.totalVidanges || 0).toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between text-slate-700">
+              <span>T.V.A. Belge (21%):</span>
+              <span class="font-mono font-bold">€${Number(totals.totalTVA || 0).toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between pt-1.5 border-t border-slate-300 text-xs font-black text-slate-900">
+              <span>TOTAL T.T.C.:</span>
+              <span class="font-mono text-sky-800">€${Number(totals.totalTTC || 0).toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 pt-4 border-t border-slate-300 text-[10px] text-slate-600">
+          <div>
+            <p class="font-bold text-slate-800 mb-6">Pour le Dépôt d'Expédition (Chauffeur):</p>
+            <p class="border-t border-slate-400 pt-0.5 font-mono">Date et Signature: _______________________</p>
+          </div>
+          <div>
+            <p class="font-bold text-slate-800 mb-6">Pour Réception Client (Magasin):</p>
+            <p class="border-t border-slate-400 pt-0.5 font-mono">Date et Signature: _______________________</p>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('evaluator-orders-modal').classList.add('hidden');
+      document.getElementById('delivery-note-modal').classList.remove('hidden');
     };
 
     // Modal Image Lightbox

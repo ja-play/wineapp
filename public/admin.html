@@ -55,11 +55,17 @@
         <button id="tab-btn-catalog" onclick="switchAdminTab('catalog')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-amber-500 text-slate-950 shadow">
           <span>🍷 Product Catalog</span>
         </button>
+        <button id="tab-btn-scanner" onclick="switchAdminTab('scanner')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+          <span>📱 Barcode & Inventory Scanner</span>
+        </button>
         <button id="tab-btn-users" onclick="switchAdminTab('users')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
           <span>👥 User & Role Management</span>
         </button>
         <button id="tab-btn-shops" onclick="switchAdminTab('shops')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
           <span>🏬 Client Shops</span>
+        </button>
+        <button id="tab-btn-reports" onclick="switchAdminTab('reports')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+          <span>📊 Orders & Sales Reports</span>
         </button>
       </div>
 
@@ -67,8 +73,8 @@
       <div id="tab-sec-catalog">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 backdrop-blur-sm shadow-xl">
           <div>
-            <h2 class="text-2xl font-extrabold text-white">Dynamic Catalog & Product Management</h2>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1">Manage wholesale SKUs, bottle & case pricing, deposit vidanges, stock status, and photography.</p>
+            <h2 class="text-2xl font-extrabold text-white">Dynamic Catalog & Stock Management</h2>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Manage wholesale SKUs, case stock counts, pricing, deposit vidanges, and photography.</p>
           </div>
           <div class="flex items-center gap-3 flex-wrap">
             <button id="seed-btn" onclick="seedDatabase()" class="bg-slate-700 hover:bg-slate-600 text-amber-300 text-xs font-semibold px-4 py-2.5 rounded-xl transition border border-amber-500/30 flex items-center gap-2">
@@ -100,7 +106,32 @@
         </div>
       </div>
 
-      <!-- TAB 2: USER & ROLE MANAGEMENT -->
+      <!-- TAB 2: BARCODE & INVENTORY SCANNER TOOL -->
+      <div id="tab-sec-scanner" class="hidden">
+        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl mb-8">
+          <h2 class="text-2xl font-extrabold text-white flex items-center gap-3">
+            <span>📱 Barcode & SKU Inventory Scanner</span>
+            <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs px-2.5 py-0.5 rounded-full font-mono">Scanner Active</span>
+          </h2>
+          <p class="text-slate-400 text-xs sm:text-sm mt-1">Scan bottle/case barcodes using USB/Bluetooth barcode guns or type SKU code to instantly inspect and adjust warehouse case inventory.</p>
+        </div>
+
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl mb-8">
+          <label class="block text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">Scan SKU Barcode / Enter Code:</label>
+          <div class="flex gap-3">
+            <input type="text" id="scanner-input" placeholder="e.g. OK-CABMER-2023-750 or scan barcode..." class="flex-1 bg-slate-950 border border-amber-500/50 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-amber-400 shadow-inner" onkeydown="if(event.key==='Enter') lookupScannedSKU()" />
+            <button onclick="lookupScannedSKU()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-6 py-3 rounded-xl shadow transition">
+              🔍 Look Up SKU
+            </button>
+          </div>
+        </div>
+
+        <div id="scanner-result" class="hidden">
+          <!-- Scanned product card & stock adjuster injected here -->
+        </div>
+      </div>
+
+      <!-- TAB 3: USER & ROLE MANAGEMENT -->
       <div id="tab-sec-users" class="hidden">
         <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 backdrop-blur-sm shadow-xl mb-8">
           <h2 class="text-2xl font-extrabold text-white">User & Role Management</h2>
@@ -128,7 +159,7 @@
         </div>
       </div>
 
-      <!-- TAB 3: CLIENT SHOPS -->
+      <!-- TAB 4: CLIENT SHOPS -->
       <div id="tab-sec-shops" class="hidden">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 backdrop-blur-sm shadow-xl">
           <div>
@@ -143,6 +174,130 @@
 
         <div id="shops-container" class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <!-- Shop cards injected dynamically -->
+        </div>
+      </div>
+
+      <!-- TAB 5: ORDERS & SALES REPORTS -->
+      <div id="tab-sec-reports" class="hidden">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 backdrop-blur-sm shadow-xl">
+          <div>
+            <h2 class="text-2xl font-extrabold text-white flex items-center gap-3">
+              <span>📊 Historical Orders & Financial Reports</span>
+              <span class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2.5 py-0.5 rounded-full font-mono">Firestore Audit Log</span>
+            </h2>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Audit complete order history across all dispatch states (`submitted`, `packing`, `dispatched`, `delivered`). Filter by date range, export CSV data, or print sales summary.</p>
+          </div>
+          <div class="flex items-center gap-3 flex-wrap">
+            <button onclick="window.exportOrdersCSV()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition shadow flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h55.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              📥 Export CSV
+            </button>
+            <button onclick="window.printSalesReport()" class="bg-slate-700 hover:bg-slate-600 text-amber-300 border border-amber-500/30 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              🖨️ Print Report
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Controls Card -->
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl mb-8">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Date Range Preset:</label>
+              <select id="report-date-preset" onchange="window.handleReportPresetChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500">
+                <option value="all" selected>📅 All Time (Full History)</option>
+                <option value="today">Today</option>
+                <option value="week">This Week</option>
+                <option value="month">This Month</option>
+                <option value="custom">Custom Date Range...</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">From Date:</label>
+              <input type="date" id="report-start-date" onchange="window.renderReportsView()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">To Date:</label>
+              <input type="date" id="report-end-date" onchange="window.renderReportsView()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500" />
+            </div>
+
+            <div>
+              <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Filter Order Status:</label>
+              <select id="report-status-filter" onchange="window.renderReportsView()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500">
+                <option value="all" selected>All Statuses (Active & Delivered)</option>
+                <option value="delivered">✅ Delivered & Completed Only</option>
+                <option value="active">⏳ Active Dispatch Queue Only</option>
+                <option value="submitted">📋 Submitted (New)</option>
+                <option value="packing">📦 Packing</option>
+                <option value="dispatched">🚚 Dispatched</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI Metrics Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-slate-400 uppercase font-semibold mb-1">Total Orders</div>
+            <div id="kpi-total-orders" class="text-3xl font-extrabold text-white font-mono">0</div>
+            <div class="text-xs text-slate-500 mt-1">In selected range</div>
+          </div>
+
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-slate-400 uppercase font-semibold mb-1">Net Sales (HT)</div>
+            <div id="kpi-total-ht" class="text-3xl font-extrabold text-amber-400 font-mono">€0.00</div>
+            <div class="text-xs text-slate-500 mt-1">Excl. TVA & Vidanges</div>
+          </div>
+
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-slate-400 uppercase font-semibold mb-1">TVA (21%)</div>
+            <div id="kpi-total-tva" class="text-3xl font-extrabold text-sky-400 font-mono">€0.00</div>
+            <div class="text-xs text-slate-500 mt-1">Belgian tax collected</div>
+          </div>
+
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-slate-400 uppercase font-semibold mb-1">Gross Revenue (TTC)</div>
+            <div id="kpi-total-ttc" class="text-3xl font-extrabold text-emerald-400 font-mono">€0.00</div>
+            <div class="text-xs text-slate-500 mt-1">Incl. Tax & Deposits</div>
+          </div>
+
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
+            <div class="text-xs text-slate-400 uppercase font-semibold mb-1">Total Cases Sold</div>
+            <div id="kpi-total-cases" class="text-3xl font-extrabold text-purple-400 font-mono">0</div>
+            <div class="text-xs text-slate-500 mt-1">Wholesale cases</div>
+          </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden shadow-xl mb-8">
+          <div class="p-4 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
+            <h3 class="font-bold text-white text-base">Filtered Orders Feed</h3>
+            <span id="report-record-count" class="text-xs font-mono text-amber-400 font-semibold">0 records matching</span>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs sm:text-sm">
+              <thead class="bg-slate-900 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-700">
+                <tr>
+                  <th class="px-4 py-3">Order ID</th>
+                  <th class="px-4 py-3">Date Placed</th>
+                  <th class="px-4 py-3">Client Shop</th>
+                  <th class="px-4 py-3">Evaluator / User</th>
+                  <th class="px-4 py-3">Status</th>
+                  <th class="px-4 py-3 text-right">Cases</th>
+                  <th class="px-4 py-3 text-right">Total TTC (€)</th>
+                  <th class="px-4 py-3 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="reports-table-body" class="divide-y divide-slate-700/60 font-mono">
+                <tr>
+                  <td colspan="8" class="px-6 py-8 text-center text-slate-400 font-sans">No orders match the specified filter criteria.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -187,10 +342,14 @@
           <input type="text" id="form-name" required placeholder="e.g. Oude Kaap Cabernet Sauvignon Merlot" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Region *</label>
             <input type="text" id="form-region" required placeholder="e.g. Franschhoek, South Africa" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-amber-400 uppercase tracking-wider mb-1">Stock Cases (Qty) *</label>
+            <input type="number" id="form-stock-quantity" required min="0" placeholder="50" value="50" class="w-full bg-slate-900 border border-amber-500/50 rounded-lg px-3 py-2 text-sm text-amber-300 font-mono focus:outline-none focus:border-amber-500" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Availability Status</label>
@@ -282,9 +441,11 @@
     import { getUserRole, updateUserRole, setupAuthUI } from './auth-guard.js';
 
     let currentWines = [];
+    let currentOrders = [];
     let snapshotUnsubscribe = null;
     let usersUnsubscribe = null;
     let shopsUnsubscribe = null;
+    let ordersUnsubscribe = null;
     let currentUserRole = null;
 
     onAuthStateChanged(auth, async (user) => {
@@ -333,27 +494,125 @@
             renderShops(shops);
           });
         }
+
+        // Subscribe to Orders for Historical Reporting
+        if (!ordersUnsubscribe) {
+          ordersUnsubscribe = onSnapshot(collection(db, "orders"), (snapshot) => {
+            currentOrders = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+            currentOrders.sort((a, b) => {
+              const timeA = a.createdAt?.seconds ? a.createdAt.seconds * 1000 : (a.createdAt ? new Date(a.createdAt).getTime() : 0);
+              const timeB = b.createdAt?.seconds ? b.createdAt.seconds * 1000 : (b.createdAt ? new Date(b.createdAt).getTime() : 0);
+              return timeB - timeA;
+            });
+            window.renderReportsView();
+          });
+        }
       } else {
         if (snapshotUnsubscribe) { snapshotUnsubscribe(); snapshotUnsubscribe = null; }
         if (usersUnsubscribe) { usersUnsubscribe(); usersUnsubscribe = null; }
         if (shopsUnsubscribe) { shopsUnsubscribe(); shopsUnsubscribe = null; }
+        if (ordersUnsubscribe) { ordersUnsubscribe(); ordersUnsubscribe = null; }
         adminDash.classList.add('hidden');
         accessDenied.classList.remove('hidden');
       }
     });
 
     window.switchAdminTab = function(tabName) {
-      ['catalog', 'users', 'shops'].forEach(t => {
+      ['catalog', 'scanner', 'users', 'shops', 'reports'].forEach(t => {
         const sec = document.getElementById(`tab-sec-${t}`);
         const btn = document.getElementById(`tab-btn-${t}`);
         if (t === tabName) {
           sec.classList.remove('hidden');
           btn.className = "px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-amber-500 text-slate-950 shadow";
+          if (t === 'scanner') {
+            setTimeout(() => {
+              const input = document.getElementById('scanner-input');
+              if (input) input.focus();
+            }, 100);
+          } else if (t === 'reports') {
+            window.renderReportsView();
+          }
         } else {
           sec.classList.add('hidden');
           btn.className = "px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700";
         }
       });
+    };
+
+    window.lookupScannedSKU = function() {
+      const input = document.getElementById('scanner-input');
+      const queryStr = (input.value || '').trim().toLowerCase();
+      const resContainer = document.getElementById('scanner-result');
+
+      if (!queryStr) {
+        showToast("Enter or scan a SKU barcode", true);
+        return;
+      }
+
+      const found = currentWines.find(w => w.sku.toLowerCase() === queryStr || w.id.toLowerCase() === queryStr || (w.name && w.name.toLowerCase().includes(queryStr)));
+      if (!found) {
+        resContainer.innerHTML = `
+          <div class="bg-rose-950/40 border border-rose-800 p-6 rounded-2xl text-center text-rose-300">
+            ❌ SKU / Barcode "${input.value}" not found in catalog.
+          </div>
+        `;
+        resContainer.classList.remove('hidden');
+        return;
+      }
+
+      const stockQty = typeof found.stockQuantity === 'number' ? found.stockQuantity : 50;
+
+      resContainer.innerHTML = `
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row gap-6 items-center">
+          <div class="w-32 h-40 bg-slate-900/80 p-2 rounded-xl border border-slate-700 flex items-center justify-center">
+            <img src="${found.imageUrl || found.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" class="h-full object-contain" />
+          </div>
+
+          <div class="flex-1 space-y-2">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded">${found.sku}</span>
+              <span class="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded font-bold">${found.vintage || '2024'}</span>
+            </div>
+            <h3 class="text-xl font-bold text-white">${found.name}</h3>
+            <p class="text-xs text-slate-400">${found.region || 'Belgique'} | Case Size: 1x${found.caseSize || 6}</p>
+
+            <div class="pt-2 flex items-center gap-4 text-sm font-mono">
+              <span class="text-slate-300">Current Warehouse Inventory:</span>
+              <span class="text-2xl font-extrabold text-amber-400">${stockQty} Cases</span>
+            </div>
+
+            <!-- Quick Adjuster -->
+            <div class="pt-4 flex flex-wrap items-center gap-3">
+              <span class="text-xs font-bold text-slate-300 uppercase">Quick Adjust:</span>
+              <button onclick="window.adjustStock('${found.id}', 5)" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg transition">+5 Cases</button>
+              <button onclick="window.adjustStock('${found.id}', 10)" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg transition">+10 Cases</button>
+              <button onclick="window.adjustStock('${found.id}', -1)" class="bg-slate-700 hover:bg-slate-600 text-rose-300 font-bold text-xs px-3 py-2 rounded-lg transition">-1 Case</button>
+              <button onclick="window.adjustStock('${found.id}', -5)" class="bg-slate-700 hover:bg-slate-600 text-rose-300 font-bold text-xs px-3 py-2 rounded-lg transition">-5 Cases</button>
+            </div>
+          </div>
+        </div>
+      `;
+      resContainer.classList.remove('hidden');
+    };
+
+    window.adjustStock = async function(docId, delta) {
+      const w = currentWines.find(x => x.id === docId);
+      if (!w) return;
+      const currentQty = typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
+      const nextQty = Math.max(0, currentQty + delta);
+      const isAvailable = nextQty > 0;
+
+      try {
+        await updateDoc(doc(db, "wines", docId), {
+          stockQuantity: nextQty,
+          stockAvailable: isAvailable,
+          updatedAt: new Date().toISOString()
+        });
+        showToast(`Stock updated to ${nextQty} cases!`);
+        lookupScannedSKU();
+      } catch (err) {
+        showToast("Failed to update stock: " + err.message, true);
+      }
     };
 
     function renderUsers(users) {
@@ -380,12 +639,15 @@
               ${u.role || 'evaluator'}
             </span>
           </td>
-          <td class="px-6 py-4 text-right">
+          <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
             <select onchange="window.handleRoleChange('${u.id}', this.value)" class="bg-slate-900 border border-slate-700 text-xs font-bold rounded-lg px-3 py-1.5 text-slate-200 focus:outline-none focus:border-amber-500">
               <option value="evaluator" ${u.role === 'evaluator' ? 'selected' : ''}>📋 Field Evaluator</option>
               <option value="depot" ${u.role === 'depot' ? 'selected' : ''}>📦 Depot Staff</option>
               <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>👑 Admin Manager</option>
             </select>
+            <button onclick="window.deleteUserProfile('${u.id}', '${(u.email || '').replace(/'/g, "\\'")}')" class="text-xs bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800/60 px-2.5 py-1.5 rounded-lg transition font-medium">
+              🗑️
+            </button>
           </td>
         </tr>
       `).join('');
@@ -398,6 +660,17 @@
       } catch (err) {
         console.error("Failed to update role:", err);
         showToast("Role update failed: " + err.message, true);
+      }
+    };
+
+    window.deleteUserProfile = async function(userId, email) {
+      if (confirm(`Remove user profile doc for "${email}" (${userId}) from database?`)) {
+        try {
+          await deleteDoc(doc(db, "users", userId));
+          showToast(`User profile removed for ${email}`);
+        } catch (err) {
+          showToast("Failed to delete user profile: " + err.message, true);
+        }
       }
     };
 
@@ -465,19 +738,33 @@
     function renderWines(wines) {
       const container = document.getElementById('wines-container');
       container.innerHTML = wines.map(w => {
-        const isAvailable = w.stockAvailable !== false;
+        const stockQty = typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
+        const isAvailable = w.stockAvailable !== false && stockQty > 0;
+        const isLowStock = isAvailable && stockQty < 10;
         const bottlePrice = typeof w.priceBottleHT === 'number' ? `€${w.priceBottleHT.toFixed(2)}` : (w.priceBottle || '€0.00');
         const casePrice = typeof w.priceCaseHT === 'number' ? `€${w.priceCaseHT.toFixed(2)}` : (w.priceCase || '€0.00');
         const caseConfig = w.caseSize ? `1x${w.caseSize}` : '1x6';
         const deposit = w.depositCase ? `€${Number(w.depositCase).toFixed(2)}` : '€1.35';
 
+        const stockBadgeClass = !isAvailable 
+          ? 'bg-rose-900/50 text-rose-300 border-rose-700' 
+          : (isLowStock 
+            ? 'bg-amber-500/30 text-amber-300 border-amber-500/60 animate-pulse font-extrabold' 
+            : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40');
+        
+        const stockBadgeText = !isAvailable 
+          ? '○ Out of Stock' 
+          : (isLowStock 
+            ? `⚠️ Low Stock: ${stockQty} Cases` 
+            : `● ${stockQty} Cases`);
+
         return `
-          <div class="bg-slate-800 border ${isAvailable ? 'border-slate-700/80' : 'border-rose-900/60 opacity-75'} rounded-2xl overflow-hidden shadow-lg flex flex-col hover:border-slate-600 transition">
+          <div class="bg-slate-800 border ${isAvailable ? (isLowStock ? 'border-amber-500/60' : 'border-slate-700/80') : 'border-rose-900/60 opacity-75'} rounded-2xl overflow-hidden shadow-lg flex flex-col hover:border-slate-600 transition">
             <div class="h-44 bg-slate-900/60 p-3 relative flex items-center justify-center border-b border-slate-700/50">
               <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain drop-shadow-md" />
               <span class="absolute top-3 left-3 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded font-mono font-semibold">${w.vintage || '2024'}</span>
-              <button onclick="toggleStockStatus('${w.id}', ${!isAvailable})" class="absolute top-3 right-3 text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${isAvailable ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30' : 'bg-rose-900/50 text-rose-300 border-rose-700 hover:bg-rose-900/80'}">
-                ${isAvailable ? '● In Stock' : '○ Out of Stock'}
+              <button onclick="toggleStockStatus('${w.id}', ${!isAvailable})" class="absolute top-3 right-3 text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${stockBadgeClass}">
+                ${stockBadgeText}
               </button>
             </div>
             <div class="p-5 flex flex-col flex-grow">
@@ -493,8 +780,14 @@
               
               <div class="mt-auto border-t border-slate-700/60 pt-3 space-y-1.5 text-xs">
                 <div class="flex justify-between text-slate-300">
+                  <span>Warehouse Inventory:</span>
+                  <span class="font-bold ${isLowStock ? 'text-amber-400 font-mono font-extrabold flex items-center gap-1' : 'text-amber-400 font-mono'}">
+                    ${isLowStock ? `⚠️ ${stockQty} Cases (Low Stock)` : `${stockQty} Cases`}
+                  </span>
+                </div>
+                <div class="flex justify-between text-slate-300">
                   <span>Bottle Price (HT):</span>
-                  <span class="font-bold text-amber-400">${bottlePrice}</span>
+                  <span class="font-bold text-slate-200">${bottlePrice}</span>
                 </div>
                 <div class="flex justify-between text-slate-300">
                   <span>Case Price (HT):</span>
@@ -518,7 +811,10 @@
 
     window.toggleStockStatus = async function(docId, newStatus) {
       try {
-        await updateDoc(doc(db, "wines", docId), { stockAvailable: newStatus });
+        const w = currentWines.find(x => x.id === docId);
+        const currentQty = w && typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
+        const targetQty = newStatus ? (currentQty > 0 ? currentQty : 50) : 0;
+        await updateDoc(doc(db, "wines", docId), { stockAvailable: newStatus, stockQuantity: targetQty });
         showToast(newStatus ? "Product set to In Stock" : "Product set to Out of Stock");
       } catch (err) {
         console.error("Toggle stock error:", err);
@@ -549,6 +845,7 @@
             priceCaseHT: parseFloat(cPriceStr) || 33.00,
             depositCase: 1.35,
             vatRate: 0.21,
+            stockQuantity: 50,
             stockAvailable: true,
             imageUrl: w.image || '',
             image: w.image || '',
@@ -561,7 +858,7 @@
           await setDoc(doc(db, "wines", docId), wineData, { merge: true });
         }
 
-        showToast("Successfully seeded database catalog with default wines!");
+        showToast("Successfully seeded database catalog with 50 cases inventory per wine!");
       } catch (err) {
         console.error("Seeding error:", err);
         showToast("Failed to seed catalog: " + err.message, true);
@@ -588,6 +885,7 @@
         document.getElementById('form-case-size').value = wineObj.caseSize || 6;
         document.getElementById('form-name').value = wineObj.name || '';
         document.getElementById('form-region').value = wineObj.region || '';
+        document.getElementById('form-stock-quantity').value = typeof wineObj.stockQuantity === 'number' ? wineObj.stockQuantity : 50;
         document.getElementById('form-stock-available').value = String(wineObj.stockAvailable !== false);
         document.getElementById('form-price-bottle-ht').value = wineObj.priceBottleHT || '';
         document.getElementById('form-price-case-ht').value = wineObj.priceCaseHT || '';
@@ -598,6 +896,7 @@
         modalHeader.textContent = "Add New Wine SKU";
         docIdInput.value = "";
         existingImageInput.value = "";
+        document.getElementById('form-stock-quantity').value = "50";
         document.getElementById('form-deposit-case').value = "1.35";
         document.getElementById('form-stock-available').value = "true";
       }
@@ -641,7 +940,8 @@
         const caseSize = parseInt(document.getElementById('form-case-size').value, 10);
         const name = document.getElementById('form-name').value.trim();
         const region = document.getElementById('form-region').value.trim();
-        const stockAvailable = document.getElementById('form-stock-available').value === 'true';
+        const stockQuantity = parseInt(document.getElementById('form-stock-quantity').value, 10) || 0;
+        const stockAvailable = document.getElementById('form-stock-available').value === 'true' && stockQuantity > 0;
         const priceBottleHT = parseFloat(document.getElementById('form-price-bottle-ht').value);
         const priceCaseHT = parseFloat(document.getElementById('form-price-case-ht').value);
         const depositCase = parseFloat(document.getElementById('form-deposit-case').value) || 1.35;
@@ -674,6 +974,7 @@
           caseSize,
           name,
           region,
+          stockQuantity,
           stockAvailable,
           priceBottleHT,
           priceCaseHT,
@@ -702,6 +1003,328 @@
         saveBtn.disabled = false;
         saveBtnText.textContent = "Save Wine Product";
       }
+    };
+
+    window.handleReportPresetChange = function() {
+      const preset = document.getElementById('report-date-preset').value;
+      const startDateInput = document.getElementById('report-start-date');
+      const endDateInput = document.getElementById('report-end-date');
+
+      const now = new Date();
+
+      if (preset === 'all') {
+        startDateInput.value = '';
+        endDateInput.value = '';
+      } else if (preset === 'today') {
+        const todayStr = now.toISOString().split('T')[0];
+        startDateInput.value = todayStr;
+        endDateInput.value = todayStr;
+      } else if (preset === 'week') {
+        const startOfWeek = new Date(now);
+        const day = startOfWeek.getDay() || 7;
+        startOfWeek.setDate(startOfWeek.getDate() - day + 1);
+        startDateInput.value = startOfWeek.toISOString().split('T')[0];
+        endDateInput.value = now.toISOString().split('T')[0];
+      } else if (preset === 'month') {
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        startDateInput.value = startOfMonth.toISOString().split('T')[0];
+        endDateInput.value = now.toISOString().split('T')[0];
+      }
+      window.renderReportsView();
+    };
+
+    window.renderReportsView = function() {
+      const startDateStr = document.getElementById('report-start-date')?.value;
+      const endDateStr = document.getElementById('report-end-date')?.value;
+      const statusFilter = document.getElementById('report-status-filter')?.value || 'all';
+
+      let filtered = [...currentOrders];
+
+      // Date Filtering
+      if (startDateStr) {
+        const startMs = new Date(startDateStr + 'T00:00:00').getTime();
+        filtered = filtered.filter(o => {
+          const t = o.createdAt?.seconds ? o.createdAt.seconds * 1000 : (o.createdAt ? new Date(o.createdAt).getTime() : 0);
+          return t >= startMs;
+        });
+      }
+
+      if (endDateStr) {
+        const endMs = new Date(endDateStr + 'T23:59:59').getTime();
+        filtered = filtered.filter(o => {
+          const t = o.createdAt?.seconds ? o.createdAt.seconds * 1000 : (o.createdAt ? new Date(o.createdAt).getTime() : 0);
+          return t <= endMs;
+        });
+      }
+
+      // Status Filtering
+      if (statusFilter === 'delivered') {
+        filtered = filtered.filter(o => o.status === 'delivered');
+      } else if (statusFilter === 'active') {
+        filtered = filtered.filter(o => o.status !== 'delivered');
+      } else if (statusFilter !== 'all') {
+        filtered = filtered.filter(o => o.status === statusFilter);
+      }
+
+      // Calculate Metrics
+      let totalHT = 0;
+      let totalTVA = 0;
+      let totalTTC = 0;
+      let totalCases = 0;
+
+      filtered.forEach(o => {
+        const totals = o.totals || { totalHT: 0, totalTVA: 0, totalTTC: 0 };
+        totalHT += (totals.totalHT || 0);
+        totalTVA += (totals.totalTVA || 0);
+        totalTTC += (totals.totalTTC || 0);
+
+        const items = o.items || [];
+        totalCases += items.reduce((sum, it) => sum + (it.qty || 0), 0);
+      });
+
+      // Update KPI Elements
+      const kpiOrders = document.getElementById('kpi-total-orders');
+      const kpiHT = document.getElementById('kpi-total-ht');
+      const kpiTVA = document.getElementById('kpi-total-tva');
+      const kpiTTC = document.getElementById('kpi-total-ttc');
+      const kpiCases = document.getElementById('kpi-total-cases');
+      const recordCount = document.getElementById('report-record-count');
+
+      if (kpiOrders) kpiOrders.textContent = filtered.length;
+      if (kpiHT) kpiHT.textContent = `€${totalHT.toFixed(2)}`;
+      if (kpiTVA) kpiTVA.textContent = `€${totalTVA.toFixed(2)}`;
+      if (kpiTTC) kpiTTC.textContent = `€${totalTTC.toFixed(2)}`;
+      if (kpiCases) kpiCases.textContent = totalCases;
+      if (recordCount) recordCount.textContent = `${filtered.length} order${filtered.length === 1 ? '' : 's'} matching criteria`;
+
+      // Render Table Rows
+      const tbody = document.getElementById('reports-table-body');
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="px-6 py-8 text-center text-slate-400 font-sans">
+              No orders found matching your selected date and status filters.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      const statusBadges = {
+        submitted: '<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs px-2.5 py-0.5 rounded-full font-bold">📋 Submitted</span>',
+        packing: '<span class="bg-sky-500/20 text-sky-300 border border-sky-500/40 text-xs px-2.5 py-0.5 rounded-full font-bold">📦 Packing</span>',
+        dispatched: '<span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-xs px-2.5 py-0.5 rounded-full font-bold">🚚 Dispatched</span>',
+        delivered: '<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs px-2.5 py-0.5 rounded-full font-bold">✅ Delivered</span>'
+      };
+
+      tbody.innerHTML = filtered.map(o => {
+        const client = o.client || { name: 'Shop Client', vat: 'BE 0000000000' };
+        const totals = o.totals || { totalTTC: 0 };
+        const items = o.items || [];
+        const orderCases = items.reduce((sum, it) => sum + (it.qty || 0), 0);
+        const dateStr = o.createdAt && o.createdAt.toDate 
+          ? o.createdAt.toDate().toLocaleString('fr-BE') 
+          : (o.createdAt ? new Date(o.createdAt).toLocaleString('fr-BE') : 'N/A');
+
+        return `
+          <tr class="hover:bg-slate-700/40 transition">
+            <td class="px-4 py-3 font-bold text-amber-400">#${o.id.substring(0, 8)}...</td>
+            <td class="px-4 py-3 text-slate-300 text-xs">${dateStr}</td>
+            <td class="px-4 py-3 font-sans text-white font-medium">
+              <div>${client.name}</div>
+              <div class="text-xs text-emerald-400 font-mono">${client.vat}</div>
+            </td>
+            <td class="px-4 py-3 font-sans text-slate-300 text-xs">${o.userEmail || o.userId || 'Evaluator'}</td>
+            <td class="px-4 py-3 font-sans">${statusBadges[o.status] || statusBadges.submitted}</td>
+            <td class="px-4 py-3 text-right font-bold text-slate-200">${orderCases}</td>
+            <td class="px-4 py-3 text-right font-bold text-emerald-400">€${(totals.totalTTC || 0).toFixed(2)}</td>
+            <td class="px-4 py-3 text-center">
+              <button onclick="window.viewOrderReceiptModal('${o.id}')" class="bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold text-xs px-2.5 py-1 rounded-lg transition border border-amber-500/30">
+                🖨️ Note
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    };
+
+    window.exportOrdersCSV = function() {
+      const startDateStr = document.getElementById('report-start-date')?.value;
+      const endDateStr = document.getElementById('report-end-date')?.value;
+      const statusFilter = document.getElementById('report-status-filter')?.value || 'all';
+
+      let filtered = [...currentOrders];
+
+      if (startDateStr) {
+        const startMs = new Date(startDateStr + 'T00:00:00').getTime();
+        filtered = filtered.filter(o => {
+          const t = o.createdAt?.seconds ? o.createdAt.seconds * 1000 : (o.createdAt ? new Date(o.createdAt).getTime() : 0);
+          return t >= startMs;
+        });
+      }
+
+      if (endDateStr) {
+        const endMs = new Date(endDateStr + 'T23:59:59').getTime();
+        filtered = filtered.filter(o => {
+          const t = o.createdAt?.seconds ? o.createdAt.seconds * 1000 : (o.createdAt ? new Date(o.createdAt).getTime() : 0);
+          return t <= endMs;
+        });
+      }
+
+      if (statusFilter === 'delivered') {
+        filtered = filtered.filter(o => o.status === 'delivered');
+      } else if (statusFilter === 'active') {
+        filtered = filtered.filter(o => o.status !== 'delivered');
+      } else if (statusFilter !== 'all') {
+        filtered = filtered.filter(o => o.status === statusFilter);
+      }
+
+      if (filtered.length === 0) {
+        showToast("No orders available to export", true);
+        return;
+      }
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Order ID,Date Placed,Client Name,Client VAT,Client Address,Evaluator,Status,Total Cases,Net Sales HT (EUR),TVA (EUR),Vidanges (EUR),Gross Total TTC (EUR)\n";
+
+      filtered.forEach(o => {
+        const client = o.client || {};
+        const totals = o.totals || {};
+        const items = o.items || [];
+        const totalCases = items.reduce((sum, it) => sum + (it.qty || 0), 0);
+        const dateStr = o.createdAt && o.createdAt.toDate 
+          ? o.createdAt.toDate().toISOString() 
+          : (o.createdAt ? new Date(o.createdAt).toISOString() : '');
+
+        const row = [
+          `"${o.id}"`,
+          `"${dateStr}"`,
+          `"${(client.name || '').replace(/"/g, '""')}"`,
+          `"${(client.vat || '').replace(/"/g, '""')}"`,
+          `"${(client.address || '').replace(/"/g, '""')}"`,
+          `"${(o.userEmail || o.userId || '').replace(/"/g, '""')}"`,
+          `"${o.status || 'submitted'}"`,
+          totalCases,
+          (totals.totalHT || 0).toFixed(2),
+          (totals.totalTVA || 0).toFixed(2),
+          (totals.totalVidanges || 0).toFixed(2),
+          (totals.totalTTC || 0).toFixed(2)
+        ];
+        csvContent += row.join(",") + "\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `aurellion_orders_report_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast(`Exported ${filtered.length} order records to CSV!`);
+    };
+
+    window.printSalesReport = function() {
+      window.print();
+    };
+
+    window.viewOrderReceiptModal = function(orderId) {
+      const order = currentOrders.find(o => o.id === orderId);
+      if (!order) return;
+
+      const client = order.client || { name: 'Shop Client', vat: 'BE 0000000000', address: 'Belgique', clientNo: 'N/A' };
+      const totals = order.totals || { totalHT: 0, totalVidanges: 0, totalTVA: 0, totalTTC: 0 };
+      const items = order.items || [];
+      const dateStr = order.createdAt && order.createdAt.toDate 
+        ? order.createdAt.toDate().toLocaleString('fr-BE') 
+        : (order.createdAt ? new Date(order.createdAt).toLocaleString('fr-BE') : 'N/A');
+
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Note d'Envoi - Order #${order.id}</title>
+          <style>
+            body { font-family: system-ui, sans-serif; padding: 20px; color: #1e293b; max-width: 800px; margin: 0 auto; }
+            .header { border-b: 2px solid #0f172a; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; }
+            .title { font-size: 24px; font-weight: bold; color: #7c2d12; }
+            .subtitle { font-size: 14px; color: #64748b; margin-top: 4px; }
+            .box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+            th, td { border: 1px solid #cbd5e1; padding: 8px 12px; text-align: left; font-size: 13px; }
+            th { background: #f1f5f9; font-weight: bold; }
+            .text-right { text-align: right; }
+            .totals { margin-top: 20px; text-align: right; font-size: 14px; }
+            .totals-row { margin-bottom: 5px; }
+            .grand-total { font-size: 18px; font-weight: bold; color: #065f46; border-top: 2px solid #0f172a; padding-top: 5px; }
+            @media print {
+              body { padding: 0; }
+              @page { size: A4 portrait; margin: 10mm; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <div>
+              <div class="title">🍷 Aurellion Wine Distribution</div>
+              <div class="subtitle">Official Note d'Envoi / Delivery Note</div>
+            </div>
+            <div style="text-align: right;">
+              <div style="font-weight: bold; font-family: monospace;">Order #${order.id}</div>
+              <div style="font-size: 12px; color: #64748b;">${dateStr}</div>
+              <div style="font-size: 12px; font-weight: bold; color: #2563eb; text-transform: uppercase;">Status: ${order.status || 'Submitted'}</div>
+            </div>
+          </div>
+
+          <div class="box">
+            <strong>Client Shop Details:</strong><br>
+            ${client.name}<br>
+            VAT: ${client.vat} | Client No: ${client.clientNo || 'N/A'}<br>
+            Address: ${client.address}
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>SKU Code</th>
+                <th>Wine Product</th>
+                <th>Vintage</th>
+                <th class="text-right">Cases Ordered</th>
+                <th class="text-right">Case Price (HT)</th>
+                <th class="text-right">Total HT (€)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${items.map(it => `
+                <tr>
+                  <td style="font-family: monospace; font-size: 11px;">${it.sku}</td>
+                  <td>${it.name}</td>
+                  <td>${it.vintage || '2024'}</td>
+                  <td class="text-right">${it.qty}</td>
+                  <td class="text-right">€${it.priceCaseHT ? it.priceCaseHT.toFixed(2) : '0.00'}</td>
+                  <td class="text-right">€${it.priceCaseHT ? (it.priceCaseHT * it.qty).toFixed(2) : '0.00'}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+
+          <div class="totals">
+            <div class="totals-row">Net Subtotal (HT): <strong>€${totals.totalHT ? totals.totalHT.toFixed(2) : '0.00'}</strong></div>
+            <div class="totals-row">Belgian TVA (21%): <strong>€${totals.totalTVA ? totals.totalTVA.toFixed(2) : '0.00'}</strong></div>
+            <div class="totals-row">Vidanges (Crates Deposit): <strong>€${totals.totalVidanges ? totals.totalVidanges.toFixed(2) : '0.00'}</strong></div>
+            <div class="grand-total">Total Payable (TTC): €${totals.totalTTC ? totals.totalTTC.toFixed(2) : '0.00'}</div>
+          </div>
+
+          <script>
+            window.onload = function() { window.print(); }
+          </script>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
     };
 
     function showToast(msg, isError = false) {
