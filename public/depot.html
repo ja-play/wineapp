@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aurellion Wine - Depot Packing & Dispatch Queue</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- Header Navigation -->
+  <header class="bg-slate-950 text-white shadow-lg border-b border-slate-800 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-amber-500 hover:text-amber-400 font-bold text-xl tracking-tight flex items-center gap-2">
+          <span>🍷 Aurellion Wine</span>
+        </a>
+        <span class="bg-sky-500/20 text-sky-400 border border-sky-500/30 text-xs px-2.5 py-1 rounded-full font-semibold">Depot Dispatch Queue</span>
+      </div>
+
+      <div id="auth-bar-container" class="flex items-center gap-2">
+        <!-- Auth widget injected here -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+
+    <!-- Access Denied Banner -->
+    <div id="access-denied-sec" class="hidden max-w-lg mx-auto my-12 bg-slate-800 border border-rose-800/60 rounded-2xl p-8 shadow-2xl text-center">
+      <div class="w-12 h-12 bg-rose-900/40 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-3 border border-rose-700">
+        🔒
+      </div>
+      <h2 class="text-2xl font-bold text-white mb-2">Depot Access Required</h2>
+      <p class="text-xs text-slate-300 mb-6">Your account role does not have Depot Dispatch permissions. Please sign in with Depot staff or Admin credentials.</p>
+      <button onclick="window.showDemoLoginModal()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl transition shadow">
+        Sign In as Depot Staff
+      </button>
+    </div>
+
+    <!-- Depot Dispatch View Content -->
+    <div id="depot-content">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl backdrop-blur-sm">
+        <div>
+          <h2 class="text-2xl font-extrabold text-white flex items-center gap-3">
+            <span>📦 Incoming Wholesale Dispatch Queue</span>
+            <span id="order-count-badge" class="bg-sky-500/20 text-sky-400 border border-sky-500/40 text-xs font-mono px-2.5 py-0.5 rounded-full">0 Orders</span>
+          </h2>
+          <p class="text-slate-400 text-xs sm:text-sm mt-1">Real-time Firestore snapshot feed of evaluator orders ready for picking, packing, and Belgian Note d'Envoi printing.</p>
+        </div>
+
+        <button onclick="window.location.reload()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-600 transition flex items-center gap-1.5">
+          🔄 Refresh Stream
+        </button>
+      </div>
+
+      <!-- Loading State -->
+      <div id="orders-loading" class="text-center py-16">
+        <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-sky-500 border-t-transparent mb-3"></div>
+        <p class="text-slate-400 text-sm">Listening for incoming orders from Firestore...</p>
+      </div>
+
+      <!-- Empty State -->
+      <div id="orders-empty" class="hidden text-center py-16 bg-slate-800/40 rounded-2xl border border-slate-800">
+        <div class="text-4xl mb-3">📋</div>
+        <p class="text-slate-300 font-semibold text-lg">No orders placed yet</p>
+        <p class="text-slate-400 text-sm mt-1 mb-4">Orders submitted by Field Evaluators in the ordering flow will appear here live.</p>
+        <a href="index.html" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl transition inline-block">
+          Go to Field Ordering Flow
+        </a>
+      </div>
+
+      <!-- Real-time Orders Feed -->
+      <div id="orders-feed" class="space-y-6 hidden">
+        <!-- Order Cards Injected Dynamically -->
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-slate-950 text-slate-500 text-xs py-6 text-center border-t border-slate-800 mt-auto">
+    <p>&copy; 2026 Aurellion Wine Distribution Belgium. Depot Logistics System.</p>
+  </footer>
+
+  <script type="module">
+    import { db, auth, collection, onSnapshot, query, orderBy, onAuthStateChanged } from './firebase-config.js';
+    import { getUserRole, setupAuthUI } from './auth-guard.js';
+
+    let snapshotUnsubscribe = null;
+
+    onAuthStateChanged(auth, async (user) => {
+      const role = await getUserRole(user);
+      setupAuthUI(user, role, 'auth-bar-container');
+
+      const depotSec = document.getElementById('depot-content');
+      const accessDenied = document.getElementById('access-denied-sec');
+
+      if (user && (role === 'depot' || role === 'admin' || user.email.includes('depot') || user.email.includes('admin'))) {
+        accessDenied.classList.add('hidden');
+        depotSec.classList.remove('hidden');
+
+        if (!snapshotUnsubscribe) {
+          try {
+            const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+            snapshotUnsubscribe = onSnapshot(q, (snapshot) => {
+              document.getElementById('orders-loading').classList.add('hidden');
+              const orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+              renderOrdersFeed(orders);
+            }, (err) => {
+              console.warn("Ordered snapshot failed (indexes building), fallback to default collection:", err);
+              snapshotUnsubscribe = onSnapshot(collection(db, "orders"), (snapFallback) => {
+                document.getElementById('orders-loading').classList.add('hidden');
+                const orders = snapFallback.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                orders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                renderOrdersFeed(orders);
+              });
+            });
+          } catch (err) {
+            console.error("Firestore setup error:", err);
+          }
+        }
+      } else {
+        if (snapshotUnsubscribe) {
+          snapshotUnsubscribe();
+          snapshotUnsubscribe = null;
+        }
+        depotSec.classList.add('hidden');
+        accessDenied.classList.remove('hidden');
+      }
+    });
+
+    function renderOrdersFeed(orders) {
+      const countBadge = document.getElementById('order-count-badge');
+      const emptyState = document.getElementById('orders-empty');
+      const feedContainer = document.getElementById('orders-feed');
+
+      countBadge.textContent = `${orders.length} Order${orders.length === 1 ? '' : 's'}`;
+
+      if (!orders || orders.length === 0) {
+        feedContainer.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      feedContainer.classList.remove('hidden');
+
+      feedContainer.innerHTML = orders.map(order => {
+        const client = order.client || { name: 'Shop Client', vat: 'BE 0000000000', clientNo: 'N/A', address: 'Belgique' };
+        const totals = order.totals || { totalHT: 0, totalVidanges: 0, totalTVA: 0, totalTTC: 0 };
+        const items = order.items || [];
+
+        const isReady = order.status === 'ready_for_dispatch' || Boolean(order.invoicePdfUrl);
+        const pdfUrl = order.invoicePdfUrl;
+
+        const dateStr = order.createdAt && order.createdAt.toDate 
+          ? order.createdAt.toDate().toLocaleString('fr-BE') 
+          : (order.createdAt ? new Date(order.createdAt).toLocaleString('fr-BE') : 'Just now');
+
+        const totalCases = items.reduce((sum, item) => sum + (item.qty || 0), 0);
+
+        return `
+          <div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden shadow-xl hover:border-slate-600 transition">
+            <!-- Order Card Header -->
+            <div class="bg-slate-950 p-4 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-sky-500/20 text-sky-400 border border-sky-500/30 rounded-xl flex items-center justify-center font-bold text-sm font-mono">
+                  📦
+                </div>
+                <div>
+                  <div class="text-sm font-bold text-white font-mono flex items-center gap-2">
+                    <span>Order #${order.id}</span>
+                  </div>
+                  <div class="text-xs text-slate-400">Placed on ${dateStr}</div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3 flex-wrap">
+                <!-- Status Badge -->
+                ${isReady ? `
+                  <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Ready for Dispatch
+                  </span>
+                ` : `
+                  <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs px-3 py-1 rounded-full font-bold flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-ping"></span>
+                    Generating Note d'Envoi...
+                  </span>
+                `}
+
+                <!-- Print Note d'Envoi Button -->
+                ${pdfUrl ? `
+                  <a href="${pdfUrl}" target="_blank" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-xs px-4 py-2 rounded-xl shadow-lg transition flex items-center gap-1.5">
+                    🖨️ Print Note d'Envoi PDF
+                  </a>
+                ` : `
+                  <button onclick="window.viewNoteModal('${order.id}')" class="bg-slate-700 hover:bg-slate-600 text-sky-300 border border-slate-600 text-xs px-4 py-2 rounded-xl font-bold transition flex items-center gap-1.5">
+                    📄 View Delivery Note
+                  </button>
+                `}
+              </div>
+            </div>
+
+            <!-- Order Details Body -->
+            <div class="p-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Client Info Card -->
+                <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4 text-xs space-y-1.5">
+                  <div class="text-amber-400 font-bold uppercase tracking-wider text-[11px] mb-1">Customer Shop Info</div>
+                  <div class="text-sm font-bold text-white">${client.name}</div>
+                  <div class="text-slate-300">${client.address || 'Address not provided'}</div>
+                  <div class="text-slate-400 font-mono">N° TVA: ${client.vat || 'N/A'} | N° Client: ${client.clientNo || 'N/A'}</div>
+                </div>
+
+                <!-- Price & Case Summary -->
+                <div class="bg-slate-900/80 border border-slate-700/60 rounded-xl p-4 text-xs space-y-1.5">
+                  <div class="text-sky-400 font-bold uppercase tracking-wider text-[11px] mb-1">Order Totals (${totalCases} Cases)</div>
+                  <div class="flex justify-between text-slate-300">
+                    <span>Subtotal H.TVA:</span>
+                    <span class="font-mono font-bold text-white">€${Number(totals.totalHT || 0).toFixed(2)}</span>
+                  </div>
+                  <div class="flex justify-between text-slate-300">
+                    <span>Vidanges Consignées:</span>
+                    <span class="font-mono font-bold text-amber-400">€${Number(totals.totalVidanges || 0).toFixed(2)}</span>
+                  </div>
+                  <div class="flex justify-between text-slate-300">
+                    <span>Belgian VAT (21%):</span>
+                    <span class="font-mono font-bold text-slate-200">€${Number(totals.totalTVA || 0).toFixed(2)}</span>
+                  </div>
+                  <div class="flex justify-between pt-1 border-t border-slate-800 text-sm font-extrabold">
+                    <span class="text-white">TOTAL TTC:</span>
+                    <span class="text-amber-400 font-mono">€${Number(totals.totalTTC || 0).toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Line Items Table -->
+              <div class="border border-slate-700/80 rounded-xl overflow-hidden">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-900 text-slate-400 uppercase text-[10px] tracking-wider border-b border-slate-700/80">
+                    <tr>
+                      <th class="py-2.5 px-4">SKU</th>
+                      <th class="py-2.5 px-4">Wine Description</th>
+                      <th class="py-2.5 px-4 text-center">Colis</th>
+                      <th class="py-2.5 px-4 text-center">Quantité (Cases)</th>
+                      <th class="py-2.5 px-4 text-right">Prix HT</th>
+                      <th class="py-2.5 px-4 text-right">Montant HT</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-700/50 text-slate-200 font-mono">
+                    ${items.map(item => `
+                      <tr class="hover:bg-slate-750">
+                        <td class="py-2.5 px-4 text-slate-400 text-[11px]">${item.sku || '-'}</td>
+                        <td class="py-2.5 px-4 font-sans font-semibold text-white">${item.description || 'Wine SKU'}</td>
+                        <td class="py-2.5 px-4 text-center">${item.colis || '1x6'}</td>
+                        <td class="py-2.5 px-4 text-center font-bold text-amber-400">${item.qty || 1}</td>
+                        <td class="py-2.5 px-4 text-right">€${Number(item.priceHT || 0).toFixed(2)}</td>
+                        <td class="py-2.5 px-4 text-right font-bold">€${Number(item.montantHT || 0).toFixed(2)}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+
+</html>

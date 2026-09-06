@@ -4,10 +4,17 @@ import {
   getFirestore, 
   collection, 
   getDocs, 
+  getDoc,
   setDoc, 
+  updateDoc,
   doc, 
   deleteDoc, 
-  onSnapshot 
+  onSnapshot,
+  query,
+  where,
+  orderBy,
+  addDoc,
+  serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { 
   getStorage, 
@@ -18,6 +25,7 @@ import {
 import { 
   getAuth, 
   signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword,
   signOut, 
   onAuthStateChanged 
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
@@ -55,14 +63,23 @@ export {
   auth,
   collection, 
   getDocs, 
+  getDoc,
   setDoc, 
+  updateDoc,
   doc, 
   deleteDoc, 
   onSnapshot, 
+  query,
+  where,
+  orderBy,
+  addDoc,
+  serverTimestamp,
   ref, 
   uploadBytes, 
   getDownloadURL,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged
 };
+

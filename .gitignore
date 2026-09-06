@@ -65,5 +65,9 @@ node_modules/
 # dotenv environment variables file
 .env
 
+# Agent MCP config containing secrets
+.agents/mcp_config.json
+
 # dataconnect generated files
 .dataconnect
+

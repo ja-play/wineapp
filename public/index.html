@@ -4,70 +4,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wine Distribution Belgium - Volume Catalog</title>
+  <title>Aurellion Wine - Evaluator Field Ordering</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍷</text></svg>">
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+<body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col pb-36">
 
-  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center gap-2">
-      <div>
-        <h1 class="text-2xl font-bold tracking-tight text-amber-500" data-i18n="brandTitle">Wine Select</h1>
-        <p class="text-xs text-slate-400" data-i18n="brandSubtitle">Belgium B2B Wholesale Selection</p>
+  <!-- Header Navigation -->
+  <header class="bg-slate-950 text-white shadow-lg border-b border-slate-800 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-amber-500 hover:text-amber-400 font-bold text-xl tracking-tight flex items-center gap-2">
+          <span>🍷 Aurellion Wine</span>
+        </a>
+        <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs px-2.5 py-1 rounded-full font-semibold">Field Ordering</span>
       </div>
-      <div class="flex items-center gap-2 sm:gap-3 flex-wrap justify-end">
-        <!-- Language Selector Dropdown -->
-        <select id="lang-select" aria-label="Select Language" class="bg-slate-800 text-slate-200 border border-slate-700 text-xs px-2.5 py-2 rounded-lg font-medium focus:outline-none focus:border-amber-500 cursor-pointer transition">
-          <option value="en">🇬🇧 English</option>
-          <option value="fr">🇫🇷 Français</option>
-          <option value="nl">🇳🇱 Nederlands</option>
-          <option value="ur">🇵🇰 اردو</option>
-        </select>
-        <a href="admin.html"
-          class="bg-slate-800 hover:bg-slate-700 text-amber-400 border border-amber-500/30 text-xs px-3 py-2 rounded-lg font-semibold transition flex items-center gap-1.5">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-          <span data-i18n="adminPortal">Admin Portal</span>
-        </a>
-        <a href="tel:+32 488 28 93 45"
-          class="bg-amber-600 hover:bg-amber-500 text-white text-xs sm:text-sm px-3 sm:px-4 py-2 rounded-lg font-medium transition whitespace-nowrap">
-          <span data-i18n="contactEvaluator">Contact Evaluator</span>
-        </a>
+
+      <div id="auth-bar-container" class="flex items-center gap-2">
+        <!-- Auth widget injected here -->
       </div>
     </div>
   </header>
 
-  <section class="bg-slate-800 text-white py-8 px-4 text-center">
-    <div class="max-w-3xl mx-auto">
-      <h2 class="text-3xl font-extrabold mb-2" data-i18n="heroTitle">Fast-Moving & Volume Wines</h2>
-      <p class="text-slate-300 text-sm" data-i18n="heroSub">High-turnover stock selection ready for shop fulfillment. Click any wine image
-        to view full bottle detail.</p>
+  <!-- Client Shop Selector Sticky Sub-Header -->
+  <div class="bg-slate-800 border-b border-slate-700/80 px-4 py-3 sticky top-[57px] z-30 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <span class="text-xs font-bold uppercase tracking-wider text-amber-400 whitespace-nowrap">🏪 Client Shop:</span>
+        <select id="client-shop-select" class="w-full sm:w-80 bg-slate-900 border border-amber-500/40 text-white text-xs font-semibold px-3 py-2 rounded-xl focus:outline-none focus:border-amber-400 cursor-pointer shadow">
+          <option value="" disabled selected>-- Select Belgian Customer Shop --</option>
+          <option value="shop-001">Food City Bruxelles - BE 0707843840</option>
+          <option value="shop-002">Wine Boutique Gent - BE 0812345678</option>
+          <option value="shop-003">Le Caveau Liège - BE 0987654321</option>
+        </select>
+      </div>
+
+      <div id="selected-client-info" class="text-xs text-slate-400 flex items-center gap-3">
+        <span class="text-rose-400 font-medium">⚠️ Select a shop client to enable order placement</span>
+      </div>
     </div>
-  </section>
+  </div>
 
   <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
-    <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+
+    <div id="catalog-loading" class="text-center py-16">
+      <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-amber-500 border-t-transparent mb-3"></div>
+      <p class="text-slate-400 text-sm">Loading available wine stock from Firestore...</p>
     </div>
+
+    <!-- Wine Catalog Grid -->
+    <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 hidden">
+    </div>
+
+    <!-- Empty Catalog State -->
+    <div id="catalog-empty" class="hidden text-center py-16 bg-slate-800/40 rounded-2xl border border-slate-800">
+      <p class="text-slate-300 font-semibold text-lg">No in-stock wines available</p>
+      <p class="text-slate-400 text-sm mt-1 mb-4">Please contact admin to enable stock availability for wholesale wines.</p>
+    </div>
+
   </main>
 
   <!-- Image Lightbox Modal -->
-  <div id="image-modal"
-    class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0"
-    onclick="closeModal(event)">
-    <div
-      class="relative max-w-4xl max-h-[90vh] flex flex-col items-center justify-center bg-slate-900/90 p-4 sm:p-6 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden"
-      onclick="event.stopPropagation()">
-      <button onclick="closeModal()"
-        class="absolute top-3 right-3 text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-700 p-2 rounded-full transition z-10 focus:outline-none"
-        data-i18n-title="closeEsc" title="Close (Esc)">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
+  <div id="image-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0" onclick="closeModal(event)">
+    <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center justify-center bg-slate-900/90 p-4 sm:p-6 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden" onclick="event.stopPropagation()">
+      <button onclick="closeModal()" class="absolute top-3 right-3 text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-700 p-2 rounded-full transition z-10">✕</button>
       <div class="w-full flex justify-center items-center overflow-hidden rounded-xl max-h-[70vh]">
-        <img id="modal-img" src="" alt=""
-          class="max-h-[70vh] w-auto max-w-full object-contain drop-shadow-2xl transition-all duration-300 transform scale-95" />
+        <img id="modal-img" src="" alt="" class="max-h-[70vh] w-auto max-w-full object-contain drop-shadow-2xl" />
       </div>
       <div class="mt-4 text-center">
         <h3 id="modal-title" class="text-xl font-bold text-amber-400"></h3>
@@ -76,132 +79,402 @@
     </div>
   </div>
 
-  <footer class="bg-slate-900 text-slate-400 text-xs py-6 text-center border-t border-slate-800">
-    <p data-i18n="copyright">&copy; 2026 Wine Distribution Belgium. Client Wholesale Portal.</p>
-  </footer>
+  <!-- Sticky Order Review Drawer (Fixed Bottom) -->
+  <div id="order-drawer" class="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 border-t border-slate-800 backdrop-blur-lg shadow-2xl transition-transform transform translate-y-0">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <!-- Drawer Header Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 bg-amber-500/20 border border-amber-500/40 rounded-xl flex items-center justify-center text-amber-400 font-bold">
+            🛒
+          </div>
+          <div>
+            <div class="text-xs text-slate-400">Order Summary (<span id="cart-case-count">0</span> cases)</div>
+            <div class="text-lg font-extrabold text-white">
+              Total TTC: <span id="cart-total-ttc" class="text-amber-400">€0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button onclick="toggleCartDetail()" class="text-xs text-slate-300 hover:text-white bg-slate-800 px-3 py-2 rounded-lg border border-slate-700 font-semibold transition">
+            <span id="toggle-cart-text">Show Line Items ▲</span>
+          </button>
+          <button id="submit-order-btn" onclick="submitOrder()" disabled class="bg-amber-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:border-slate-700 disabled:cursor-not-allowed hover:bg-amber-400 text-slate-950 font-bold text-sm px-6 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+            <span>Submit Wholesale Order</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Expandable Cart Breakdown Panel -->
+      <div id="cart-detail-panel" class="hidden mt-4 pt-4 border-t border-slate-800 max-h-60 overflow-y-auto">
+        <div id="cart-items-list" class="space-y-2 mb-4">
+          <!-- Cart lines injected here -->
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs">
+          <div>
+            <div class="text-slate-400">Subtotal H.TVA</div>
+            <div id="cart-subtotal-ht" class="font-bold text-slate-200">€0.00</div>
+          </div>
+          <div>
+            <div class="text-slate-400">Vidanges Consignées</div>
+            <div id="cart-total-vidanges" class="font-bold text-amber-400">€0.00</div>
+          </div>
+          <div>
+            <div class="text-slate-400">Belgian VAT (21%)</div>
+            <div id="cart-total-tva" class="font-bold text-slate-200">€0.00</div>
+          </div>
+          <div>
+            <div class="text-slate-400 font-semibold">Grand Total TTC</div>
+            <div id="cart-grand-ttc" class="font-extrabold text-amber-400">€0.00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-24 right-5 z-50 transform translate-y-16 opacity-0 transition-all duration-300 pointer-events-none bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 font-medium text-sm">
+    <span id="toast-message">Order Placed</span>
+  </div>
 
   <script type="module">
-    import { db, collection, onSnapshot } from './firebase-config.js';
-    import { t, getCurrentLanguage, setLanguage, applyTranslations } from './i18n.js';
+    import { db, auth, collection, onSnapshot, query, where, addDoc, serverTimestamp, onAuthStateChanged } from './firebase-config.js';
+    import { BELGIAN_CLIENT_SHOPS, getUserRole, setupAuthUI } from './auth-guard.js';
 
     let currentWines = [];
+    let cart = {}; // sku -> qty
+    let selectedClient = null;
+    let currentUser = null;
 
+    // Initialize Auth UI Guard
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      const role = await getUserRole(user);
+      setupAuthUI(user, role, 'auth-bar-container');
+    });
+
+    // Client Selector Listener
+    const shopSelect = document.getElementById('client-shop-select');
+    shopSelect.addEventListener('change', (e) => {
+      const shopId = e.target.value;
+      selectedClient = BELGIAN_CLIENT_SHOPS.find(s => s.id === shopId) || null;
+      
+      const infoBox = document.getElementById('selected-client-info');
+      if (selectedClient) {
+        infoBox.innerHTML = `
+          <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-md font-mono">
+            N° TVA: ${selectedClient.vat} | N° Client: ${selectedClient.clientNo}
+          </span>
+        `;
+      } else {
+        infoBox.innerHTML = `<span class="text-rose-400 font-medium">⚠️ Select a shop client to enable order placement</span>`;
+      }
+      renderCatalog(currentWines);
+      updateCartTotals();
+    });
+
+    // Subscribe to available wines from Firestore where stockAvailable == true
+    try {
+      const q = query(collection(db, "wines"), where("stockAvailable", "==", true));
+      onSnapshot(q, (snapshot) => {
+        document.getElementById('catalog-loading').classList.add('hidden');
+        if (snapshot.empty) {
+          // Fallback to fetch all wines if filtering returns empty during initial seed
+          onSnapshot(collection(db, "wines"), (snapAll) => {
+            currentWines = snapAll.docs.map(d => ({ id: d.id, ...d.data() })).filter(w => w.stockAvailable !== false);
+            renderCatalog(currentWines);
+          });
+        } else {
+          currentWines = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          renderCatalog(currentWines);
+        }
+      }, (err) => {
+        console.error("Firestore catalog subscription error:", err);
+        document.getElementById('catalog-loading').innerHTML = `<p class="text-rose-400 text-sm">Failed to connect to Firestore catalog.</p>`;
+      });
+    } catch (e) {
+      console.error(e);
+    }
+
+    function renderCatalog(wines) {
+      const grid = document.getElementById('catalog-grid');
+      const emptySec = document.getElementById('catalog-empty');
+
+      if (!wines || wines.length === 0) {
+        grid.classList.add('hidden');
+        emptySec.classList.remove('hidden');
+        return;
+      }
+
+      emptySec.classList.add('hidden');
+      grid.classList.remove('hidden');
+
+      grid.innerHTML = wines.map(w => {
+        const qty = cart[w.sku] || 0;
+        const bottlePriceHT = typeof w.priceBottleHT === 'number' ? w.priceBottleHT : (parseFloat((w.priceBottle || '').replace(/[^0-9.]/g, '')) || 5.50);
+        const casePriceHT = typeof w.priceCaseHT === 'number' ? w.priceCaseHT : (parseFloat((w.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
+        const caseConfig = w.caseSize ? `1x${w.caseSize}` : '1x6';
+        const depositCase = w.depositCase || 1.35;
+        const isClientSelected = Boolean(selectedClient);
+
+        return `
+          <div class="bg-slate-800 border border-slate-700/80 rounded-2xl overflow-hidden shadow-lg flex flex-col hover:border-amber-500/50 transition group">
+            <div class="relative overflow-hidden cursor-pointer bg-slate-900/60 flex items-center justify-center h-48 p-3 border-b border-slate-700/50" onclick="window.openModal('${(w.imageUrl || w.image || '').replace(/'/g, "\\'")}', '${(w.name || '').replace(/'/g, "\\'")}', '${(w.sku || '').replace(/'/g, "\\'")}')">
+              <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md" />
+              <span class="absolute top-3 left-3 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded font-mono font-semibold">${w.vintage || '2024'}</span>
+            </div>
+
+            <div class="p-4 flex flex-col flex-grow">
+              <div class="flex justify-between items-start mb-1">
+                <h3 class="text-base font-bold text-white leading-snug">${w.name}</h3>
+              </div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="text-xs font-mono text-slate-400">${w.sku}</span>
+                <span class="text-[10px] bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded font-bold">${caseConfig}</span>
+              </div>
+              <p class="text-xs text-slate-400 mb-3 line-clamp-2">${w.description || ''}</p>
+
+              <div class="mt-auto border-t border-slate-700/60 pt-2.5 space-y-1 text-xs">
+                <div class="flex justify-between text-slate-300">
+                  <span>Bottle Price (HT):</span>
+                  <span class="font-bold text-slate-200">€${bottlePriceHT.toFixed(2)}</span>
+                </div>
+                <div class="flex justify-between text-slate-300">
+                  <span>Case Price (HT):</span>
+                  <span class="font-bold text-amber-400">€${casePriceHT.toFixed(2)}</span>
+                </div>
+                <div class="flex justify-between text-[11px] text-amber-300/80 italic">
+                  <span>Vidange Consignée:</span>
+                  <span>+€${depositCase.toFixed(2)} / case</span>
+                </div>
+              </div>
+
+              <!-- Quantity Selector -->
+              <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between">
+                <span class="text-xs text-slate-400 font-semibold">Cases:</span>
+                <div class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-xl p-1">
+                  <button onclick="updateQty('${w.sku}', -1)" ${!isClientSelected || qty <= 0 ? 'disabled' : ''} class="w-8 h-8 rounded-lg bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-700 text-white font-bold text-sm transition flex items-center justify-center">
+                    -
+                  </button>
+                  <span class="w-7 text-center text-sm font-extrabold text-amber-400 font-mono">${qty}</span>
+                  <button onclick="updateQty('${w.sku}', 1)" ${!isClientSelected ? 'disabled' : ''} class="w-8 h-8 rounded-lg bg-amber-500 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-amber-400 text-slate-950 font-bold text-sm transition flex items-center justify-center">
+                    +
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.updateQty = function(sku, delta) {
+      if (!selectedClient) {
+        showToast("Please select a client shop first", true);
+        return;
+      }
+      const current = cart[sku] || 0;
+      const next = Math.max(0, current + delta);
+      if (next === 0) delete cart[sku];
+      else cart[sku] = next;
+
+      renderCatalog(currentWines);
+      updateCartTotals();
+    };
+
+    function updateCartTotals() {
+      let totalCases = 0;
+      let totalHT = 0;
+      let totalVidanges = 0;
+      const itemsList = [];
+
+      for (const [sku, qty] of Object.entries(cart)) {
+        if (qty <= 0) continue;
+        const wine = currentWines.find(w => w.sku === sku);
+        if (!wine) continue;
+
+        const priceHT = typeof wine.priceCaseHT === 'number' ? wine.priceCaseHT : (parseFloat((wine.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
+        const deposit = wine.depositCase || 1.35;
+        const lineHT = priceHT * qty;
+        const lineVidange = deposit * qty;
+
+        totalCases += qty;
+        totalHT += lineHT;
+        totalVidanges += lineVidange;
+
+        itemsList.push({
+          sku: wine.sku,
+          description: wine.name,
+          colis: wine.caseSize ? `1x${wine.caseSize}` : '1x6',
+          qty: qty,
+          priceHT: priceHT,
+          montantHT: lineHT,
+          tvaRate: 21
+        });
+      }
+
+      const totalTVA = totalHT * 0.21;
+      const totalTTC = totalHT + totalVidanges + totalTVA;
+
+      document.getElementById('cart-case-count').textContent = totalCases;
+      document.getElementById('cart-subtotal-ht').textContent = `€${totalHT.toFixed(2)}`;
+      document.getElementById('cart-total-vidanges').textContent = `€${totalVidanges.toFixed(2)}`;
+      document.getElementById('cart-total-tva').textContent = `€${totalTVA.toFixed(2)}`;
+      document.getElementById('cart-total-ttc').textContent = `€${totalTTC.toFixed(2)}`;
+      document.getElementById('cart-grand-ttc').textContent = `€${totalTTC.toFixed(2)}`;
+
+      const submitBtn = document.getElementById('submit-order-btn');
+      submitBtn.disabled = !selectedClient || totalCases === 0;
+
+      // Render cart line items
+      const cartItemsContainer = document.getElementById('cart-items-list');
+      if (itemsList.length === 0) {
+        cartItemsContainer.innerHTML = `<div class="text-slate-500 text-xs italic">No items selected yet.</div>`;
+      } else {
+        cartItemsContainer.innerHTML = itemsList.map(item => `
+          <div class="flex items-center justify-between text-xs bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+            <div>
+              <span class="font-bold text-white">${item.description}</span>
+              <span class="text-slate-400 font-mono text-[11px] ml-2">(${item.sku} - ${item.colis})</span>
+            </div>
+            <div class="flex items-center gap-4">
+              <span class="text-amber-400 font-bold font-mono">${item.qty} cases</span>
+              <span class="text-slate-200 font-mono">€${item.montantHT.toFixed(2)} HT</span>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    window.toggleCartDetail = function() {
+      const panel = document.getElementById('cart-detail-panel');
+      const text = document.getElementById('toggle-cart-text');
+      if (panel.classList.contains('hidden')) {
+        panel.classList.remove('hidden');
+        text.textContent = "Hide Line Items ▼";
+      } else {
+        panel.classList.add('hidden');
+        text.textContent = "Show Line Items ▲";
+      }
+    };
+
+    window.submitOrder = async function() {
+      if (!selectedClient) {
+        showToast("Select a Belgian client shop first!", true);
+        return;
+      }
+
+      const submitBtn = document.getElementById('submit-order-btn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="animate-spin inline-block h-4 w-4 border-2 border-slate-950 border-t-transparent rounded-full mr-2"></span> Submitting Order...`;
+
+      try {
+        let totalHT = 0;
+        let totalVidanges = 0;
+        const items = [];
+
+        for (const [sku, qty] of Object.entries(cart)) {
+          if (qty <= 0) continue;
+          const wine = currentWines.find(w => w.sku === sku);
+          if (!wine) continue;
+
+          const priceHT = typeof wine.priceCaseHT === 'number' ? wine.priceCaseHT : (parseFloat((wine.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
+          const deposit = wine.depositCase || 1.35;
+          const lineHT = priceHT * qty;
+          const lineVidange = deposit * qty;
+
+          totalHT += lineHT;
+          totalVidanges += lineVidange;
+
+          items.push({
+            sku: wine.sku,
+            description: wine.name,
+            colis: wine.caseSize ? `1x${wine.caseSize}` : '1x6',
+            qty: qty,
+            priceHT: priceHT,
+            montantHT: lineHT,
+            tvaRate: 21
+          });
+        }
+
+        const totalTVA = totalHT * 0.21;
+        const totalTTC = totalHT + totalVidanges + totalTVA;
+
+        const orderPayload = {
+          evaluatorUid: currentUser ? currentUser.uid : 'evaluator-demo-uid',
+          evaluatorEmail: currentUser ? currentUser.email : 'evaluator@winedistribution.be',
+          client: {
+            name: selectedClient.name,
+            address: selectedClient.address,
+            vat: selectedClient.vat,
+            clientNo: selectedClient.clientNo
+          },
+          items: items,
+          totals: {
+            totalHT: Number(totalHT.toFixed(2)),
+            totalVidanges: Number(totalVidanges.toFixed(2)),
+            totalTVA: Number(totalTVA.toFixed(2)),
+            totalTTC: Number(totalTTC.toFixed(2))
+          },
+          status: 'submitted',
+          createdAt: serverTimestamp(),
+          invoicePdfUrl: null
+        };
+
+        const docRef = await addDoc(collection(db, "orders"), orderPayload);
+        
+        // Reset cart
+        cart = {};
+        renderCatalog(currentWines);
+        updateCartTotals();
+
+        showToast(`Order submitted successfully! Doc ID: ${docRef.id}`);
+        
+        setTimeout(() => {
+          if (confirm("Order submitted! Would you like to view the Depot Dispatch Queue?")) {
+            window.location.href = "depot.html";
+          }
+        }, 800);
+      } catch (err) {
+        console.error("Order submission error:", err);
+        showToast("Order submission failed: " + err.message, true);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Submit Wholesale Order</span>`;
+      }
+    };
+
+    // Modal Image Lightbox
     const modal = document.getElementById('image-modal');
     const modalImg = document.getElementById('modal-img');
     const modalTitle = document.getElementById('modal-title');
     const modalCaption = document.getElementById('modal-caption');
-    const langSelect = document.getElementById('lang-select');
-
-    // Initialize Language Selector
-    langSelect.value = getCurrentLanguage();
-    applyTranslations();
-
-    langSelect.addEventListener('change', (e) => {
-      setLanguage(e.target.value);
-    });
-
-    window.addEventListener('languageChanged', () => {
-      if (currentWines.length > 0) {
-        renderGrid(currentWines);
-      }
-    });
 
     window.openModal = function(imgSrc, title, sku) {
       modalImg.src = imgSrc;
       modalImg.alt = title;
       modalTitle.textContent = title;
-      modalCaption.textContent = `${t('skuPrefix')} ${sku}`;
+      modalCaption.textContent = `SKU: ${sku}`;
       modal.classList.remove('hidden');
-      setTimeout(() => {
-        modal.classList.remove('opacity-0');
-        modalImg.classList.remove('scale-95');
-        modalImg.classList.add('scale-100');
-      }, 10);
-      document.body.style.overflow = 'hidden';
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
     };
 
-    window.closeModal = function(event) {
+    window.closeModal = function() {
       modal.classList.add('opacity-0');
-      modalImg.classList.remove('scale-100');
-      modalImg.classList.add('scale-95');
-      setTimeout(() => {
-        modal.classList.add('hidden');
-        document.body.style.overflow = '';
-      }, 200);
+      setTimeout(() => modal.classList.add('hidden'), 200);
     };
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-        closeModal();
-      }
-    });
-
-    function renderGrid(wines) {
-      currentWines = wines;
-      const grid = document.getElementById('catalog-grid');
-      const viewFullImageText = t('viewFullImage');
-      const bottlePriceText = t('bottlePrice');
-      const casePriceText = t('casePrice');
-
-      grid.innerHTML = wines.map(wine => `
-        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col">
-          <div class="relative overflow-hidden cursor-pointer group bg-slate-100 flex items-center justify-center h-56 p-2" onclick="openModal('${(wine.image || '').replace(/'/g, "\\'")}', '${(wine.name || '').replace(/'/g, "\\'")}', '${(wine.sku || '').replace(/'/g, "\\'")}')">
-            <img src="${wine.image}" alt="${wine.name}" class="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105" />
-            <div class="absolute inset-0 bg-slate-900/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
-              <span class="bg-amber-600/90 text-white text-xs font-semibold px-3 py-1.5 rounded-full shadow flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
-                ${viewFullImageText}
-              </span>
-            </div>
-          </div>
-          <div class="p-5 flex flex-col flex-grow">
-            <div class="flex justify-between items-start mb-2">
-              <span class="text-xs font-semibold px-2 py-1 bg-amber-100 text-amber-800 rounded">${wine.vintage}</span>
-              <span class="text-xs text-slate-400 font-mono">${wine.sku}</span>
-            </div>
-            <h3 class="text-lg font-bold text-slate-900">${wine.name}</h3>
-            <p class="text-xs text-slate-500 mb-3">${wine.region}</p>
-            <p class="text-sm text-slate-600 mb-4 flex-grow">${wine.description || ''}</p>
-            <div class="border-t border-slate-100 pt-3 mt-auto">
-              <div class="flex justify-between text-xs text-slate-500 mb-1">
-                <span>${bottlePriceText}</span>
-                <span class="font-bold text-slate-800">${wine.priceBottle}</span>
-              </div>
-              <div class="flex justify-between text-xs text-slate-500">
-                <span>${casePriceText}</span>
-                <span class="font-bold text-amber-700">${wine.priceCase}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    async function loadFallbackJson() {
-      try {
-        const response = await fetch('./wines.json');
-        const wines = await response.json();
-        renderGrid(wines);
-      } catch (err) {
-        console.error('Error loading fallback wine catalog:', err);
-      }
-    }
-
-    // Render initial catalog from wines.json immediately for zero-wait UI
-    loadFallbackJson();
-
-    // Listen to live Firestore collection updates
-    try {
-      onSnapshot(collection(db, "wines"), (snapshot) => {
-        if (!snapshot.empty) {
-          const wines = snapshot.docs.map(doc => doc.data());
-          renderGrid(wines);
-        }
-      }, (err) => {
-        console.warn("Firestore stream unavailable, keeping local catalog:", err);
-      });
-    } catch (e) {
-      console.warn("Firestore setup error:", e);
+    function showToast(msg, isError = false) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-message');
+      toastMsg.textContent = msg;
+      toast.className = `fixed bottom-24 right-5 z-50 transition-all duration-300 font-medium text-sm px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-white ${isError ? 'bg-rose-600' : 'bg-emerald-600'}`;
+      toast.classList.remove('opacity-0', 'translate-y-16');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-16');
+      }, 3500);
     }
   </script>
 </body>
