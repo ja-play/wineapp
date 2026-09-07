@@ -342,6 +342,23 @@
           <input type="text" id="form-name" required placeholder="e.g. Oude Kaap Cabernet Sauvignon Merlot" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
         </div>
 
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-amber-400 uppercase tracking-wider mb-1">Category / Type *</label>
+            <select id="form-category" required class="w-full bg-slate-900 border border-amber-500/50 rounded-lg px-3 py-2 text-sm text-amber-300 font-semibold focus:outline-none focus:border-amber-400">
+              <option value="Red">Red 🍷</option>
+              <option value="White">White 🥂</option>
+              <option value="Rosé">Rosé 🌸</option>
+              <option value="Sparkling">Sparkling ✨</option>
+              <option value="Dessert">Dessert / Fortified 🍇</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Tags (Comma-separated)</label>
+            <input type="text" id="form-tags" placeholder="e.g. Reserve, Oak-Aged, Bio" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+        </div>
+
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Region *</label>
@@ -737,9 +754,118 @@
       }
     };
 
+    function detectWineCategory(wine) {
+      if (wine && wine.category) return wine.category;
+      const str = `${wine?.name || ''} ${wine?.description || ''} ${wine?.sku || ''}`.toLowerCase();
+      if (str.includes('rosé') || str.includes('rose')) return 'Rosé';
+      if (str.includes('moscato') || str.includes('sparkling') || str.includes('champagne') || str.includes('cava') || str.includes('prosecco') || str.includes('spritz')) return 'Sparkling';
+      if (str.includes('cabernet') || str.includes('merlot') || str.includes('pinotage') || str.includes('shiraz') || str.includes('syrah') || str.includes('red') || str.includes('rouge') || str.includes('malbec')) return 'Red';
+      if (str.includes('wit') || str.includes('chardonnay') || str.includes('pinot grigio') || str.includes('sauvignon') || str.includes('white') || str.includes('blanc') || str.includes('chenin')) return 'White';
+      return 'White';
+    }
+
+    function getCategoryBadge(category) {
+      switch (category) {
+        case 'Red':
+          return { text: '🍷 Red', class: 'bg-rose-950/80 text-rose-300 border-rose-700/80' };
+        case 'White':
+          return { text: '🥂 White', class: 'bg-amber-950/80 text-amber-300 border-amber-700/80' };
+        case 'Rosé':
+          return { text: '🌸 Rosé', class: 'bg-pink-950/80 text-pink-300 border-pink-700/80' };
+        case 'Sparkling':
+          return { text: '✨ Sparkling', class: 'bg-cyan-950/80 text-cyan-300 border-cyan-700/80' };
+        case 'Dessert':
+          return { text: '🍇 Dessert', class: 'bg-purple-950/80 text-purple-300 border-purple-700/80' };
+        default:
+          return { text: category || 'Wine', class: 'bg-slate-800 text-slate-300 border-slate-700' };
+      }
+    }
+
+    function getWineColorTheme(category) {
+      switch (category) {
+        case 'Red':
+          return {
+            name: 'Ruby Red / Vin Rouge',
+            hex: '#800020',
+            bgGradient: 'from-rose-950/90 via-red-950/70 to-slate-900',
+            swatchGradient: 'from-red-600 via-rose-800 to-rose-950',
+            glow: 'shadow-[0_0_22px_rgba(225,29,72,0.5)]',
+            borderColor: 'border-rose-700/60',
+            badgeBg: 'bg-rose-950/90 text-rose-300 border-rose-700/80',
+            dotBg: 'bg-rose-500',
+            icon: '🍷'
+          };
+        case 'White':
+          return {
+            name: 'Straw Gold / Vin Blanc',
+            hex: '#F4E07B',
+            bgGradient: 'from-amber-950/90 via-yellow-950/70 to-slate-900',
+            swatchGradient: 'from-amber-300 via-yellow-500 to-amber-700',
+            glow: 'shadow-[0_0_22px_rgba(251,191,36,0.5)]',
+            borderColor: 'border-amber-600/60',
+            badgeBg: 'bg-amber-950/90 text-amber-300 border-amber-700/80',
+            dotBg: 'bg-amber-400',
+            icon: '🥂'
+          };
+        case 'Rosé':
+          return {
+            name: 'Salmon Pink / Vin Rosé',
+            hex: '#FFC0CB',
+            bgGradient: 'from-pink-950/90 via-rose-950/70 to-slate-900',
+            swatchGradient: 'from-pink-400 via-rose-400 to-pink-700',
+            glow: 'shadow-[0_0_22px_rgba(244,114,182,0.5)]',
+            borderColor: 'border-pink-600/60',
+            badgeBg: 'bg-pink-950/90 text-pink-300 border-pink-700/80',
+            dotBg: 'bg-pink-400',
+            icon: '🌸'
+          };
+        case 'Sparkling':
+          return {
+            name: 'Champagne Gold / Effervescent',
+            hex: '#F0E68C',
+            bgGradient: 'from-cyan-950/90 via-amber-950/70 to-slate-900',
+            swatchGradient: 'from-cyan-300 via-amber-300 to-yellow-500',
+            glow: 'shadow-[0_0_22px_rgba(103,232,249,0.5)]',
+            borderColor: 'border-cyan-600/60',
+            badgeBg: 'bg-cyan-950/90 text-cyan-300 border-cyan-700/80',
+            dotBg: 'bg-cyan-300',
+            icon: '✨'
+          };
+        case 'Dessert':
+          return {
+            name: 'Royal Tawny / Vin Doux',
+            hex: '#6A1B9A',
+            bgGradient: 'from-purple-950/90 via-indigo-950/70 to-slate-900',
+            swatchGradient: 'from-purple-500 via-indigo-600 to-amber-700',
+            glow: 'shadow-[0_0_22px_rgba(192,132,252,0.5)]',
+            borderColor: 'border-purple-600/60',
+            badgeBg: 'bg-purple-950/90 text-purple-300 border-purple-700/80',
+            dotBg: 'bg-purple-400',
+            icon: '🍇'
+          };
+        default:
+          return {
+            name: 'Classic Wine',
+            hex: '#722F37',
+            bgGradient: 'from-slate-900 to-slate-950',
+            swatchGradient: 'from-slate-600 to-slate-800',
+            glow: '',
+            borderColor: 'border-slate-700',
+            badgeBg: 'bg-slate-800 text-slate-300 border-slate-700',
+            dotBg: 'bg-slate-400',
+            icon: '🍷'
+          };
+      }
+    }
+
     function renderWines(wines) {
       const container = document.getElementById('wines-container');
       container.innerHTML = wines.map(w => {
+        const category = detectWineCategory(w);
+        const categoryBadge = getCategoryBadge(category);
+        const colorTheme = getWineColorTheme(category);
+        const tags = Array.isArray(w.tags) ? w.tags : (w.tags ? String(w.tags).split(',') : []);
+
         const stockQty = typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
         const isAvailable = w.stockAvailable !== false && stockQty > 0;
         const isLowStock = isAvailable && stockQty < 10;
@@ -760,12 +886,24 @@
             ? `⚠️ Low Stock: ${stockQty} Cases` 
             : `● ${stockQty} Cases`);
 
+        const tagsHtml = tags.map(t => `<span class="text-[9px] bg-slate-700/80 text-slate-300 border border-slate-600 px-1.5 py-0.5 rounded-full font-medium">#${t.trim()}</span>`).join('');
+
         return `
           <div class="bg-slate-800 border ${isAvailable ? (isLowStock ? 'border-amber-500/60' : 'border-slate-700/80') : 'border-rose-900/60 opacity-75'} rounded-2xl overflow-hidden shadow-lg flex flex-col hover:border-slate-600 transition">
-            <div class="h-44 bg-slate-900/60 p-3 relative flex items-center justify-center border-b border-slate-700/50">
-              <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain drop-shadow-md" />
-              <span class="absolute top-3 left-3 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded font-mono font-semibold">${w.vintage || '2024'}</span>
-              <button onclick="toggleStockStatus('${w.id}', ${!isAvailable})" class="absolute top-3 right-3 text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${stockBadgeClass}">
+            <div class="h-44 bg-gradient-to-b ${colorTheme.bgGradient} p-3 relative flex flex-col items-center justify-center border-b border-slate-700/50">
+              <div class="flex flex-col items-center justify-center z-10">
+                <div class="w-14 h-14 rounded-full bg-gradient-to-br ${colorTheme.swatchGradient} ${colorTheme.glow} border-2 border-white/30 flex items-center justify-center shadow-2xl relative overflow-hidden">
+                  <div class="absolute inset-0 bg-white/15 rounded-full blur-[1px]"></div>
+                  <span class="text-2xl drop-shadow-lg relative z-10">${colorTheme.icon}</span>
+                </div>
+                <div class="mt-2 bg-slate-950/85 backdrop-blur-sm border ${colorTheme.borderColor} px-2.5 py-0.5 rounded-full text-[10px] font-bold text-white shadow-md flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full ${colorTheme.dotBg} shadow-sm"></span>
+                  <span>${colorTheme.name}</span>
+                </div>
+              </div>
+
+              <span class="absolute top-3 left-3 bg-slate-950/80 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded font-mono font-semibold z-20">${w.vintage || '2024'}</span>
+              <button onclick="toggleStockStatus('${w.id}', ${!isAvailable})" class="absolute top-3 right-3 text-[11px] font-bold px-2.5 py-1 rounded-full border transition z-20 ${stockBadgeClass}">
                 ${stockBadgeText}
               </button>
             </div>
@@ -773,11 +911,13 @@
               <div class="flex justify-between items-start mb-1">
                 <h3 class="text-base font-bold text-white leading-snug">${w.name}</h3>
               </div>
-              <div class="flex items-center gap-2 mb-2">
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="text-xs font-mono text-slate-400">${w.sku}</span>
+                <span class="text-[10px] border px-2 py-0.5 rounded-full font-bold ${categoryBadge.class}">${categoryBadge.text}</span>
                 <span class="text-[10px] bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded font-bold">${caseConfig}</span>
                 <span class="text-[10px] bg-amber-950/80 text-amber-400 border border-amber-800/40 px-1.5 py-0.5 rounded">+${deposit} Vidange</span>
               </div>
+              ${tagsHtml ? `<div class="flex items-center gap-1 flex-wrap mb-2">${tagsHtml}</div>` : ''}
               <p class="text-xs text-slate-400 mb-4 line-clamp-2">${w.description || ''}</p>
               
               <div class="mt-auto border-t border-slate-700/60 pt-3 space-y-1.5 text-xs">
@@ -836,10 +976,14 @@
           
           const bPriceStr = (w.priceBottle || '').replace(/[^0-9.]/g, '');
           const cPriceStr = (w.priceCase || '').replace(/[^0-9.]/g, '');
+          const category = w.category || detectWineCategory(w);
+          const tags = Array.isArray(w.tags) ? w.tags : [];
 
           const wineData = {
             sku: w.sku,
             name: w.name,
+            category: category,
+            tags: tags,
             vintage: w.vintage || "2024",
             region: w.region || "Belgique",
             caseSize: 6,
@@ -860,7 +1004,7 @@
           await setDoc(doc(db, "wines", docId), wineData, { merge: true });
         }
 
-        showToast("Successfully seeded database catalog with 50 cases inventory per wine!");
+        showToast("Successfully seeded database catalog with categories and tags!");
       } catch (err) {
         console.error("Seeding error:", err);
         showToast("Failed to seed catalog: " + err.message, true);
@@ -886,6 +1030,8 @@
         document.getElementById('form-vintage').value = wineObj.vintage || '';
         document.getElementById('form-case-size').value = wineObj.caseSize || 6;
         document.getElementById('form-name').value = wineObj.name || '';
+        document.getElementById('form-category').value = wineObj.category || detectWineCategory(wineObj);
+        document.getElementById('form-tags').value = Array.isArray(wineObj.tags) ? wineObj.tags.join(', ') : (wineObj.tags || '');
         document.getElementById('form-region').value = wineObj.region || '';
         document.getElementById('form-stock-quantity').value = typeof wineObj.stockQuantity === 'number' ? wineObj.stockQuantity : 50;
         document.getElementById('form-stock-available').value = String(wineObj.stockAvailable !== false);
@@ -898,6 +1044,8 @@
         modalHeader.textContent = "Add New Wine SKU";
         docIdInput.value = "";
         existingImageInput.value = "";
+        document.getElementById('form-category').value = "Red";
+        document.getElementById('form-tags').value = "";
         document.getElementById('form-stock-quantity').value = "50";
         document.getElementById('form-deposit-case').value = "1.35";
         document.getElementById('form-stock-available').value = "true";
@@ -941,6 +1089,9 @@
         const vintage = document.getElementById('form-vintage').value.trim();
         const caseSize = parseInt(document.getElementById('form-case-size').value, 10);
         const name = document.getElementById('form-name').value.trim();
+        const category = document.getElementById('form-category').value;
+        const tagsInput = document.getElementById('form-tags').value.trim();
+        const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(Boolean) : [];
         const region = document.getElementById('form-region').value.trim();
         const stockQuantity = parseInt(document.getElementById('form-stock-quantity').value, 10) || 0;
         const stockAvailable = document.getElementById('form-stock-available').value === 'true' && stockQuantity > 0;
@@ -975,6 +1126,8 @@
           vintage,
           caseSize,
           name,
+          category,
+          tags,
           region,
           stockQuantity,
           stockAvailable,

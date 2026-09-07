@@ -89,6 +89,48 @@
 
   <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
 
+    <!-- Category & Search Filter Bar -->
+    <div id="catalog-filter-bar" class="mb-6 bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 shadow-xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+      <!-- Category Filter Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+        <button onclick="setCategoryFilter('all')" id="cat-pill-all" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-amber-500 text-slate-950 shadow">
+          🍷 All Wines (<span id="cat-count-all">0</span>)
+        </button>
+        <button onclick="setCategoryFilter('Red')" id="cat-pill-Red" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700">
+          🍷 Red (<span id="cat-count-Red">0</span>)
+        </button>
+        <button onclick="setCategoryFilter('White')" id="cat-pill-White" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700">
+          🥂 White (<span id="cat-count-White">0</span>)
+        </button>
+        <button onclick="setCategoryFilter('Rosé')" id="cat-pill-Rosé" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700">
+          🌸 Rosé (<span id="cat-count-Rosé">0</span>)
+        </button>
+        <button onclick="setCategoryFilter('Sparkling')" id="cat-pill-Sparkling" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700">
+          ✨ Sparkling (<span id="cat-count-Sparkling">0</span>)
+        </button>
+        <button onclick="setCategoryFilter('Dessert')" id="cat-pill-Dessert" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700">
+          🍇 Dessert (<span id="cat-count-Dessert">0</span>)
+        </button>
+      </div>
+
+      <!-- Controls Right: View Mode Toggle & Live Search Box -->
+      <div class="flex items-center gap-3 w-full md:w-auto flex-wrap">
+        <div class="flex items-center bg-slate-950 p-1 border border-slate-700 rounded-xl text-xs">
+          <button id="view-mode-color" onclick="setViewMode('color')" class="px-3 py-1.5 rounded-lg font-bold transition bg-amber-500 text-slate-950 shadow flex items-center gap-1">
+            <span>🎨 Color Info</span>
+          </button>
+          <button id="view-mode-photo" onclick="setViewMode('photo')" class="px-3 py-1.5 rounded-lg font-bold transition text-slate-400 hover:text-white flex items-center gap-1">
+            <span>🖼️ Photos</span>
+          </button>
+        </div>
+
+        <div class="relative flex-1 md:w-56">
+          <input type="text" id="catalog-search-input" oninput="handleSearchInput()" placeholder="Search wine, SKU, tag..." class="w-full bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 rounded-xl pl-9 pr-3 py-2 focus:outline-none focus:border-amber-500 shadow-inner" />
+          <span class="absolute left-3 top-2 text-xs text-slate-500">🔍</span>
+        </div>
+      </div>
+    </div>
+
     <div id="catalog-loading" class="text-center py-16">
       <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-amber-500 border-t-transparent mb-3"></div>
       <p class="text-slate-400 text-sm">Loading available wine stock from Firestore...</p>
@@ -268,6 +310,188 @@
       updateCartTotals();
     });
 
+    let activeCategory = 'all';
+    let searchQuery = '';
+    let viewMode = 'color'; // 'color' or 'photo'
+
+    window.setViewMode = function(mode) {
+      viewMode = mode;
+      const btnColor = document.getElementById('view-mode-color');
+      const btnPhoto = document.getElementById('view-mode-photo');
+      if (mode === 'color') {
+        btnColor.className = "px-3 py-1.5 rounded-lg font-bold transition bg-amber-500 text-slate-950 shadow flex items-center gap-1";
+        btnPhoto.className = "px-3 py-1.5 rounded-lg font-bold transition text-slate-400 hover:text-white flex items-center gap-1";
+      } else {
+        btnPhoto.className = "px-3 py-1.5 rounded-lg font-bold transition bg-amber-500 text-slate-950 shadow flex items-center gap-1";
+        btnColor.className = "px-3 py-1.5 rounded-lg font-bold transition text-slate-400 hover:text-white flex items-center gap-1";
+      }
+      applyFilters();
+    };
+
+    function detectWineCategory(wine) {
+      if (wine && wine.category) return wine.category;
+      const str = `${wine?.name || ''} ${wine?.description || ''} ${wine?.sku || ''}`.toLowerCase();
+      if (str.includes('rosé') || str.includes('rose')) return 'Rosé';
+      if (str.includes('moscato') || str.includes('sparkling') || str.includes('champagne') || str.includes('cava') || str.includes('prosecco') || str.includes('spritz')) return 'Sparkling';
+      if (str.includes('cabernet') || str.includes('merlot') || str.includes('pinotage') || str.includes('shiraz') || str.includes('syrah') || str.includes('red') || str.includes('rouge') || str.includes('malbec')) return 'Red';
+      if (str.includes('wit') || str.includes('chardonnay') || str.includes('pinot grigio') || str.includes('sauvignon') || str.includes('white') || str.includes('blanc') || str.includes('chenin')) return 'White';
+      return 'White';
+    }
+
+    function getWineColorTheme(category) {
+      switch (category) {
+        case 'Red':
+          return {
+            name: 'Ruby Red / Vin Rouge',
+            hex: '#800020',
+            bgGradient: 'from-rose-950/90 via-red-950/70 to-slate-900',
+            swatchGradient: 'from-red-600 via-rose-800 to-rose-950',
+            glow: 'shadow-[0_0_22px_rgba(225,29,72,0.5)]',
+            borderColor: 'border-rose-700/60',
+            badgeBg: 'bg-rose-950/90 text-rose-300 border-rose-700/80',
+            dotBg: 'bg-rose-500',
+            icon: '🍷',
+            tastingTone: 'Deep Ruby • High Tannin Profile'
+          };
+        case 'White':
+          return {
+            name: 'Straw Gold / Vin Blanc',
+            hex: '#F4E07B',
+            bgGradient: 'from-amber-950/90 via-yellow-950/70 to-slate-900',
+            swatchGradient: 'from-amber-300 via-yellow-500 to-amber-700',
+            glow: 'shadow-[0_0_22px_rgba(251,191,36,0.5)]',
+            borderColor: 'border-amber-600/60',
+            badgeBg: 'bg-amber-950/90 text-amber-300 border-amber-700/80',
+            dotBg: 'bg-amber-400',
+            icon: '🥂',
+            tastingTone: 'Straw Gold • Crisp Acidity'
+          };
+        case 'Rosé':
+          return {
+            name: 'Salmon Pink / Vin Rosé',
+            hex: '#FFC0CB',
+            bgGradient: 'from-pink-950/90 via-rose-950/70 to-slate-900',
+            swatchGradient: 'from-pink-400 via-rose-400 to-pink-700',
+            glow: 'shadow-[0_0_22px_rgba(244,114,182,0.5)]',
+            borderColor: 'border-pink-600/60',
+            badgeBg: 'bg-pink-950/90 text-pink-300 border-pink-700/80',
+            dotBg: 'bg-pink-400',
+            icon: '🌸',
+            tastingTone: 'Salmon Pink • Fresh Berry Finish'
+          };
+        case 'Sparkling':
+          return {
+            name: 'Champagne Gold / Effervescent',
+            hex: '#F0E68C',
+            bgGradient: 'from-cyan-950/90 via-amber-950/70 to-slate-900',
+            swatchGradient: 'from-cyan-300 via-amber-300 to-yellow-500',
+            glow: 'shadow-[0_0_22px_rgba(103,232,249,0.5)]',
+            borderColor: 'border-cyan-600/60',
+            badgeBg: 'bg-cyan-950/90 text-cyan-300 border-cyan-700/80',
+            dotBg: 'bg-cyan-300',
+            icon: '✨',
+            tastingTone: 'Golden Spritz • Bubbly Perlage'
+          };
+        case 'Dessert':
+          return {
+            name: 'Royal Tawny / Vin Doux',
+            hex: '#6A1B9A',
+            bgGradient: 'from-purple-950/90 via-indigo-950/70 to-slate-900',
+            swatchGradient: 'from-purple-500 via-indigo-600 to-amber-700',
+            glow: 'shadow-[0_0_22px_rgba(192,132,252,0.5)]',
+            borderColor: 'border-purple-600/60',
+            badgeBg: 'bg-purple-950/90 text-purple-300 border-purple-700/80',
+            dotBg: 'bg-purple-400',
+            icon: '🍇',
+            tastingTone: 'Royal Tawny • Honeyed Sweetness'
+          };
+        default:
+          return {
+            name: 'Classic Wine',
+            hex: '#722F37',
+            bgGradient: 'from-slate-900 to-slate-950',
+            swatchGradient: 'from-slate-600 to-slate-800',
+            glow: '',
+            borderColor: 'border-slate-700',
+            badgeBg: 'bg-slate-800 text-slate-300 border-slate-700',
+            dotBg: 'bg-slate-400',
+            icon: '🍷',
+            tastingTone: 'Standard Wholesale Wine'
+          };
+      }
+    }
+
+    function getCategoryBadge(category) {
+      switch (category) {
+        case 'Red':
+          return { text: '🍷 Red', class: 'bg-rose-950/80 text-rose-300 border-rose-700/80' };
+        case 'White':
+          return { text: '🥂 White', class: 'bg-amber-950/80 text-amber-300 border-amber-700/80' };
+        case 'Rosé':
+          return { text: '🌸 Rosé', class: 'bg-pink-950/80 text-pink-300 border-pink-700/80' };
+        case 'Sparkling':
+          return { text: '✨ Sparkling', class: 'bg-cyan-950/80 text-cyan-300 border-cyan-700/80' };
+        case 'Dessert':
+          return { text: '🍇 Dessert', class: 'bg-purple-950/80 text-purple-300 border-purple-700/80' };
+        default:
+          return { text: category || 'Wine', class: 'bg-slate-800 text-slate-300 border-slate-700' };
+      }
+    }
+
+    function updateCategoryCounts() {
+      const counts = { all: currentWines.length, Red: 0, White: 0, Rosé: 0, Sparkling: 0, Dessert: 0 };
+      currentWines.forEach(w => {
+        const cat = detectWineCategory(w);
+        if (counts[cat] !== undefined) counts[cat]++;
+      });
+      Object.keys(counts).forEach(cat => {
+        const el = document.getElementById(`cat-count-${cat}`);
+        if (el) el.textContent = counts[cat];
+      });
+    }
+
+    window.setCategoryFilter = function(cat) {
+      activeCategory = cat;
+      const categories = ['all', 'Red', 'White', 'Rosé', 'Sparkling', 'Dessert'];
+      categories.forEach(c => {
+        const btn = document.getElementById(`cat-pill-${c}`);
+        if (!btn) return;
+        if (c === cat) {
+          btn.className = "cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-amber-500 text-slate-950 shadow";
+        } else {
+          btn.className = "cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700";
+        }
+      });
+      applyFilters();
+    };
+
+    window.handleSearchInput = function() {
+      const input = document.getElementById('catalog-search-input');
+      searchQuery = (input.value || '').trim().toLowerCase();
+      applyFilters();
+    };
+
+    function applyFilters() {
+      updateCategoryCounts();
+      const filtered = currentWines.filter(w => {
+        const cat = detectWineCategory(w);
+        const matchesCategory = activeCategory === 'all' || cat === activeCategory;
+
+        if (!matchesCategory) return false;
+        if (!searchQuery) return true;
+
+        const nameStr = (w.name || '').toLowerCase();
+        const skuStr = (w.sku || '').toLowerCase();
+        const regionStr = (w.region || '').toLowerCase();
+        const catStr = cat.toLowerCase();
+        const tagsStr = (Array.isArray(w.tags) ? w.tags.join(' ') : (w.tags || '')).toLowerCase();
+
+        return nameStr.includes(searchQuery) || skuStr.includes(searchQuery) || regionStr.includes(searchQuery) || catStr.includes(searchQuery) || tagsStr.includes(searchQuery);
+      });
+
+      renderCatalog(filtered);
+    }
+
     // Subscribe to available wines from Firestore where stockAvailable == true
     try {
       const q = query(collection(db, "wines"), where("stockAvailable", "==", true));
@@ -276,11 +500,11 @@
         if (snapshot.empty) {
           onSnapshot(collection(db, "wines"), (snapAll) => {
             currentWines = snapAll.docs.map(d => ({ id: d.id, ...d.data() })).filter(w => w.stockAvailable !== false);
-            renderCatalog(currentWines);
+            applyFilters();
           });
         } else {
           currentWines = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-          renderCatalog(currentWines);
+          applyFilters();
         }
       });
     } catch (e) {
@@ -302,6 +526,11 @@
 
       grid.innerHTML = wines.map(w => {
         const qty = cart[w.sku] || 0;
+        const category = detectWineCategory(w);
+        const categoryBadge = getCategoryBadge(category);
+        const colorTheme = getWineColorTheme(category);
+        const tags = Array.isArray(w.tags) ? w.tags : (w.tags ? String(w.tags).split(',') : []);
+
         const stockQty = typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
         const isLowStock = stockQty < 10 && stockQty > 0;
         const bottlePriceHT = typeof w.priceBottleHT === 'number' ? w.priceBottleHT : (parseFloat((w.priceBottle || '').replace(/[^0-9.]/g, '')) || 5.50);
@@ -318,12 +547,31 @@
           ? `⚠️ Low Stock: ${stockQty} Cases left` 
           : `In Stock: ${stockQty} Cases`;
 
+        const tagsHtml = tags.map(t => `<span class="text-[9px] bg-slate-700/80 text-slate-300 border border-slate-600 px-1.5 py-0.5 rounded-full font-medium">#${t.trim()}</span>`).join('');
+
+        const headerMediaHtml = viewMode === 'color' 
+          ? `
+            <div class="relative z-10 flex flex-col items-center justify-center my-auto transition-transform duration-300 group-hover:scale-105">
+              <div class="w-16 h-16 rounded-full bg-gradient-to-br ${colorTheme.swatchGradient} ${colorTheme.glow} border-2 border-white/30 flex items-center justify-center shadow-2xl relative overflow-hidden">
+                <div class="absolute inset-0 bg-white/15 rounded-full blur-[1px]"></div>
+                <span class="text-3xl drop-shadow-lg relative z-10">${colorTheme.icon}</span>
+              </div>
+              <div class="mt-2.5 bg-slate-950/85 backdrop-blur-sm border ${colorTheme.borderColor} px-3 py-1 rounded-full text-[11px] font-bold text-white shadow-md flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full ${colorTheme.dotBg} shadow-sm"></span>
+                <span>${colorTheme.name}</span>
+              </div>
+            </div>
+          `
+          : `
+            <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md z-10" />
+          `;
+
         return `
           <div class="bg-slate-800 border ${isLowStock ? 'border-amber-500/60' : 'border-slate-700/80'} rounded-2xl overflow-hidden shadow-lg flex flex-col hover:border-amber-500/50 transition group">
-            <div class="relative overflow-hidden cursor-pointer bg-slate-900/60 flex items-center justify-center h-48 p-3 border-b border-slate-700/50" onclick="window.openModal('${(w.imageUrl || w.image || '').replace(/'/g, "\\'")}', '${(w.name || '').replace(/'/g, "\\'")}', '${(w.sku || '').replace(/'/g, "\\'")}')">
-              <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md" />
-              <span class="absolute top-3 left-3 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded font-mono font-semibold">${w.vintage || '2024'}</span>
-              <span class="absolute top-3 right-3 text-[11px] px-2 py-0.5 rounded font-mono font-bold border ${stockBadgeClass}">
+            <div class="relative overflow-hidden cursor-pointer bg-gradient-to-b ${colorTheme.bgGradient} flex flex-col items-center justify-center h-48 p-3 border-b border-slate-700/50" onclick="window.openModal('${(w.imageUrl || w.image || '').replace(/'/g, "\\'")}', '${(w.name || '').replace(/'/g, "\\'")}', '${(w.sku || '').replace(/'/g, "\\'")}')">
+              ${headerMediaHtml}
+              <span class="absolute top-3 left-3 bg-slate-950/80 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded font-mono font-semibold z-20">${w.vintage || '2024'}</span>
+              <span class="absolute top-3 right-3 text-[11px] px-2 py-0.5 rounded font-mono font-bold border z-20 ${stockBadgeClass}">
                 ${stockBadgeText}
               </span>
             </div>
@@ -332,10 +580,12 @@
               <div class="flex justify-between items-start mb-1">
                 <h3 class="text-base font-bold text-white leading-snug">${w.name}</h3>
               </div>
-              <div class="flex items-center gap-2 mb-2">
+              <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="text-xs font-mono text-slate-400">${w.sku}</span>
+                <span class="text-[10px] border px-2 py-0.5 rounded-full font-bold ${categoryBadge.class}">${categoryBadge.text}</span>
                 <span class="text-[10px] bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded font-bold">${caseConfig}</span>
               </div>
+              ${tagsHtml ? `<div class="flex items-center gap-1 flex-wrap mb-2">${tagsHtml}</div>` : ''}
               <p class="text-xs text-slate-400 mb-3 line-clamp-2">${w.description || ''}</p>
 
               <div class="mt-auto border-t border-slate-700/60 pt-2.5 space-y-1 text-xs">
