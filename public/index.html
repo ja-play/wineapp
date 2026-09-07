@@ -113,21 +113,10 @@
         </button>
       </div>
 
-      <!-- Controls Right: View Mode Toggle & Live Search Box -->
-      <div class="flex items-center gap-3 w-full md:w-auto flex-wrap">
-        <div class="flex items-center bg-slate-950 p-1 border border-slate-700 rounded-xl text-xs">
-          <button id="view-mode-color" onclick="setViewMode('color')" class="px-3 py-1.5 rounded-lg font-bold transition bg-amber-500 text-slate-950 shadow flex items-center gap-1">
-            <span>🎨 Color Info</span>
-          </button>
-          <button id="view-mode-photo" onclick="setViewMode('photo')" class="px-3 py-1.5 rounded-lg font-bold transition text-slate-400 hover:text-white flex items-center gap-1">
-            <span>🖼️ Photos</span>
-          </button>
-        </div>
-
-        <div class="relative flex-1 md:w-56">
-          <input type="text" id="catalog-search-input" oninput="handleSearchInput()" placeholder="Search wine, SKU, tag..." class="w-full bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 rounded-xl pl-9 pr-3 py-2 focus:outline-none focus:border-amber-500 shadow-inner" />
-          <span class="absolute left-3 top-2 text-xs text-slate-500">🔍</span>
-        </div>
+      <!-- Live Search Box -->
+      <div class="relative w-full md:w-64 flex-shrink-0">
+        <input type="text" id="catalog-search-input" oninput="handleSearchInput()" placeholder="Search wine, SKU, tag..." class="w-full bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 rounded-xl pl-9 pr-3 py-2 focus:outline-none focus:border-amber-500 shadow-inner" />
+        <span class="absolute left-3 top-2 text-xs text-slate-500">🔍</span>
       </div>
     </div>
 
@@ -424,15 +413,15 @@
     function getCategoryBadge(category) {
       switch (category) {
         case 'Red':
-          return { text: '🍷 Red', class: 'bg-rose-950/80 text-rose-300 border-rose-700/80' };
+          return { text: '<span class="w-2 h-2 rounded-full bg-rose-500 inline-block shadow-sm"></span> Red', class: 'bg-rose-950/90 text-rose-300 border-rose-700/80' };
         case 'White':
-          return { text: '🥂 White', class: 'bg-amber-950/80 text-amber-300 border-amber-700/80' };
+          return { text: '<span class="w-2 h-2 rounded-full bg-slate-100 inline-block shadow-sm"></span> White', class: 'bg-amber-950/90 text-amber-300 border-amber-700/80' };
         case 'Rosé':
-          return { text: '🌸 Rosé', class: 'bg-pink-950/80 text-pink-300 border-pink-700/80' };
+          return { text: '<span class="w-2 h-2 rounded-full bg-pink-400 inline-block shadow-sm"></span> Rosé', class: 'bg-pink-950/90 text-pink-300 border-pink-700/80' };
         case 'Sparkling':
-          return { text: '✨ Sparkling', class: 'bg-cyan-950/80 text-cyan-300 border-cyan-700/80' };
+          return { text: '<span class="w-2 h-2 rounded-full bg-cyan-300 inline-block shadow-sm"></span> Sparkling', class: 'bg-cyan-950/90 text-cyan-300 border-cyan-700/80' };
         case 'Dessert':
-          return { text: '🍇 Dessert', class: 'bg-purple-950/80 text-purple-300 border-purple-700/80' };
+          return { text: '<span class="w-2 h-2 rounded-full bg-purple-400 inline-block shadow-sm"></span> Dessert', class: 'bg-purple-950/90 text-purple-300 border-purple-700/80' };
         default:
           return { text: category || 'Wine', class: 'bg-slate-800 text-slate-300 border-slate-700' };
       }
@@ -528,7 +517,6 @@
         const qty = cart[w.sku] || 0;
         const category = detectWineCategory(w);
         const categoryBadge = getCategoryBadge(category);
-        const colorTheme = getWineColorTheme(category);
         const tags = Array.isArray(w.tags) ? w.tags : (w.tags ? String(w.tags).split(',') : []);
 
         const stockQty = typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
@@ -549,29 +537,12 @@
 
         const tagsHtml = tags.map(t => `<span class="text-[9px] bg-slate-700/80 text-slate-300 border border-slate-600 px-1.5 py-0.5 rounded-full font-medium">#${t.trim()}</span>`).join('');
 
-        const headerMediaHtml = viewMode === 'color' 
-          ? `
-            <div class="relative z-10 flex flex-col items-center justify-center my-auto transition-transform duration-300 group-hover:scale-105">
-              <div class="w-16 h-16 rounded-full bg-gradient-to-br ${colorTheme.swatchGradient} ${colorTheme.glow} border-2 border-white/30 flex items-center justify-center shadow-2xl relative overflow-hidden">
-                <div class="absolute inset-0 bg-white/15 rounded-full blur-[1px]"></div>
-                <span class="text-3xl drop-shadow-lg relative z-10">${colorTheme.icon}</span>
-              </div>
-              <div class="mt-2.5 bg-slate-950/85 backdrop-blur-sm border ${colorTheme.borderColor} px-3 py-1 rounded-full text-[11px] font-bold text-white shadow-md flex items-center gap-1.5">
-                <span class="w-2.5 h-2.5 rounded-full ${colorTheme.dotBg} shadow-sm"></span>
-                <span>${colorTheme.name}</span>
-              </div>
-            </div>
-          `
-          : `
-            <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md z-10" />
-          `;
-
         return `
           <div class="bg-slate-800 border ${isLowStock ? 'border-amber-500/60' : 'border-slate-700/80'} rounded-2xl overflow-hidden shadow-lg flex flex-col hover:border-amber-500/50 transition group">
-            <div class="relative overflow-hidden cursor-pointer bg-gradient-to-b ${colorTheme.bgGradient} flex flex-col items-center justify-center h-48 p-3 border-b border-slate-700/50" onclick="window.openModal('${(w.imageUrl || w.image || '').replace(/'/g, "\\'")}', '${(w.name || '').replace(/'/g, "\\'")}', '${(w.sku || '').replace(/'/g, "\\'")}')">
-              ${headerMediaHtml}
-              <span class="absolute top-3 left-3 bg-slate-950/80 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded font-mono font-semibold z-20">${w.vintage || '2024'}</span>
-              <span class="absolute top-3 right-3 text-[11px] px-2 py-0.5 rounded font-mono font-bold border z-20 ${stockBadgeClass}">
+            <div class="relative overflow-hidden cursor-pointer bg-slate-900/60 flex items-center justify-center h-48 p-3 border-b border-slate-700/50" onclick="window.openModal('${(w.imageUrl || w.image || '').replace(/'/g, "\\'")}', '${(w.name || '').replace(/'/g, "\\'")}', '${(w.sku || '').replace(/'/g, "\\'")}')">
+              <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md" />
+              <span class="absolute top-3 left-3 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded font-mono font-semibold">${w.vintage || '2024'}</span>
+              <span class="absolute top-3 right-3 text-[11px] px-2 py-0.5 rounded font-mono font-bold border ${stockBadgeClass}">
                 ${stockBadgeText}
               </span>
             </div>
