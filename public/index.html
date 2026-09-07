@@ -681,6 +681,12 @@
     };
 
     window.submitOrder = async function() {
+      if (!auth.currentUser) {
+        showToast("Please sign in as a Field Evaluator to submit orders!", true);
+        if (window.showLoginModal) window.showLoginModal(false);
+        return;
+      }
+
       if (!selectedClient) {
         showToast("Select a Belgian client shop first!", true);
         return;

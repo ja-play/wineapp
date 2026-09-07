@@ -50,9 +50,13 @@ export async function getShops() {
       return snap.docs.map(d => ({ id: d.id, ...d.data() }));
     }
     
-    // Seed initial client shops if collection is empty
-    for (const shop of DEFAULT_BELGIAN_CLIENT_SHOPS) {
-      await setDoc(doc(db, 'shops', shop.id), shop);
+    // Seed initial client shops if collection is empty (only succeeds if authorized)
+    try {
+      for (const shop of DEFAULT_BELGIAN_CLIENT_SHOPS) {
+        await setDoc(doc(db, 'shops', shop.id), shop);
+      }
+    } catch (seedErr) {
+      // Ignored if current user is not admin
     }
     return DEFAULT_BELGIAN_CLIENT_SHOPS;
   } catch (err) {

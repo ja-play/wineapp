@@ -4,7 +4,9 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     function getUserRole() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+      return request.auth != null && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role
+        : 'evaluator';
     }
 
     function isAdmin() {
@@ -34,7 +36,8 @@ service cloud.firestore {
     // Wine Catalog Collection
     match /wines/{sku} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow create, delete: if isAdmin();
+      allow update: if isEvaluator() || isAdmin();
     }
 
     // Orders Collection
@@ -45,3 +48,4 @@ service cloud.firestore {
     }
   }
 }
+
