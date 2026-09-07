@@ -219,6 +219,9 @@
   <script type="module">
     import { db, auth, collection, doc, getDocs, updateDoc, onSnapshot, query, where, addDoc, serverTimestamp, onAuthStateChanged } from './firebase-config.js';
     import { getShops, getUserRole, setupAuthUI } from './auth-guard.js';
+    import { escapeHtml } from './utils/sanitizer.js';
+    import { calculateOrderTotals } from './utils/tax-calculator.js';
+    import { formatCurrency } from './app-config.js';
 
     let currentWines = [];
     let cart = {}; // sku -> qty
@@ -233,7 +236,7 @@
       const shopSelect = document.getElementById('client-shop-select');
       shopSelect.innerHTML = `
         <option value="" disabled selected>-- Select Belgian Customer Shop --</option>
-        ${availableShops.map(s => `<option value="${s.id}">${s.name} - ${s.vat}</option>`).join('')}
+        ${availableShops.map(s => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)} - ${escapeHtml(s.vat)}</option>`).join('')}
       `;
     }
     loadClientShops();
@@ -388,8 +391,6 @@
 
     function updateCartTotals() {
       let totalCases = 0;
-      let totalHT = 0;
-      let totalVidanges = 0;
       const itemsList = [];
 
       for (const [sku, qty] of Object.entries(cart)) {
@@ -400,11 +401,8 @@
         const priceHT = typeof wine.priceCaseHT === 'number' ? wine.priceCaseHT : (parseFloat((wine.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
         const deposit = wine.depositCase || 1.35;
         const lineHT = priceHT * qty;
-        const lineVidange = deposit * qty;
 
         totalCases += qty;
-        totalHT += lineHT;
-        totalVidanges += lineVidange;
 
         itemsList.push({
           sku: wine.sku,
@@ -412,20 +410,20 @@
           colis: wine.caseSize ? `1x${wine.caseSize}` : '1x6',
           qty: qty,
           priceHT: priceHT,
+          vidangeRate: deposit,
           montantHT: lineHT,
           tvaRate: 21
         });
       }
 
-      const totalTVA = totalHT * 0.21;
-      const totalTTC = totalHT + totalVidanges + totalTVA;
+      const totals = calculateOrderTotals(itemsList);
 
       document.getElementById('cart-case-count').textContent = totalCases;
-      document.getElementById('cart-subtotal-ht').textContent = `€${totalHT.toFixed(2)}`;
-      document.getElementById('cart-total-vidanges').textContent = `€${totalVidanges.toFixed(2)}`;
-      document.getElementById('cart-total-tva').textContent = `€${totalTVA.toFixed(2)}`;
-      document.getElementById('cart-total-ttc').textContent = `€${totalTTC.toFixed(2)}`;
-      document.getElementById('cart-grand-ttc').textContent = `€${totalTTC.toFixed(2)}`;
+      document.getElementById('cart-subtotal-ht').textContent = `€${totals.totalHT.toFixed(2)}`;
+      document.getElementById('cart-total-vidanges').textContent = `€${totals.totalVidanges.toFixed(2)}`;
+      document.getElementById('cart-total-tva').textContent = `€${totals.totalTVA.toFixed(2)}`;
+      document.getElementById('cart-total-ttc').textContent = `€${totals.totalTTC.toFixed(2)}`;
+      document.getElementById('cart-grand-ttc').textContent = `€${totals.totalTTC.toFixed(2)}`;
 
       const submitBtn = document.getElementById('submit-order-btn');
       submitBtn.disabled = !selectedClient || totalCases === 0;

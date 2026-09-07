@@ -439,6 +439,8 @@
   <script type="module">
     import { db, storage, auth, collection, getDocs, setDoc, doc, deleteDoc, updateDoc, onSnapshot, ref, uploadBytes, getDownloadURL, onAuthStateChanged } from './firebase-config.js';
     import { getUserRole, updateUserRole, setupAuthUI } from './auth-guard.js';
+    import { escapeHtml } from './utils/sanitizer.js';
+    import { calculateOrderTotals } from './utils/tax-calculator.js';
 
     let currentWines = [];
     let currentOrders = [];

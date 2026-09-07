@@ -29,13 +29,9 @@ import {
   signOut, 
   onAuthStateChanged 
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { FIREBASE_APP_CONFIG } from './app-config.js';
 
-// Fetch hosting config if available, or use project config
-let firebaseConfig = {
-  projectId: "wine-catalog-belgium",
-  authDomain: "wine-catalog-belgium.firebaseapp.com",
-  storageBucket: "wine-catalog-belgium.appspot.com"
-};
+let firebaseConfig = { ...FIREBASE_APP_CONFIG };
 
 try {
   const initRes = await fetch('/__/firebase/init.json');
@@ -44,11 +40,10 @@ try {
     firebaseConfig = { ...firebaseConfig, ...hostedConfig };
   }
 } catch (e) {
-  console.log("Not running on Firebase Hosting init endpoint, using default config");
+  console.log("Not running on Firebase Hosting init endpoint, using central config");
 }
 
-// Force the CORS-configured Google Cloud Storage bucket domain
-firebaseConfig.storageBucket = "wine-catalog-belgium.appspot.com";
+firebaseConfig.storageBucket = FIREBASE_APP_CONFIG.storageBucket;
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -82,4 +77,3 @@ export {
   signOut,
   onAuthStateChanged
 };
-

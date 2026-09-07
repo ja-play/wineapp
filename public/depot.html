@@ -202,6 +202,8 @@
   <script type="module">
     import { db, auth, collection, doc, updateDoc, onSnapshot, query, orderBy, onAuthStateChanged } from './firebase-config.js';
     import { getUserRole, setupAuthUI } from './auth-guard.js';
+    import { escapeHtml } from './utils/sanitizer.js';
+    import { calculateOrderTotals } from './utils/tax-calculator.js';
 
     let snapshotUnsubscribe = null;
     let currentOrders = [];
