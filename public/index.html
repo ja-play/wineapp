@@ -351,23 +351,71 @@
     let currentUser = null;
     let availableShops = [];
     let evaluatorOrders = [];
+    let shopsUnsubscribe = null;
 
-    // Populate Client Selector dynamically from Firestore
-    async function loadClientShops() {
-      availableShops = await getShops();
+    // Populate Client Selector dynamically with real-time Firestore listener
+    function subscribeClientShops(user) {
       const shopSelect = document.getElementById('client-shop-select');
-      shopSelect.innerHTML = `
-        <option value="" disabled selected>-- Select Belgian Customer Shop --</option>
-        ${availableShops.map(s => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)} - ${escapeHtml(s.vat)}</option>`).join('')}
-      `;
+      const infoBox = document.getElementById('selected-client-info');
+
+      if (shopsUnsubscribe) {
+        shopsUnsubscribe();
+        shopsUnsubscribe = null;
+      }
+
+      if (!user) {
+        availableShops = [];
+        selectedClient = null;
+        if (shopSelect) {
+          shopSelect.disabled = true;
+          shopSelect.innerHTML = `<option value="" disabled selected>-- Sign in to select Customer Shop --</option>`;
+        }
+        if (infoBox) {
+          infoBox.innerHTML = `<span class="text-amber-300/90 font-medium">⚠️ Sign in as Field Evaluator or Admin to select shop client</span>`;
+        }
+        renderCatalog(currentWines);
+        updateCartTotals();
+        return;
+      }
+
+      if (shopSelect) shopSelect.disabled = false;
+
+      try {
+        shopsUnsubscribe = onSnapshot(collection(db, 'shops'), async (snapshot) => {
+          if (!snapshot.empty) {
+            availableShops = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+          } else {
+            availableShops = await getShops();
+          }
+
+          if (shopSelect) {
+            const currentVal = shopSelect.value;
+            shopSelect.innerHTML = `
+              <option value="" disabled ${!currentVal ? 'selected' : ''}>-- Select Belgian Customer Shop --</option>
+              ${availableShops.map(s => `<option value="${escapeHtml(s.id)}" ${s.id === currentVal ? 'selected' : ''}>${escapeHtml(s.name)} - ${escapeHtml(s.vat)}</option>`).join('')}
+            `;
+          }
+        }, async (err) => {
+          console.warn("Realtime shops subscription fallback:", err);
+          availableShops = await getShops();
+          if (shopSelect) {
+            shopSelect.innerHTML = `
+              <option value="" disabled selected>-- Select Belgian Customer Shop --</option>
+              ${availableShops.map(s => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)} - ${escapeHtml(s.vat)}</option>`).join('')}
+            `;
+          }
+        });
+      } catch (e) {
+        console.error("Failed to subscribe to shops:", e);
+      }
     }
-    loadClientShops();
 
     // Initialize Auth UI Guard
     onAuthStateChanged(auth, async (user) => {
       currentUser = user;
       const role = await getUserRole(user);
       setupAuthUI(user, role, 'auth-bar-container');
+      subscribeClientShops(user);
     });
 
     // Client Selector Listener

@@ -43,6 +43,9 @@ const DEFAULT_BELGIAN_CLIENT_SHOPS = [
 
 // Fetch client shops dynamically from Firestore 'shops' collection (seeds default if empty)
 export async function getShops() {
+  if (!auth.currentUser) {
+    return [];
+  }
   try {
     const shopsRef = collection(db, 'shops');
     const snap = await getDocs(shopsRef);
