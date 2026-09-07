@@ -6,8 +6,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aurellion Wine - Evaluator Field Ordering</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍷</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    :root {
+      --burgundy-deep: #140204;
+      --burgundy-card: rgba(34, 5, 9, 0.86);
+      --gold-primary: #D4AF37;
+      --gold-light: #F3E5AB;
+      --gold-dark: #997312;
+    }
+
+    body {
+      background-color: #120204;
+      background-image: 
+        linear-gradient(180deg, rgba(18, 2, 4, 0.88) 0%, rgba(42, 6, 11, 0.75) 45%, rgba(10, 1, 2, 0.96) 100%),
+        url('images/vineyard_bg.jpg');
+      background-size: cover;
+      background-position: center bottom;
+      background-attachment: fixed;
+      color: #F5EAE0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .font-serif-title {
+      font-family: 'Cinzel', serif;
+    }
+
+    .gold-gradient-text {
+      background: linear-gradient(135deg, #FFF6D6 0%, #F3E5AB 35%, #D4AF37 70%, #B88E1C 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 0.04em;
+    }
+
+    .card-theme {
+      background: rgba(32, 5, 9, 0.85) !important;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(212, 175, 55, 0.32) !important;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(243, 229, 171, 0.12) !important;
+    }
+
+    .card-theme-hover {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card-theme-hover:hover {
+      border-color: rgba(212, 175, 55, 0.75) !important;
+      box-shadow: 0 16px 45px rgba(212, 175, 55, 0.22), inset 0 1px 0 rgba(243, 229, 171, 0.25) !important;
+      transform: translateY(-2px);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #A67C13 100%) !important;
+      color: #140204 !important;
+      font-weight: 800 !important;
+      border: 1px solid #FFF2C6 !important;
+      box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35) !important;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .btn-gold:hover {
+      filter: brightness(1.12);
+      box-shadow: 0 6px 24px rgba(212, 175, 55, 0.55) !important;
+      transform: scale(1.01);
+    }
+
+    .header-theme {
+      background: rgba(16, 2, 4, 0.94) !important;
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(212, 175, 55, 0.35) !important;
+      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.8) !important;
+    }
+
+    .input-theme {
+      background: rgba(20, 3, 5, 0.9) !important;
+      border: 1px solid rgba(212, 175, 55, 0.3) !important;
+      color: #F3E5AB !important;
+    }
+    .input-theme:focus {
+      border-color: #D4AF37 !important;
+      box-shadow: 0 0 12px rgba(212, 175, 55, 0.3) !important;
+      outline: none;
+    }
+
     @media print {
       @page {
         size: A4 portrait;
@@ -48,20 +133,26 @@
   </style>
 </head>
 
-<body class="bg-slate-900 text-slate-100 font-sans antialiased min-h-screen flex flex-col pb-36">
+<body class="antialiased min-h-screen flex flex-col pb-36">
 
   <!-- Header Navigation -->
-  <header class="bg-slate-950 text-white shadow-lg border-b border-slate-800 sticky top-0 z-40">
+  <header class="header-theme text-white sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
       <div class="flex items-center gap-3">
-        <a href="index.html" class="text-amber-500 hover:text-amber-400 font-bold text-xl tracking-tight flex items-center gap-2">
-          <span>🍷 Aurellion Wine</span>
+        <a href="index.html" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#400B12] to-[#1C0407] border border-[#D4AF37]/60 flex items-center justify-center shadow-lg group-hover:border-[#D4AF37]">
+            <span class="text-xl">🍷</span>
+          </div>
+          <div>
+            <div class="font-serif-title font-black text-lg gold-gradient-text tracking-wide leading-none">AURELLION</div>
+            <div class="text-[9px] text-[#C8B69B] tracking-[0.25em] uppercase font-semibold mt-0.5">WINE DISTRIBUTION & IMPORT</div>
+          </div>
         </a>
-        <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs px-2.5 py-1 rounded-full font-semibold">Field Ordering</span>
+        <span class="bg-[#3D080E] text-[#F3E5AB] border border-[#D4AF37]/40 text-xs px-2.5 py-0.5 rounded-full font-semibold">Field Ordering</span>
       </div>
 
       <div class="flex items-center gap-3">
-        <button onclick="openEvaluatorOrdersModal()" class="bg-slate-800 hover:bg-slate-700 text-emerald-300 text-xs px-3 py-1.5 rounded-lg border border-slate-700 font-medium transition flex items-center gap-1.5">
+        <button onclick="openEvaluatorOrdersModal()" class="card-theme hover:bg-[#3D0A11] text-[#F3E5AB] text-xs px-3.5 py-2 rounded-xl font-medium transition flex items-center gap-1.5 shadow">
           <span>📋 My Placed Orders</span>
         </button>
         <div id="auth-bar-container" class="flex items-center gap-2">
@@ -72,16 +163,16 @@
   </header>
 
   <!-- Client Shop Selector Sticky Sub-Header -->
-  <div id="client-shop-bar" class="bg-slate-800 border-b border-slate-700/80 px-4 py-3 sticky top-[57px] z-30 shadow-md">
+  <div id="client-shop-bar" class="header-theme px-4 py-3 sticky top-[65px] z-30 shadow-md">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
       <div class="flex items-center gap-2 w-full sm:w-auto">
-        <span class="text-xs font-bold uppercase tracking-wider text-amber-400 whitespace-nowrap">🏪 Client Shop:</span>
-        <select id="client-shop-select" class="w-full sm:w-80 bg-slate-900 border border-amber-500/40 text-white text-xs font-semibold px-3 py-2 rounded-xl focus:outline-none focus:border-amber-400 cursor-pointer shadow">
+        <span class="text-xs font-bold uppercase tracking-wider gold-gradient-text whitespace-nowrap">🏪 Client Shop:</span>
+        <select id="client-shop-select" class="w-full sm:w-80 input-theme text-xs font-semibold px-3 py-2 rounded-xl cursor-pointer shadow">
           <option value="" disabled selected>-- Loading Client Shops... --</option>
         </select>
       </div>
 
-      <div id="selected-client-info" class="text-xs text-slate-400 flex items-center gap-3">
+      <div id="selected-client-info" class="text-xs text-[#C8B69B] flex items-center gap-3">
         <span class="text-rose-400 font-medium">⚠️ Select a shop client to enable order placement</span>
       </div>
     </div>
@@ -90,33 +181,33 @@
   <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
 
     <!-- Category & Search Filter Bar -->
-    <div id="catalog-filter-bar" class="mb-6 bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 shadow-xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+    <div id="catalog-filter-bar" class="mb-6 card-theme p-4 rounded-2xl shadow-xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
       <!-- Category Filter Pills -->
       <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
-        <button onclick="setCategoryFilter('all')" id="cat-pill-all" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-amber-500 text-slate-950 shadow flex items-center gap-1.5">
+        <button onclick="setCategoryFilter('all')" id="cat-pill-all" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap btn-gold shadow flex items-center gap-1.5">
           <span>🍷</span> All Wines (<span id="cat-count-all">0</span>)
         </button>
-        <button onclick="setCategoryFilter('Red')" id="cat-pill-Red" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700 flex items-center gap-1.5">
+        <button onclick="setCategoryFilter('Red')" id="cat-pill-Red" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
           <span class="w-3 h-3 rounded-full bg-[#CC0000] border border-red-400 inline-block shadow-sm"></span> Red (<span id="cat-count-Red">0</span>)
         </button>
-        <button onclick="setCategoryFilter('White')" id="cat-pill-White" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700 flex items-center gap-1.5">
+        <button onclick="setCategoryFilter('White')" id="cat-pill-White" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
           <span class="w-3 h-3 rounded-full bg-amber-100 border border-amber-300 inline-block shadow-sm"></span> White (<span id="cat-count-White">0</span>)
         </button>
-        <button onclick="setCategoryFilter('Rosé')" id="cat-pill-Rosé" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700 flex items-center gap-1.5">
+        <button onclick="setCategoryFilter('Rosé')" id="cat-pill-Rosé" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
           <span class="w-3 h-3 rounded-full bg-[#FFB3DA] border border-pink-400 inline-block shadow-sm"></span> Rosé (<span id="cat-count-Rosé">0</span>)
         </button>
-        <button onclick="setCategoryFilter('Sparkling')" id="cat-pill-Sparkling" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700 flex items-center gap-1.5">
+        <button onclick="setCategoryFilter('Sparkling')" id="cat-pill-Sparkling" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
           <span>✨</span> Sparkling (<span id="cat-count-Sparkling">0</span>)
         </button>
-        <button onclick="setCategoryFilter('Dessert')" id="cat-pill-Dessert" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700 flex items-center gap-1.5">
+        <button onclick="setCategoryFilter('Dessert')" id="cat-pill-Dessert" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
           <span class="w-3 h-3 rounded-full bg-purple-500 border border-purple-400 inline-block shadow-sm"></span> Dessert (<span id="cat-count-Dessert">0</span>)
         </button>
       </div>
 
       <!-- Live Search Box -->
       <div class="relative w-full md:w-64 flex-shrink-0">
-        <input type="text" id="catalog-search-input" oninput="handleSearchInput()" placeholder="Search wine, SKU, tag..." class="w-full bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 rounded-xl pl-9 pr-3 py-2 focus:outline-none focus:border-amber-500 shadow-inner" />
-        <span class="absolute left-3 top-2 text-xs text-slate-500">🔍</span>
+        <input type="text" id="catalog-search-input" oninput="handleSearchInput()" placeholder="Search wine, SKU, tag..." class="w-full input-theme text-xs placeholder-[#C8B69B]/60 rounded-xl pl-9 pr-3 py-2 shadow-inner" />
+        <span class="absolute left-3 top-2 text-xs text-[#D4AF37]">🔍</span>
       </div>
     </div>
 
@@ -138,25 +229,25 @@
   </main>
 
   <!-- Image Lightbox Modal -->
-  <div id="image-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0" onclick="closeModal(event)">
-    <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center justify-center bg-slate-900/90 p-4 sm:p-6 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden" onclick="event.stopPropagation()">
-      <button onclick="closeModal()" class="absolute top-3 right-3 text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-700 p-2 rounded-full transition z-10">✕</button>
+  <div id="image-modal" class="fixed inset-0 bg-[#0F0204]/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0" onclick="closeModal(event)">
+    <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center justify-center card-theme p-4 sm:p-6 rounded-2xl shadow-2xl overflow-hidden" onclick="event.stopPropagation()">
+      <button onclick="closeModal()" class="absolute top-3 right-3 text-[#F3E5AB] hover:text-white bg-[#2A060B] border border-[#D4AF37]/40 p-2 rounded-full transition z-10">✕</button>
       <div class="w-full flex justify-center items-center overflow-hidden rounded-xl max-h-[70vh]">
         <img id="modal-img" src="" alt="" class="max-h-[70vh] w-auto max-w-full object-contain drop-shadow-2xl" />
       </div>
       <div class="mt-4 text-center">
-        <h3 id="modal-title" class="text-xl font-bold text-amber-400"></h3>
-        <p id="modal-caption" class="text-xs text-slate-400 font-mono mt-1"></p>
+        <h3 id="modal-title" class="font-serif-title text-xl font-bold gold-gradient-text"></h3>
+        <p id="modal-caption" class="text-xs text-[#C8B69B] font-mono mt-1"></p>
       </div>
     </div>
   </div>
 
   <!-- Evaluator Orders History Modal -->
-  <div id="evaluator-orders-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="relative max-w-3xl w-full bg-slate-900 border border-slate-700 rounded-2xl p-6 shadow-2xl my-8">
-      <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-6">
-        <h3 class="text-xl font-bold text-emerald-400">📋 My Placed Orders & Delivery Notes</h3>
-        <button onclick="closeEvaluatorOrdersModal()" class="text-slate-400 hover:text-white p-1">✕</button>
+  <div id="evaluator-orders-modal" class="fixed inset-0 bg-[#0F0204]/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="relative max-w-3xl w-full card-theme rounded-2xl p-6 shadow-2xl my-8">
+      <div class="flex justify-between items-center pb-4 border-b border-[#D4AF37]/30 mb-6">
+        <h3 class="font-serif-title text-xl font-bold gold-gradient-text">📋 My Placed Orders & Delivery Notes</h3>
+        <button onclick="closeEvaluatorOrdersModal()" class="text-[#F3E5AB] hover:text-white p-1">✕</button>
       </div>
       <div id="evaluator-orders-list" class="space-y-4 max-h-[60vh] overflow-y-auto">
         <!-- Order cards injected dynamically -->
@@ -165,15 +256,15 @@
   </div>
 
   <!-- Printable Delivery Note Modal -->
-  <div id="delivery-note-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+  <div id="delivery-note-modal" class="fixed inset-0 bg-[#0F0204]/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
     <div class="relative max-w-4xl w-full my-8">
       <div class="flex justify-between items-center mb-4 no-print">
-        <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">📄 Belgian Note d'Envoi Preview</span>
+        <span class="text-xs font-bold gold-gradient-text uppercase tracking-wider">📄 Belgian Note d'Envoi Preview</span>
         <div class="flex items-center gap-3">
-          <button onclick="window.print()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+          <button onclick="window.print()" class="btn-gold font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
             🖨️ Print Delivery Note (A4)
           </button>
-          <button onclick="document.getElementById('delivery-note-modal').classList.add('hidden')" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl border border-slate-700 transition">
+          <button onclick="document.getElementById('delivery-note-modal').classList.add('hidden')" class="card-theme text-[#F3E5AB] hover:text-white font-bold text-xs px-4 py-2.5 rounded-xl border border-[#D4AF37]/40 transition">
             ✕ Close
           </button>
         </div>
@@ -188,54 +279,54 @@
   </div>
 
   <!-- Sticky Order Review Drawer (Fixed Bottom) -->
-  <div id="order-drawer" class="fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 border-t border-slate-800 backdrop-blur-lg shadow-2xl transition-transform transform translate-y-0">
+  <div id="order-drawer" class="fixed bottom-0 left-0 right-0 z-40 header-theme backdrop-blur-xl shadow-2xl transition-transform transform translate-y-0">
     <div class="max-w-7xl mx-auto px-4 py-3">
       <!-- Drawer Header Bar -->
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-          <div class="w-10 h-10 bg-amber-500/20 border border-amber-500/40 rounded-xl flex items-center justify-center text-amber-400 font-bold">
+          <div class="w-10 h-10 bg-[#3D0A11] border border-[#D4AF37]/50 rounded-xl flex items-center justify-center text-[#F3E5AB] font-bold shadow-lg">
             🛒
           </div>
           <div>
-            <div class="text-xs text-slate-400">Order Summary (<span id="cart-case-count">0</span> cases)</div>
+            <div class="text-xs text-[#C8B69B]">Order Summary (<span id="cart-case-count">0</span> cases)</div>
             <div class="text-lg font-extrabold text-white">
-              Total TTC: <span id="cart-total-ttc" class="text-amber-400">€0.00</span>
+              Total TTC: <span id="cart-total-ttc" class="gold-gradient-text font-serif-title">€0.00</span>
             </div>
           </div>
         </div>
 
         <div class="flex items-center gap-3">
-          <button onclick="toggleCartDetail()" class="text-xs text-slate-300 hover:text-white bg-slate-800 px-3 py-2 rounded-lg border border-slate-700 font-semibold transition">
+          <button onclick="toggleCartDetail()" class="text-xs text-[#F3E5AB] hover:text-white bg-[#2A060B] px-3.5 py-2 rounded-xl border border-[#D4AF37]/40 font-semibold transition">
             <span id="toggle-cart-text">Show Line Items ▲</span>
           </button>
-          <button id="submit-order-btn" onclick="submitOrder()" disabled class="bg-amber-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:border-slate-700 disabled:cursor-not-allowed hover:bg-amber-400 text-slate-950 font-bold text-sm px-6 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+          <button id="submit-order-btn" onclick="submitOrder()" disabled class="btn-gold disabled:opacity-40 disabled:cursor-not-allowed font-extrabold text-sm px-6 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
             <span>Submit Wholesale Order</span>
           </button>
         </div>
       </div>
 
       <!-- Expandable Cart Breakdown Panel -->
-      <div id="cart-detail-panel" class="hidden mt-4 pt-4 border-t border-slate-800 max-h-60 overflow-y-auto">
+      <div id="cart-detail-panel" class="hidden mt-4 pt-4 border-t border-[#D4AF37]/30 max-h-60 overflow-y-auto">
         <div id="cart-items-list" class="space-y-2 mb-4">
           <!-- Cart lines injected here -->
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-900/80 p-3 rounded-xl border border-slate-800 text-xs">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#180305]/90 p-3 rounded-xl border border-[#D4AF37]/30 text-xs">
           <div>
-            <div class="text-slate-400">Subtotal H.TVA</div>
-            <div id="cart-subtotal-ht" class="font-bold text-slate-200">€0.00</div>
+            <div class="text-[#C8B69B]">Subtotal H.TVA</div>
+            <div id="cart-subtotal-ht" class="font-bold text-[#F5EAE0]">€0.00</div>
           </div>
           <div>
-            <div class="text-slate-400">Vidanges Consignées</div>
-            <div id="cart-total-vidanges" class="font-bold text-amber-400">€0.00</div>
+            <div class="text-[#C8B69B]">Vidanges Consignées</div>
+            <div id="cart-total-vidanges" class="font-bold text-[#F3E5AB]">€0.00</div>
           </div>
           <div>
-            <div class="text-slate-400">Belgian VAT (21%)</div>
-            <div id="cart-total-tva" class="font-bold text-slate-200">€0.00</div>
+            <div class="text-[#C8B69B]">Belgian VAT (21%)</div>
+            <div id="cart-total-tva" class="font-bold text-[#F5EAE0]">€0.00</div>
           </div>
           <div>
-            <div class="text-slate-400 font-semibold">Grand Total TTC</div>
-            <div id="cart-grand-ttc" class="font-extrabold text-amber-400">€0.00</div>
+            <div class="text-[#C8B69B] font-semibold">Grand Total TTC</div>
+            <div id="cart-grand-ttc" class="font-extrabold gold-gradient-text text-sm font-serif-title">€0.00</div>
           </div>
         </div>
       </div>
@@ -528,61 +619,61 @@
         const isClientSelected = Boolean(selectedClient);
 
         const stockBadgeClass = isLowStock 
-          ? 'bg-amber-500/30 text-amber-300 border-amber-500/60 animate-pulse font-extrabold' 
-          : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40';
+          ? 'bg-rose-950/80 text-rose-300 border-rose-600/80 animate-pulse font-extrabold' 
+          : 'bg-[#2D070D] text-[#F3E5AB] border-[#D4AF37]/50';
 
         const stockBadgeText = isLowStock 
           ? `⚠️ Low Stock: ${stockQty} Cases left` 
           : `In Stock: ${stockQty} Cases`;
 
-        const tagsHtml = tags.map(t => `<span class="text-[9px] bg-slate-700/80 text-slate-300 border border-slate-600 px-1.5 py-0.5 rounded-full font-medium">#${t.trim()}</span>`).join('');
+        const tagsHtml = tags.map(t => `<span class="text-[9px] bg-[#2A060B] text-[#F3E5AB] border border-[#D4AF37]/30 px-2 py-0.5 rounded-full font-medium">#${t.trim()}</span>`).join('');
 
         return `
-          <div class="bg-slate-800 border ${isLowStock ? 'border-amber-500/60' : 'border-slate-700/80'} rounded-2xl overflow-hidden shadow-lg flex flex-col hover:border-amber-500/50 transition group">
-            <div class="relative overflow-hidden cursor-pointer bg-slate-900/60 flex items-center justify-center h-48 p-3 border-b border-slate-700/50" onclick="window.openModal('${(w.imageUrl || w.image || '').replace(/'/g, "\\'")}', '${(w.name || '').replace(/'/g, "\\'")}', '${(w.sku || '').replace(/'/g, "\\'")}')">
-              <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md" />
-              <span class="absolute top-3 left-3 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded font-mono font-semibold">${w.vintage || '2024'}</span>
-              <span class="absolute top-3 right-3 text-[11px] px-2 py-0.5 rounded font-mono font-bold border ${stockBadgeClass}">
+          <div class="card-theme card-theme-hover rounded-2xl overflow-hidden flex flex-col group">
+            <div class="relative overflow-hidden cursor-pointer bg-[#140204]/90 flex items-center justify-center h-52 p-4 border-b border-[#D4AF37]/20" onclick="window.openModal('${(w.imageUrl || w.image || '').replace(/'/g, "\\'")}', '${(w.name || '').replace(/'/g, "\\'")}', '${(w.sku || '').replace(/'/g, "\\'")}')">
+              <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-xl" />
+              <span class="absolute top-3 left-3 bg-[#2D070D]/90 text-[#F3E5AB] border border-[#D4AF37]/40 text-xs px-2.5 py-0.5 rounded font-mono font-semibold">${w.vintage || '2024'}</span>
+              <span class="absolute top-3 right-3 text-[11px] px-2.5 py-0.5 rounded font-mono font-bold border ${stockBadgeClass}">
                 ${stockBadgeText}
               </span>
             </div>
 
-            <div class="p-4 flex flex-col flex-grow">
-              <div class="flex justify-between items-start mb-1">
-                <h3 class="text-base font-bold text-white leading-snug">${w.name}</h3>
+            <div class="p-5 flex flex-col flex-grow">
+              <div class="flex justify-between items-start mb-1.5">
+                <h3 class="font-serif-title text-base font-extrabold gold-gradient-text leading-snug">${w.name}</h3>
               </div>
-              <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <span class="text-xs font-mono text-slate-400">${w.sku}</span>
-                <span title="${categoryBadge.title}" class="border px-2 py-1 rounded-full font-bold flex items-center justify-center ${categoryBadge.class}">${categoryBadge.html}</span>
-                <span class="text-[10px] bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded font-bold">${caseConfig}</span>
+              <div class="flex items-center gap-2 mb-3 flex-wrap">
+                <span class="text-xs font-mono text-[#C8B69B]">${w.sku}</span>
+                <span title="${categoryBadge.title}" class="border px-2 py-0.5 rounded-full text-xs font-bold flex items-center justify-center bg-[#230508] border-[#D4AF37]/30 text-[#F3E5AB]">${categoryBadge.html}</span>
+                <span class="text-[10px] bg-[#2A060B] text-[#F3E5AB] border border-[#D4AF37]/30 px-2 py-0.5 rounded font-bold">${caseConfig}</span>
               </div>
-              ${tagsHtml ? `<div class="flex items-center gap-1 flex-wrap mb-2">${tagsHtml}</div>` : ''}
-              <p class="text-xs text-slate-400 mb-3 line-clamp-2">${w.description || ''}</p>
+              ${tagsHtml ? `<div class="flex items-center gap-1 flex-wrap mb-3">${tagsHtml}</div>` : ''}
+              <p class="text-xs text-[#C8B69B]/80 mb-4 line-clamp-2">${w.description || ''}</p>
 
-              <div class="mt-auto border-t border-slate-700/60 pt-2.5 space-y-1 text-xs">
-                <div class="flex justify-between text-slate-300">
+              <div class="mt-auto border-t border-[#D4AF37]/20 pt-3 space-y-1.5 text-xs">
+                <div class="flex justify-between text-[#C8B69B]">
                   <span>Bottle Price (HT):</span>
-                  <span class="font-bold text-slate-200">€${bottlePriceHT.toFixed(2)}</span>
+                  <span class="font-bold text-[#F5EAE0]">€${bottlePriceHT.toFixed(2)}</span>
                 </div>
-                <div class="flex justify-between text-slate-300">
+                <div class="flex justify-between text-[#C8B69B]">
                   <span>Case Price (HT):</span>
-                  <span class="font-bold text-amber-400">€${casePriceHT.toFixed(2)}</span>
+                  <span class="font-bold text-[#F3E5AB] text-sm">€${casePriceHT.toFixed(2)}</span>
                 </div>
-                <div class="flex justify-between text-[11px] text-amber-300/80 italic">
+                <div class="flex justify-between text-[11px] text-[#D4AF37]/90 italic">
                   <span>Vidange Consignée:</span>
                   <span>+€${depositCase.toFixed(2)} / case</span>
                 </div>
               </div>
 
               <!-- Quantity Selector -->
-              <div class="mt-4 pt-3 border-t border-slate-700/60 flex items-center justify-between">
-                <span class="text-xs text-slate-400 font-semibold">Cases:</span>
-                <div class="flex items-center gap-2 bg-slate-900 border border-slate-700 rounded-xl p-1">
-                  <button onclick="updateQty('${w.sku}', -1)" ${!isClientSelected || qty <= 0 ? 'disabled' : ''} class="w-8 h-8 rounded-lg bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-slate-700 text-white font-bold text-sm transition flex items-center justify-center">
+              <div class="mt-4 pt-3 border-t border-[#D4AF37]/20 flex items-center justify-between">
+                <span class="text-xs text-[#C8B69B] font-semibold">Cases:</span>
+                <div class="flex items-center gap-2 bg-[#140204] border border-[#D4AF37]/40 rounded-xl p-1 shadow-inner">
+                  <button onclick="updateQty('${w.sku}', -1)" ${!isClientSelected || qty <= 0 ? 'disabled' : ''} class="w-8 h-8 rounded-lg bg-[#2A060B] disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/30 font-bold text-sm transition flex items-center justify-center">
                     -
                   </button>
-                  <span class="w-7 text-center text-sm font-extrabold text-amber-400 font-mono">${qty}</span>
-                  <button onclick="updateQty('${w.sku}', 1)" ${!isClientSelected || qty >= stockQty ? 'disabled' : ''} class="w-8 h-8 rounded-lg bg-amber-500 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-amber-400 text-slate-950 font-bold text-sm transition flex items-center justify-center">
+                  <span class="w-7 text-center text-sm font-extrabold gold-gradient-text font-mono">${qty}</span>
+                  <button onclick="updateQty('${w.sku}', 1)" ${!isClientSelected || qty >= stockQty ? 'disabled' : ''} class="w-8 h-8 rounded-lg btn-gold disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 font-bold text-sm transition flex items-center justify-center">
                     +
                   </button>
                 </div>
