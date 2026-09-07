@@ -93,23 +93,23 @@
     <div id="catalog-filter-bar" class="mb-6 bg-slate-800/80 p-4 rounded-2xl border border-slate-700/80 shadow-xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
       <!-- Category Filter Pills -->
       <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
-        <button onclick="setCategoryFilter('all')" id="cat-pill-all" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-amber-500 text-slate-950 shadow">
-          🍷 All Wines (<span id="cat-count-all">0</span>)
+        <button onclick="setCategoryFilter('all')" id="cat-pill-all" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-amber-500 text-slate-950 shadow flex items-center gap-1.5">
+          <span>🍷</span> All Wines (<span id="cat-count-all">0</span>)
         </button>
-        <button onclick="setCategoryFilter('Red')" id="cat-pill-Red" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700">
-          🍷 Red (<span id="cat-count-Red">0</span>)
+        <button onclick="setCategoryFilter('Red')" id="cat-pill-Red" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700 flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-rose-500 inline-block shadow-sm"></span> Red (<span id="cat-count-Red">0</span>)
         </button>
-        <button onclick="setCategoryFilter('White')" id="cat-pill-White" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700">
-          🥂 White (<span id="cat-count-White">0</span>)
+        <button onclick="setCategoryFilter('White')" id="cat-pill-White" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700 flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-slate-100 inline-block shadow-sm"></span> White (<span id="cat-count-White">0</span>)
         </button>
-        <button onclick="setCategoryFilter('Rosé')" id="cat-pill-Rosé" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700">
-          🌸 Rosé (<span id="cat-count-Rosé">0</span>)
+        <button onclick="setCategoryFilter('Rosé')" id="cat-pill-Rosé" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700 flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-pink-400 inline-block shadow-sm"></span> Rosé (<span id="cat-count-Rosé">0</span>)
         </button>
-        <button onclick="setCategoryFilter('Sparkling')" id="cat-pill-Sparkling" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700">
-          ✨ Sparkling (<span id="cat-count-Sparkling">0</span>)
+        <button onclick="setCategoryFilter('Sparkling')" id="cat-pill-Sparkling" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700 flex items-center gap-1.5">
+          <span>✨</span> Sparkling (<span id="cat-count-Sparkling">0</span>)
         </button>
-        <button onclick="setCategoryFilter('Dessert')" id="cat-pill-Dessert" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700">
-          🍇 Dessert (<span id="cat-count-Dessert">0</span>)
+        <button onclick="setCategoryFilter('Dessert')" id="cat-pill-Dessert" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700 flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-purple-400 inline-block shadow-sm"></span> Dessert (<span id="cat-count-Dessert">0</span>)
         </button>
       </div>
 
@@ -413,17 +413,17 @@
     function getCategoryBadge(category) {
       switch (category) {
         case 'Red':
-          return { text: '<span class="w-2 h-2 rounded-full bg-rose-500 inline-block shadow-sm"></span> Red', class: 'bg-rose-950/90 text-rose-300 border-rose-700/80' };
+          return { html: '<span class="w-3 h-3 rounded-full bg-rose-600 inline-block shadow-sm"></span>', class: 'bg-rose-950/80 border-rose-800/80', title: 'Red Wine' };
         case 'White':
-          return { text: '<span class="w-2 h-2 rounded-full bg-slate-100 inline-block shadow-sm"></span> White', class: 'bg-amber-950/90 text-amber-300 border-amber-700/80' };
+          return { html: '<span class="w-3 h-3 rounded-full bg-slate-100 inline-block shadow-sm"></span>', class: 'bg-slate-900 border-slate-700', title: 'White Wine' };
         case 'Rosé':
-          return { text: '<span class="w-2 h-2 rounded-full bg-pink-400 inline-block shadow-sm"></span> Rosé', class: 'bg-pink-950/90 text-pink-300 border-pink-700/80' };
+          return { html: '<span class="w-3 h-3 rounded-full bg-pink-400 inline-block shadow-sm"></span>', class: 'bg-pink-950/80 border-pink-800/80', title: 'Rosé Wine' };
         case 'Sparkling':
-          return { text: '<span class="w-2 h-2 rounded-full bg-cyan-300 inline-block shadow-sm"></span> Sparkling', class: 'bg-cyan-950/90 text-cyan-300 border-cyan-700/80' };
+          return { html: '<span class="w-3 h-3 rounded-full bg-cyan-300 inline-block shadow-sm"></span>', class: 'bg-cyan-950/80 border-cyan-800/80', title: 'Sparkling Wine' };
         case 'Dessert':
-          return { text: '<span class="w-2 h-2 rounded-full bg-purple-400 inline-block shadow-sm"></span> Dessert', class: 'bg-purple-950/90 text-purple-300 border-purple-700/80' };
+          return { html: '<span class="w-3 h-3 rounded-full bg-purple-400 inline-block shadow-sm"></span>', class: 'bg-purple-950/80 border-purple-800/80', title: 'Dessert Wine' };
         default:
-          return { text: category || 'Wine', class: 'bg-slate-800 text-slate-300 border-slate-700' };
+          return { html: '<span class="w-3 h-3 rounded-full bg-slate-400 inline-block shadow-sm"></span>', class: 'bg-slate-800 border-slate-700', title: 'Wine' };
       }
     }
 
@@ -446,9 +446,9 @@
         const btn = document.getElementById(`cat-pill-${c}`);
         if (!btn) return;
         if (c === cat) {
-          btn.className = "cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-amber-500 text-slate-950 shadow";
+          btn.className = "cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-amber-500 text-slate-950 shadow flex items-center gap-1.5";
         } else {
-          btn.className = "cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700";
+          btn.className = "cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700 flex items-center gap-1.5";
         }
       });
       applyFilters();
@@ -553,7 +553,7 @@
               </div>
               <div class="flex items-center gap-2 mb-2 flex-wrap">
                 <span class="text-xs font-mono text-slate-400">${w.sku}</span>
-                <span class="text-[10px] border px-2 py-0.5 rounded-full font-bold ${categoryBadge.class}">${categoryBadge.text}</span>
+                <span title="${categoryBadge.title}" class="border px-2 py-1 rounded-full font-bold flex items-center justify-center ${categoryBadge.class}">${categoryBadge.html}</span>
                 <span class="text-[10px] bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded font-bold">${caseConfig}</span>
               </div>
               ${tagsHtml ? `<div class="flex items-center gap-1 flex-wrap mb-2">${tagsHtml}</div>` : ''}
