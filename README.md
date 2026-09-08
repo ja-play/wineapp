@@ -1,18 +1,19 @@
 # Wine Distribution Belgium - B2B Wholesale Portal & Admin System
 
-A lightweight, high-performance B2B wholesale wine catalog and non-technical management dashboard built for **Wine Distribution Belgium**. Serves volume wine catalog data directly to shop evaluators and provides an intuitive, code-free Admin Portal for managers to update pricing and upload bottle images.
+A lightweight, high-performance B2B wholesale wine catalog, real-time ordering system, automated PDF delivery note generator, and non-technical management dashboard built for **Wine Distribution Belgium**.
 
 ---
 
 ## 🏗️ Technical Stack & Architecture
 
 - **Frontend:** Vanilla HTML5, JavaScript (ES6 Modules), Tailwind CSS (CDN).
-- **Backend Services:** Firebase (Modular Web SDK v10).
-  - **Firebase Hosting:** Global CDN deployment for static web assets.
-  - **Cloud Firestore:** Real-time NoSQL database powering live catalog & price updates.
-  - **Cloud Storage:** Media bucket for high-res bottle images (`wines/`).
-  - **Firebase Auth:** Configured for role-based access (Evaluator vs. Manager/Depot).
-- **GCP Region:** `europe-west9` (Belgium/Frankfurt).
+- **Backend & Cloud Infrastructure:** Firebase (Modular Web SDK v10).
+  - **Firebase Hosting:** Global CDN deployment with HSTS headers, canonical URL tags, and forced HTTP-to-HTTPS redirection.
+  - **Cloud Firestore:** Real-time NoSQL database powering live catalog updates, stock toggles, and real-time order feeds.
+  - **Cloud Storage:** Media bucket for high-res bottle images (`wines/`) and generated PDF invoices/delivery notes (`invoices/`).
+  - **Firebase Cloud Functions (Node 20 / `europe-west9`):** Background event-driven function (`onDocumentCreated`) using `@sparticuz/chromium` & `puppeteer-core` to generate A4 Belgian "Note d'Envoi" PDFs.
+- **SEO & Security:** SSL/HTTPS enforcement, HSTS max-age headers, canonical tags on all HTML pages, `sitemap.xml`, and `robots.txt`.
+- **Integrations & AI Workflows:** Automated Jira issue tracking (`WINE` project) and mandatory git pre-commit rule enforcements.
 
 ---
 
@@ -20,27 +21,43 @@ A lightweight, high-performance B2B wholesale wine catalog and non-technical man
 
 ```text
 wineapp/
-├── .firebaserc              # Firebase project alias configuration (wine-catalog-belgium)
-├── firebase.json            # Hosting & site routing rules
-├── PROJECT_SPEC.md          # Original project requirements & roadmap
-├── README.md                # Comprehensive technical documentation (this file)
-└── public/                  # Public web directory (Deployed to Firebase Hosting)
-    ├── 404.html             # Custom 404 error page
-    ├── admin.html           # Non-technical Admin Portal (CRUD wines, image upload, seeding)
-    ├── firebase-config.js   # Centralized Firebase SDK initialization & module exports
-    ├── index.html           # Customer/Evaluator public catalog (Real-time Firestore listener)
-    ├── wines.json           # Initial fallback wine dataset (10 volume wines)
-    └── images/              # Static bottle asset fallback directory
+├── .agents/
+│   └── rules/
+│       ├── jira-workflow.md            # Mandatory Jira task creation & commit rule
+│       └── doc_update_and_preview.md   # Mandatory pre-commit doc sync & preview rule
+├── .firebaserc                         # Firebase project alias (wine-catalog-belgium)
+├── firebase.json                       # Hosting rules, HSTS headers & functions config
+├── firestore.rules                     # Cloud Firestore security rules
+├── storage.rules                       # Cloud Storage security rules
+├── PROJECT_SPEC.md                     # Current project specification & architecture
+├── README.md                           # Technical documentation & developer guide
+├── functions/                          # Node 20 Cloud Functions
+│   ├── index.js                        # PDF generation function (onDocumentCreated)
+│   ├── templates/                      # Note d'Envoi HTML/CSS templates
+│   └── config/                         # App & billing configurations
+└── public/                             # Deployed web application directory
+    ├── 404.html                        # Custom 404 error page
+    ├── admin.html                      # Admin Portal (Catalog management, pricing, images)
+    ├── depot.html                      # Real-time Depot Packing & Dispatch Queue
+    ├── index.html                      # Evaluator Field Ordering interface
+    ├── app-config.js                   # Application configuration & constants
+    ├── auth-guard.js                   # Client role authorization guard
+    ├── firebase-config.js              # Centralized Firebase SDK initialization
+    ├── i18n.js                         # Multilingual translations (FR/NL/EN)
+    ├── robots.txt                      # Search engine crawler directives
+    ├── sitemap.xml                     # Canonical HTTPS sitemap
+    ├── wines.json                      # Fallback initial dataset (10 volume wines)
+    ├── images/                         # Static bottle asset fallback directory
+    └── utils/                          # Belgian tax & VAT calculation helpers
 ```
 
 ---
 
 ## 🗄️ Database & Storage Specifications
 
-### 1. Firestore Collection: `wines`
+### 1. Firestore Collections
 
-Each document ID is normalized from the wine SKU (e.g. `OK-CABMER-2023-750`).
-
+#### `wines/{sku}`
 ```json
 {
   "sku": "OK-CABMER-2023-750",
@@ -49,78 +66,57 @@ Each document ID is normalized from the wine SKU (e.g. `OK-CABMER-2023-750`).
   "vintage": "2023",
   "priceBottle": "€5.50",
   "priceCase": "€33.00 (Case of 6)",
+  "stockAvailable": true,
+  "vidangePerCase": 1.35,
   "image": "https://firebasestorage.googleapis.com/v0/b/wine-catalog-belgium.appspot.com/o/wines%2F...",
-  "description": "A smooth, approachable South African red blend featuring intense aromas of ripe cassis...",
   "updatedAt": "2026-08-07T15:27:00.000Z"
 }
 ```
 
-### 2. Firebase Cloud Storage: `wines/`
-
-- **Upload Directory:** `wines/{timestamp}_{sanitized_filename}`
-- **Access Pattern:** Uploaded via `admin.html` -> public download URL generated via `getDownloadURL()` -> stored in Firestore `image` property.
-
----
-
-## ⚡ Core Developer Workflows
-
-### 1. Seeding Firestore from Local JSON
-If Firestore is empty or initializing a fresh environment:
-1. Open `public/admin.html`.
-2. Click **"Seed from JSON"** in the top header bar.
-3. The application will iterate through `public/wines.json` and push all records into Firestore using `setDoc` with `{ merge: true }`.
-
-### 2. Real-Time Synchronization
-- `index.html` uses Firestore `onSnapshot(collection(db, "wines"))`.
-- Any edit made in `admin.html` triggers instant UI re-renders for all connected clients without requiring a page refresh.
-- If Firestore is offline or empty, `index.html` automatically falls back to fetching `./wines.json`.
-
----
-
-## 🛡️ Recommended Firebase Production Security Rules
-
-### Firestore Security Rules (`firestore.rules`)
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Anyone can read wine catalog
-    match /wines/{wineId} {
-      allow read: if true;
-      allow write: if request.auth != null; // Restrict writes to authenticated managers
-    }
-  }
+#### `orders/{orderId}`
+```json
+{
+  "orderId": "ORD-2026-0908-001",
+  "clientName": "Food City Brussels",
+  "items": [...],
+  "subtotalHT": 198.00,
+  "vat21": 41.58,
+  "vidanges": 5.40,
+  "totalTTC": 244.98,
+  "status": "ready_for_dispatch",
+  "pdfUrl": "https://firebasestorage.googleapis.com/v0/b/wine-catalog-belgium.appspot.com/o/invoices%2F...",
+  "createdAt": "2026-09-08T09:40:00.000Z"
 }
 ```
 
-### Storage Security Rules (`storage.rules`)
-```javascript
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    match /wines/{allPaths=**} {
-      allow read: if true;
-      allow write: if request.auth != null; // Only authenticated users can upload bottle images
-    }
-  }
-}
-```
+---
+
+## ⚡ Core Workflows & Features
+
+1. **Evaluator Field Ordering Flow (`index.html`)**: Select client, filter live in-stock wines, dynamic subtotal HT, 21% VAT, Vidange deposits, TTC grand total calculation, and order submission.
+2. **Admin Portal (`admin.html`)**: Add/edit wine SKUs, update HT bottle & case pricing, toggle stock availability, upload bottle images to Firebase Storage, and seed initial catalog.
+3. **Depot Packing & Dispatch Queue (`depot.html`)**: Live `onSnapshot` feed of orders, dispatch state toggles, and direct print links for generated Note d'Envoi PDFs.
+4. **Cloud Function PDF Generator (`functions/index.js`)**: Listens to `orders/{orderId}` creation, renders an A4 Belgian Note d'Envoi via Puppeteer, stores PDF in Cloud Storage, and links URL to Firestore document.
+5. **SEO & SSL Protection**: Enforced HTTP to HTTPS redirect, Strict-Transport-Security (HSTS) headers, canonical tags, `sitemap.xml`, and `robots.txt`.
+6. **Jira & Pre-Commit Rules**: Automated Sub-task creation in Jira project `WINE`, git commit referencing issue key, and pre-commit documentation preview.
 
 ---
 
 ## 🚀 Deployment & Local Testing
 
-### Local Development
-Open `public/index.html` or `public/admin.html` directly in a browser or serve using any static web server (e.g. `npx serve public` or VS Code Live Server).
-
-### Deploying to Firebase Hosting
-Make sure you are logged in to Firebase CLI:
+### Local Testing
+Serve static files using any local web server:
 ```bash
-# Login to Firebase CLI
-firebase login
-
-# Deploy updated static files & hosting configuration
-firebase deploy --only hosting
+npx serve public
 ```
 
-Live Production Site: [wine-catalog-belgium.web.app](https://wine-catalog-belgium.web.app)
+### Production Deployment
+```bash
+# Deploy Firebase static hosting and security headers
+npx firebase-tools deploy --only hosting
+
+# Deploy Cloud Functions
+npx firebase-tools deploy --only functions
+```
+
+Live Site: [https://wine-catalog-belgium.web.app](https://wine-catalog-belgium.web.app) / [https://aurellionwine.com](https://aurellionwine.com)
