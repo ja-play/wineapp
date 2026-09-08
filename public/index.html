@@ -11,11 +11,14 @@
       window.location.href = window.location.href.replace('http:', 'https:');
     }
   </script>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍷</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍷</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com?v=3.4.1" crossorigin="anonymous"></script>
   <style>
     :root {
       --burgundy-deep: #140204;
@@ -27,7 +30,7 @@
 
     body {
       background-color: #120204;
-      background-image: 
+      background-image:
         linear-gradient(180deg, rgba(18, 2, 4, 0.88) 0%, rgba(42, 6, 11, 0.75) 45%, rgba(10, 1, 2, 0.96) 100%),
         url('images/vineyard_bg.jpg');
       background-size: cover;
@@ -93,6 +96,7 @@
       border: 1px solid rgba(212, 175, 55, 0.3) !important;
       color: #F3E5AB !important;
     }
+
     .input-theme:focus {
       border-color: #D4AF37 !important;
       box-shadow: 0 0 12px rgba(212, 175, 55, 0.3) !important;
@@ -104,6 +108,7 @@
         size: A4 portrait;
         margin: 10mm 12mm;
       }
+
       body {
         background: white !important;
         color: black !important;
@@ -112,9 +117,16 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      header, main, footer, #order-drawer, #client-shop-bar, .no-print {
+
+      header,
+      main,
+      footer,
+      #order-drawer,
+      #client-shop-bar,
+      .no-print {
         display: none !important;
       }
+
       #delivery-note-modal {
         position: static !important;
         display: block !important;
@@ -124,6 +136,7 @@
         width: 100% !important;
         box-shadow: none !important;
       }
+
       #printable-note-container {
         position: static !important;
         width: 100% !important;
@@ -146,19 +159,25 @@
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
       <div class="flex items-center gap-3">
         <a href="index.html" class="flex items-center gap-3 group">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#400B12] to-[#1C0407] border border-[#D4AF37]/60 flex items-center justify-center shadow-lg group-hover:border-[#D4AF37]">
+          <div
+            class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#400B12] to-[#1C0407] border border-[#D4AF37]/60 flex items-center justify-center shadow-lg group-hover:border-[#D4AF37]">
             <span class="text-xl">🍷</span>
           </div>
           <div>
-            <div class="font-serif-title font-black text-lg gold-gradient-text tracking-wide leading-none">AURELLION</div>
-            <div class="text-[9px] text-[#C8B69B] tracking-[0.25em] uppercase font-semibold mt-0.5">WINE DISTRIBUTION & IMPORT</div>
+            <div class="font-serif-title font-black text-lg gold-gradient-text tracking-wide leading-none">AURELLION
+            </div>
+            <div class="text-[9px] text-[#C8B69B] tracking-[0.25em] uppercase font-semibold mt-0.5">WINE DISTRIBUTION &
+              IMPORT</div>
           </div>
         </a>
-        <span class="bg-[#3D080E] text-[#F3E5AB] border border-[#D4AF37]/40 text-xs px-2.5 py-0.5 rounded-full font-semibold">Field Ordering</span>
+        <span
+          class="bg-[#3D080E] text-[#F3E5AB] border border-[#D4AF37]/40 text-xs px-2.5 py-0.5 rounded-full font-semibold">Field
+          Ordering</span>
       </div>
 
       <div class="flex items-center gap-3">
-        <button onclick="openEvaluatorOrdersModal()" class="card-theme hover:bg-[#3D0A11] text-[#F3E5AB] text-xs px-3.5 py-2 rounded-xl font-medium transition flex items-center gap-1.5 shadow">
+        <button onclick="openEvaluatorOrdersModal()"
+          class="card-theme hover:bg-[#3D0A11] text-[#F3E5AB] text-xs px-3.5 py-2 rounded-xl font-medium transition flex items-center gap-1.5 shadow">
           <span>📋 My Placed Orders</span>
         </button>
         <div id="auth-bar-container" class="flex items-center gap-2">
@@ -172,8 +191,10 @@
   <div id="client-shop-bar" class="header-theme px-4 py-3 sticky top-[65px] z-30 shadow-md">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
       <div class="flex items-center gap-2 w-full sm:w-auto">
-        <span class="text-xs font-bold uppercase tracking-wider gold-gradient-text whitespace-nowrap">🏪 Client Shop:</span>
-        <select id="client-shop-select" class="w-full sm:w-80 input-theme text-xs font-semibold px-3 py-2 rounded-xl cursor-pointer shadow">
+        <span class="text-xs font-bold uppercase tracking-wider gold-gradient-text whitespace-nowrap">🏪 Client
+          Shop:</span>
+        <select id="client-shop-select"
+          class="w-full sm:w-80 input-theme text-xs font-semibold px-3 py-2 rounded-xl cursor-pointer shadow">
           <option value="" disabled selected>-- Loading Client Shops... --</option>
         </select>
       </div>
@@ -187,38 +208,52 @@
   <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
 
     <!-- Category & Search Filter Bar -->
-    <div id="catalog-filter-bar" class="mb-6 card-theme p-4 rounded-2xl shadow-xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+    <div id="catalog-filter-bar"
+      class="mb-6 card-theme p-4 rounded-2xl shadow-xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
       <!-- Category Filter Pills -->
       <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
-        <button onclick="setCategoryFilter('all')" id="cat-pill-all" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap btn-gold shadow flex items-center gap-1.5">
+        <button onclick="setCategoryFilter('all')" id="cat-pill-all"
+          class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap btn-gold shadow flex items-center gap-1.5">
           <span>🍷</span> All Wines (<span id="cat-count-all">0</span>)
         </button>
-        <button onclick="setCategoryFilter('Red')" id="cat-pill-Red" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
-          <span class="w-3 h-3 rounded-full bg-[#CC0000] border border-red-400 inline-block shadow-sm"></span> Red (<span id="cat-count-Red">0</span>)
+        <button onclick="setCategoryFilter('Red')" id="cat-pill-Red"
+          class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-[#CC0000] border border-red-400 inline-block shadow-sm"></span> Red
+          (<span id="cat-count-Red">0</span>)
         </button>
-        <button onclick="setCategoryFilter('White')" id="cat-pill-White" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
-          <span class="w-3 h-3 rounded-full bg-amber-100 border border-amber-300 inline-block shadow-sm"></span> White (<span id="cat-count-White">0</span>)
+        <button onclick="setCategoryFilter('White')" id="cat-pill-White"
+          class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-amber-100 border border-amber-300 inline-block shadow-sm"></span> White
+          (<span id="cat-count-White">0</span>)
         </button>
-        <button onclick="setCategoryFilter('Rosé')" id="cat-pill-Rosé" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
-          <span class="w-3 h-3 rounded-full bg-[#FFB3DA] border border-pink-400 inline-block shadow-sm"></span> Rosé (<span id="cat-count-Rosé">0</span>)
+        <button onclick="setCategoryFilter('Rosé')" id="cat-pill-Rosé"
+          class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-[#FFB3DA] border border-pink-400 inline-block shadow-sm"></span> Rosé
+          (<span id="cat-count-Rosé">0</span>)
         </button>
-        <button onclick="setCategoryFilter('Sparkling')" id="cat-pill-Sparkling" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
+        <button onclick="setCategoryFilter('Sparkling')" id="cat-pill-Sparkling"
+          class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
           <span>✨</span> Sparkling (<span id="cat-count-Sparkling">0</span>)
         </button>
-        <button onclick="setCategoryFilter('Dessert')" id="cat-pill-Dessert" class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
-          <span class="w-3 h-3 rounded-full bg-purple-500 border border-purple-400 inline-block shadow-sm"></span> Dessert (<span id="cat-count-Dessert">0</span>)
+        <button onclick="setCategoryFilter('Dessert')" id="cat-pill-Dessert"
+          class="cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-[#230508] text-[#F3E5AB] hover:bg-[#38080E] border border-[#D4AF37]/30 flex items-center gap-1.5">
+          <span class="w-3 h-3 rounded-full bg-purple-500 border border-purple-400 inline-block shadow-sm"></span>
+          Dessert (<span id="cat-count-Dessert">0</span>)
         </button>
       </div>
 
       <!-- Live Search Box -->
       <div class="relative w-full md:w-64 flex-shrink-0">
-        <input type="text" id="catalog-search-input" oninput="handleSearchInput()" placeholder="Search wine, SKU, tag..." class="w-full input-theme text-xs placeholder-[#C8B69B]/60 rounded-xl pl-9 pr-3 py-2 shadow-inner" />
+        <input type="text" id="catalog-search-input" oninput="handleSearchInput()"
+          placeholder="Search wine, SKU, tag..."
+          class="w-full input-theme text-xs placeholder-[#C8B69B]/60 rounded-xl pl-9 pr-3 py-2 shadow-inner" />
         <span class="absolute left-3 top-2 text-xs text-[#D4AF37]">🔍</span>
       </div>
     </div>
 
     <div id="catalog-loading" class="text-center py-16">
-      <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-amber-500 border-t-transparent mb-3"></div>
+      <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-amber-500 border-t-transparent mb-3">
+      </div>
       <p class="text-slate-400 text-sm">Loading available wine stock from Firestore...</p>
     </div>
 
@@ -229,15 +264,21 @@
     <!-- Empty Catalog State -->
     <div id="catalog-empty" class="hidden text-center py-16 bg-slate-800/40 rounded-2xl border border-slate-800">
       <p class="text-slate-300 font-semibold text-lg">No in-stock wines available</p>
-      <p class="text-slate-400 text-sm mt-1 mb-4">Please contact admin to enable stock availability for wholesale wines.</p>
+      <p class="text-slate-400 text-sm mt-1 mb-4">Please contact admin to enable stock availability for wholesale wines.
+      </p>
     </div>
 
   </main>
 
   <!-- Image Lightbox Modal -->
-  <div id="image-modal" class="fixed inset-0 bg-[#0F0204]/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0" onclick="closeModal(event)">
-    <div class="relative max-w-4xl max-h-[90vh] flex flex-col items-center justify-center card-theme p-4 sm:p-6 rounded-2xl shadow-2xl overflow-hidden" onclick="event.stopPropagation()">
-      <button onclick="closeModal()" class="absolute top-3 right-3 text-[#F3E5AB] hover:text-white bg-[#2A060B] border border-[#D4AF37]/40 p-2 rounded-full transition z-10">✕</button>
+  <div id="image-modal"
+    class="fixed inset-0 bg-[#0F0204]/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 transition-opacity duration-300 opacity-0"
+    onclick="closeModal(event)">
+    <div
+      class="relative max-w-4xl max-h-[90vh] flex flex-col items-center justify-center card-theme p-4 sm:p-6 rounded-2xl shadow-2xl overflow-hidden"
+      onclick="event.stopPropagation()">
+      <button onclick="closeModal()"
+        class="absolute top-3 right-3 text-[#F3E5AB] hover:text-white bg-[#2A060B] border border-[#D4AF37]/40 p-2 rounded-full transition z-10">✕</button>
       <div class="w-full flex justify-center items-center overflow-hidden rounded-xl max-h-[70vh]">
         <img id="modal-img" src="" alt="" class="max-h-[70vh] w-auto max-w-full object-contain drop-shadow-2xl" />
       </div>
@@ -249,7 +290,8 @@
   </div>
 
   <!-- Evaluator Orders History Modal -->
-  <div id="evaluator-orders-modal" class="fixed inset-0 bg-[#0F0204]/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+  <div id="evaluator-orders-modal"
+    class="fixed inset-0 bg-[#0F0204]/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
     <div class="relative max-w-3xl w-full card-theme rounded-2xl p-6 shadow-2xl my-8">
       <div class="flex justify-between items-center pb-4 border-b border-[#D4AF37]/30 mb-6">
         <h3 class="font-serif-title text-xl font-bold gold-gradient-text">📋 My Placed Orders & Delivery Notes</h3>
@@ -262,21 +304,26 @@
   </div>
 
   <!-- Printable Delivery Note Modal -->
-  <div id="delivery-note-modal" class="fixed inset-0 bg-[#0F0204]/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+  <div id="delivery-note-modal"
+    class="fixed inset-0 bg-[#0F0204]/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
     <div class="relative max-w-4xl w-full my-8">
       <div class="flex justify-between items-center mb-4 no-print">
-        <span class="text-xs font-bold gold-gradient-text uppercase tracking-wider">📄 Belgian Note d'Envoi Preview</span>
+        <span class="text-xs font-bold gold-gradient-text uppercase tracking-wider">📄 Belgian Note d'Envoi
+          Preview</span>
         <div class="flex items-center gap-3">
-          <button onclick="window.print()" class="btn-gold font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+          <button onclick="window.print()"
+            class="btn-gold font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
             🖨️ Print Delivery Note (A4)
           </button>
-          <button onclick="document.getElementById('delivery-note-modal').classList.add('hidden')" class="card-theme text-[#F3E5AB] hover:text-white font-bold text-xs px-4 py-2.5 rounded-xl border border-[#D4AF37]/40 transition">
+          <button onclick="document.getElementById('delivery-note-modal').classList.add('hidden')"
+            class="card-theme text-[#F3E5AB] hover:text-white font-bold text-xs px-4 py-2.5 rounded-xl border border-[#D4AF37]/40 transition">
             ✕ Close
           </button>
         </div>
       </div>
 
-      <div id="printable-note-container" class="bg-white text-slate-900 rounded-2xl p-8 shadow-2xl border border-slate-200">
+      <div id="printable-note-container"
+        class="bg-white text-slate-900 rounded-2xl p-8 shadow-2xl border border-slate-200">
         <div id="note-modal-content">
           <!-- Injected dynamically -->
         </div>
@@ -285,12 +332,14 @@
   </div>
 
   <!-- Sticky Order Review Drawer (Fixed Bottom) -->
-  <div id="order-drawer" class="fixed bottom-0 left-0 right-0 z-40 header-theme backdrop-blur-xl shadow-2xl transition-transform transform translate-y-0">
+  <div id="order-drawer"
+    class="fixed bottom-0 left-0 right-0 z-40 header-theme backdrop-blur-xl shadow-2xl transition-transform transform translate-y-0">
     <div class="max-w-7xl mx-auto px-4 py-3">
       <!-- Drawer Header Bar -->
       <div class="flex flex-wrap items-center justify-between gap-4">
         <div class="flex items-center gap-4">
-          <div class="w-10 h-10 bg-[#3D0A11] border border-[#D4AF37]/50 rounded-xl flex items-center justify-center text-[#F3E5AB] font-bold shadow-lg">
+          <div
+            class="w-10 h-10 bg-[#3D0A11] border border-[#D4AF37]/50 rounded-xl flex items-center justify-center text-[#F3E5AB] font-bold shadow-lg">
             🛒
           </div>
           <div>
@@ -302,10 +351,12 @@
         </div>
 
         <div class="flex items-center gap-3">
-          <button onclick="toggleCartDetail()" class="text-xs text-[#F3E5AB] hover:text-white bg-[#2A060B] px-3.5 py-2 rounded-xl border border-[#D4AF37]/40 font-semibold transition">
+          <button onclick="toggleCartDetail()"
+            class="text-xs text-[#F3E5AB] hover:text-white bg-[#2A060B] px-3.5 py-2 rounded-xl border border-[#D4AF37]/40 font-semibold transition">
             <span id="toggle-cart-text">Show Line Items ▲</span>
           </button>
-          <button id="submit-order-btn" onclick="submitOrder()" disabled class="btn-gold disabled:opacity-40 disabled:cursor-not-allowed font-extrabold text-sm px-6 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+          <button id="submit-order-btn" onclick="submitOrder()" disabled
+            class="btn-gold disabled:opacity-40 disabled:cursor-not-allowed font-extrabold text-sm px-6 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
             <span>Submit Wholesale Order</span>
           </button>
         </div>
@@ -317,7 +368,8 @@
           <!-- Cart lines injected here -->
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#180305]/90 p-3 rounded-xl border border-[#D4AF37]/30 text-xs">
+        <div
+          class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#180305]/90 p-3 rounded-xl border border-[#D4AF37]/30 text-xs">
           <div>
             <div class="text-[#C8B69B]">Subtotal H.TVA</div>
             <div id="cart-subtotal-ht" class="font-bold text-[#F5EAE0]">€0.00</div>
@@ -340,7 +392,8 @@
   </div>
 
   <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-24 right-5 z-50 transform translate-y-16 opacity-0 transition-all duration-300 pointer-events-none bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 font-medium text-sm">
+  <div id="toast"
+    class="fixed bottom-24 right-5 z-50 transform translate-y-16 opacity-0 transition-all duration-300 pointer-events-none bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 font-medium text-sm">
     <span id="toast-message">Order Placed</span>
   </div>
 
@@ -429,7 +482,7 @@
     shopSelect.addEventListener('change', (e) => {
       const shopId = e.target.value;
       selectedClient = availableShops.find(s => s.id === shopId) || null;
-      
+
       const infoBox = document.getElementById('selected-client-info');
       if (selectedClient) {
         infoBox.innerHTML = `
@@ -448,7 +501,7 @@
     let searchQuery = '';
     let viewMode = 'color'; // 'color' or 'photo'
 
-    window.setViewMode = function(mode) {
+    window.setViewMode = function (mode) {
       viewMode = mode;
       const btnColor = document.getElementById('view-mode-color');
       const btnPhoto = document.getElementById('view-mode-photo');
@@ -584,7 +637,7 @@
       });
     }
 
-    window.setCategoryFilter = function(cat) {
+    window.setCategoryFilter = function (cat) {
       activeCategory = cat;
       const categories = ['all', 'Red', 'White', 'Rosé', 'Sparkling', 'Dessert'];
       categories.forEach(c => {
@@ -599,7 +652,7 @@
       applyFilters();
     };
 
-    window.handleSearchInput = function() {
+    window.handleSearchInput = function () {
       const input = document.getElementById('catalog-search-input');
       searchQuery = (input.value || '').trim().toLowerCase();
       applyFilters();
@@ -672,12 +725,12 @@
         const depositCase = w.depositCase || 1.35;
         const isClientSelected = Boolean(selectedClient);
 
-        const stockBadgeClass = isLowStock 
-          ? 'bg-rose-950/80 text-rose-300 border-rose-600/80 animate-pulse font-extrabold' 
+        const stockBadgeClass = isLowStock
+          ? 'bg-rose-950/80 text-rose-300 border-rose-600/80 animate-pulse font-extrabold'
           : 'bg-[#2D070D] text-[#F3E5AB] border-[#D4AF37]/50';
 
-        const stockBadgeText = isLowStock 
-          ? `⚠️ Low Stock: ${stockQty} Cases left` 
+        const stockBadgeText = isLowStock
+          ? `⚠️ Low Stock: ${stockQty} Cases left`
           : `In Stock: ${stockQty} Cases`;
 
         const tagsHtml = tags.map(t => `<span class="text-[9px] bg-[#2A060B] text-[#F3E5AB] border border-[#D4AF37]/30 px-2 py-0.5 rounded-full font-medium">#${t.trim()}</span>`).join('');
@@ -738,7 +791,7 @@
       }).join('');
     }
 
-    window.updateQty = function(sku, delta) {
+    window.updateQty = function (sku, delta) {
       if (!selectedClient) {
         showToast("Please select a client shop first", true);
         return;
@@ -813,7 +866,7 @@
       }
     }
 
-    window.toggleCartDetail = function() {
+    window.toggleCartDetail = function () {
       const panel = document.getElementById('cart-detail-panel');
       const text = document.getElementById('toggle-cart-text');
       if (panel.classList.contains('hidden')) {
@@ -825,7 +878,7 @@
       }
     };
 
-    window.submitOrder = async function() {
+    window.submitOrder = async function () {
       if (!auth.currentUser) {
         showToast("Please sign in as a Field Evaluator to submit orders!", true);
         if (window.showLoginModal) window.showLoginModal(false);
@@ -903,13 +956,13 @@
         };
 
         const docRef = await addDoc(collection(db, "orders"), orderPayload);
-        
+
         cart = {};
         renderCatalog(currentWines);
         updateCartTotals();
 
         showToast(`Order submitted! Stock auto-deducted.`);
-        
+
         setTimeout(() => {
           window.printEvaluatorOrder(docRef.id, orderPayload);
         }, 500);
@@ -922,7 +975,7 @@
       }
     };
 
-    window.openEvaluatorOrdersModal = async function() {
+    window.openEvaluatorOrdersModal = async function () {
       const modal = document.getElementById('evaluator-orders-modal');
       const container = document.getElementById('evaluator-orders-list');
       container.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">Loading placed orders...</p>`;
@@ -960,11 +1013,11 @@
       }
     };
 
-    window.closeEvaluatorOrdersModal = function() {
+    window.closeEvaluatorOrdersModal = function () {
       document.getElementById('evaluator-orders-modal').classList.add('hidden');
     };
 
-    window.printEvaluatorOrder = function(orderId, directPayload = null) {
+    window.printEvaluatorOrder = function (orderId, directPayload = null) {
       const order = directPayload ? { id: orderId, ...directPayload } : evaluatorOrders.find(o => o.id === orderId);
       if (!order) {
         showToast("Order details loading...", true);
@@ -1077,7 +1130,7 @@
     const modalTitle = document.getElementById('modal-title');
     const modalCaption = document.getElementById('modal-caption');
 
-    window.openModal = function(imgSrc, title, sku) {
+    window.openModal = function (imgSrc, title, sku) {
       modalImg.src = imgSrc;
       modalImg.alt = title;
       modalTitle.textContent = title;
@@ -1086,7 +1139,7 @@
       setTimeout(() => modal.classList.remove('opacity-0'), 10);
     };
 
-    window.closeModal = function() {
+    window.closeModal = function () {
       modal.classList.add('opacity-0');
       setTimeout(() => modal.classList.add('hidden'), 200);
     };
