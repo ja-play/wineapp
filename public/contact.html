@@ -318,18 +318,20 @@
                 <option value="Dégustation">Planification d'une Dégustation d'Échantillons</option>
                 <option value="Ouverture Compte">Ouverture de Compte Client & Conditions de Paiement</option>
                 <option value="Commande Existante">Suivi de Commande & Logistique Dépôt</option>
-                <option value="Autre">Autre Renseignement</option>
-              </select>
-            </div>
-
-            <div>
+                <option value="Autre">Autre Renseignement</o            <div>
               <label class="block text-xs font-semibold text-[#D4AF37] uppercase tracking-wider mb-1">Détails & Volumes Estimés *</label>
               <textarea id="contact-message" required rows="4" placeholder="Précisez votre demande, vos préférences de cépages, ou le volume de caisses envisagé..." class="w-full input-theme rounded-xl px-3.5 py-2.5 text-sm"></textarea>
             </div>
 
+            <!-- Anti-Spam Honeypot Field (Hidden from human users, traps automated bots) -->
+            <div class="hidden" aria-hidden="true" style="display:none !important;">
+              <label for="contact-website-hp">Leave this field empty</label>
+              <input type="text" id="contact-website-hp" name="contact-website-hp" tabindex="-1" autocomplete="off" />
+            </div>
+
             <div class="pt-4 border-t border-[#D4AF37]/20 flex flex-col sm:flex-row items-center justify-between gap-4">
               <p class="text-[11px] text-[#C8B69B]/70 max-w-xs">
-                Vos données sont strictement réservées au traitement commercial d'Aurellion Wine Selection.
+                Vos données sont strictly réservées au traitement commercial d'Aurellion Wine Selection.
               </p>
 
               <button type="submit" id="contact-submit-btn" class="w-full sm:w-auto btn-gold px-8 py-3 rounded-xl font-extrabold text-sm flex items-center justify-center gap-2">
@@ -390,21 +392,38 @@
       setupAuthUI(user, role, 'auth-bar-container', 'contact');
     });
 
+    // Helper: Sanitize string input against XSS
+    function sanitize(str) {
+      if (!str) return '';
+      return String(str).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
     window.handleContactSubmit = async function(e) {
       e.preventDefault();
-      const btn = document.getElementById('contact-submit-btn');
-      const btnText = document.getElementById('btn-text');
+
+      // 0. Check Anti-Spam Honeypot (if filled out, it's a bot -> silently discard)
+      const honeypot = document.getElementById('contact-website-hp')?.value;
       const form = document.getElementById('contact-form');
       const successBox = document.getElementById('contact-success');
 
-      const name = document.getElementById('contact-name').value.trim();
-      const company = document.getElementById('contact-company').value.trim();
-      const type = document.getElementById('contact-type').value;
-      const vat = document.getElementById('contact-vat').value.trim();
-      const phone = document.getElementById('contact-phone').value.trim();
-      const email = document.getElementById('contact-email').value.trim();
-      const subject = document.getElementById('contact-subject').value;
-      const message = document.getElementById('contact-message').value.trim();
+      if (honeypot && honeypot.trim() !== '') {
+        console.warn("Spam bot submission caught by honeypot filter.");
+        form.classList.add('hidden');
+        successBox.classList.remove('hidden');
+        return;
+      }
+
+      const btn = document.getElementById('contact-submit-btn');
+      const btnText = document.getElementById('btn-text');
+
+      const name = sanitize(document.getElementById('contact-name').value.trim());
+      const company = sanitize(document.getElementById('contact-company').value.trim());
+      const type = sanitize(document.getElementById('contact-type').value);
+      const vat = sanitize(document.getElementById('contact-vat').value.trim());
+      const phone = sanitize(document.getElementById('contact-phone').value.trim());
+      const email = sanitize(document.getElementById('contact-email').value.trim());
+      const subject = sanitize(document.getElementById('contact-subject').value);
+      const message = sanitize(document.getElementById('contact-message').value.trim());
 
       btn.disabled = true;
       btnText.textContent = "Transmission en cours...";
@@ -419,8 +438,7 @@
         subject,
         message,
         _subject: `[B2B Demande] ${subject} - ${company}`,
-        _template: 'table',
-        _captcha: 'false'
+        _template: 'table'
       };
 
       try {
