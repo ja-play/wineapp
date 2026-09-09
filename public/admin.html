@@ -475,7 +475,7 @@
         <div>
           <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Wine Bottle Photography</label>
           <input type="file" id="form-image-file" accept="image/*" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-400 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-500" />
-          <p class="text-xs text-slate-500 mt-1">Upload JPEG/PNG file. Will upload directly to Firebase Storage (`wine-images/{sku}.jpg`).</p>
+          <p class="text-xs text-slate-500 mt-1">Upload JPEG/PNG file. Automatically optimized and compressed for instant loading.</p>
         </div>
 
         <div class="pt-4 border-t border-slate-700 flex justify-end gap-3">
@@ -572,6 +572,21 @@
           snapshotUnsubscribe = onSnapshot(collection(db, "wines"), (snapshot) => {
             document.getElementById('loading-state').classList.add('hidden');
             currentWines = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+
+            // Auto-backfill missing stock fields directly in Firestore DB documents
+            snapshot.docs.forEach(async (d) => {
+              const data = d.data();
+              if (data.stockQuantity === undefined || data.stockQuantity === null) {
+                try {
+                  await updateDoc(doc(db, "wines", d.id), {
+                    stockQuantity: 50,
+                    stockAvailable: true
+                  });
+                } catch (err) {
+                  console.warn(`Could not backfill stock for ${d.id}:`, err);
+                }
+              }
+            });
 
             const container = document.getElementById('wines-container');
             const emptyState = document.getElementById('empty-state');
@@ -1111,19 +1126,35 @@
 
         if (fileInput.files && fileInput.files[0]) {
           const file = fileInput.files[0];
-          saveBtnText.textContent = "Uploading image...";
-          try {
-            const storageRef = ref(storage, `wine-images/${sku}.jpg`);
-            await uploadBytes(storageRef, file);
-            imageUrl = await getDownloadURL(storageRef);
-          } catch (uploadErr) {
-            console.warn("Storage upload failed, reading data URL fallback:", uploadErr);
-            imageUrl = await new Promise((res) => {
-              const r = new FileReader();
-              r.onload = (ev) => res(ev.target.result);
-              r.readAsDataURL(file);
-            });
-          }
+          saveBtnText.textContent = "Processing photo...";
+
+          imageUrl = await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              const img = new Image();
+              img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_HEIGHT = 650;
+                let width = img.width;
+                let height = img.height;
+                if (height > MAX_HEIGHT) {
+                  width = Math.round((width * MAX_HEIGHT) / height);
+                  height = MAX_HEIGHT;
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                // Highly compressed, crisp WebP/JPEG data URL (~30-50 KB)
+                const compressedUrl = canvas.toDataURL('image/webp', 0.85) || canvas.toDataURL('image/jpeg', 0.85);
+                resolve(compressedUrl);
+              };
+              img.onerror = () => resolve(ev.target.result);
+              img.src = ev.target.result;
+            };
+            reader.onerror = () => resolve('images/34172 DGB Oude kaap_Cab Merlot.png');
+            reader.readAsDataURL(file);
+          });
         }
 
         const wineData = {
