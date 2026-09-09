@@ -159,10 +159,6 @@
             <p class="text-slate-400 text-xs sm:text-sm mt-1">Manage wholesale SKUs, case stock counts, pricing, deposit vidanges, and photography.</p>
           </div>
           <div class="flex items-center gap-3 flex-wrap">
-            <button id="seed-btn" onclick="seedDatabase()" class="bg-slate-700 hover:bg-slate-600 text-amber-300 text-xs font-semibold px-4 py-2.5 rounded-xl transition border border-amber-500/30 flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-              Seed Default Catalog
-            </button>
             <button onclick="openWineModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
               Add New Wine SKU
@@ -181,10 +177,7 @@
 
         <div id="empty-state" class="hidden text-center py-16 bg-slate-800/40 rounded-2xl border border-slate-800">
           <p class="text-slate-300 font-semibold text-lg">No wines found in Firestore</p>
-          <p class="text-slate-400 text-sm mt-1 mb-4">Click "Seed Default Catalog" above to import default wholesale wines.</p>
-          <button onclick="seedDatabase()" class="bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs px-5 py-2.5 rounded-xl transition">
-            Import Default Catalog JSON
-          </button>
+          <p class="text-slate-400 text-xs sm:text-sm mt-1">Use the "Add New Wine SKU" button above to add wholesale wine SKUs to the catalog.</p>
         </div>
       </div>
 
@@ -1023,56 +1016,6 @@
       } catch (err) {
         console.error("Toggle stock error:", err);
         showToast("Failed to update status: " + err.message, true);
-      }
-    };
-
-    window.seedDatabase = async function() {
-      const btn = document.getElementById('seed-btn');
-      btn.disabled = true;
-      btn.innerHTML = `<span class="animate-spin inline-block h-3.5 w-3.5 border-2 border-amber-300 border-t-transparent rounded-full mr-1"></span> Seeding...`;
-      try {
-        const res = await fetch('wines.json');
-        const defaultWines = await res.json();
-        for (const w of defaultWines) {
-          const docId = w.sku.replace(/[^a-zA-Z0-9_-]/g, '_');
-          
-          const bPriceStr = (w.priceBottle || '').replace(/[^0-9.]/g, '');
-          const cPriceStr = (w.priceCase || '').replace(/[^0-9.]/g, '');
-          const category = w.category || detectWineCategory(w);
-          const tags = Array.isArray(w.tags) ? w.tags : [];
-
-          const wineData = {
-            sku: w.sku,
-            name: w.name,
-            category: category,
-            tags: tags,
-            vintage: w.vintage || "2024",
-            region: w.region || "Belgique",
-            caseSize: 6,
-            priceBottleHT: parseFloat(bPriceStr) || 5.50,
-            priceCaseHT: parseFloat(cPriceStr) || 33.00,
-            depositCase: 1.35,
-            vatRate: 0.21,
-            stockQuantity: 50,
-            stockAvailable: true,
-            imageUrl: w.image || '',
-            image: w.image || '',
-            description: w.description || '',
-            priceBottle: w.priceBottle || '€5.50',
-            priceCase: w.priceCase || '€33.00 (Case of 6)',
-            updatedAt: new Date().toISOString()
-          };
-
-          await setDoc(doc(db, "wines", docId), wineData, { merge: true });
-        }
-
-        showToast("Successfully seeded database catalog with categories and tags!");
-      } catch (err) {
-        console.error("Seeding error:", err);
-        showToast("Failed to seed catalog: " + err.message, true);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> Seed Default Catalog`;
       }
     };
 
