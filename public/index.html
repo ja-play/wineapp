@@ -704,20 +704,12 @@
       renderCatalog(filtered);
     }
 
-    // Subscribe to available wines from Firestore where stockAvailable == true
+    // Subscribe to wines from Firestore
     try {
-      const q = query(collection(db, "wines"), where("stockAvailable", "==", true));
-      onSnapshot(q, (snapshot) => {
+      onSnapshot(collection(db, "wines"), (snapshot) => {
         document.getElementById('catalog-loading').classList.add('hidden');
-        if (snapshot.empty) {
-          onSnapshot(collection(db, "wines"), (snapAll) => {
-            currentWines = snapAll.docs.map(d => ({ id: d.id, ...d.data() })).filter(w => w.stockAvailable !== false);
-            applyFilters();
-          });
-        } else {
-          currentWines = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-          applyFilters();
-        }
+        currentWines = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        applyFilters();
       });
     } catch (e) {
       console.error(e);
@@ -743,26 +735,31 @@
         const tags = Array.isArray(w.tags) ? w.tags : (w.tags ? String(w.tags).split(',') : []);
 
         const stockQty = (w.stockQuantity !== undefined && w.stockQuantity !== null && !isNaN(Number(w.stockQuantity))) ? Number(w.stockQuantity) : 0;
-        const isLowStock = stockQty < 10 && stockQty > 0;
+        const isAvailable = w.stockAvailable !== false && stockQty > 0;
+        const isLowStock = isAvailable && stockQty < 10;
         const bottlePriceHT = typeof w.priceBottleHT === 'number' ? w.priceBottleHT : (parseFloat((w.priceBottle || '').replace(/[^0-9.]/g, '')) || 5.50);
         const casePriceHT = typeof w.priceCaseHT === 'number' ? w.priceCaseHT : (parseFloat((w.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
         const caseConfig = w.caseSize ? `1x${w.caseSize}` : '1x6';
         const depositCase = w.depositCase || 1.35;
         const isClientSelected = Boolean(selectedClient);
 
-        const stockBadgeClass = isLowStock
-          ? 'bg-rose-950/80 text-rose-300 border-rose-600/80 animate-pulse font-extrabold'
-          : 'bg-[#2D070D] text-[#F3E5AB] border-[#D4AF37]/50';
+        const stockBadgeClass = !isAvailable
+          ? 'bg-rose-950/80 text-rose-300 border-rose-600/80'
+          : (isLowStock
+            ? 'bg-amber-500/30 text-amber-300 border-amber-500/60 animate-pulse font-extrabold'
+            : 'bg-[#2D070D] text-[#F3E5AB] border-[#D4AF37]/50');
 
-        const stockBadgeText = isLowStock
-          ? `⚠️ Low Stock: ${stockQty} Cases left`
-          : `In Stock: ${stockQty} Cases`;
+        const stockBadgeText = !isAvailable
+          ? '○ Out of Stock'
+          : (isLowStock
+            ? `⚠️ Low Stock: ${stockQty} Cases left`
+            : `In Stock: ${stockQty} Cases`);
 
         const tagsHtml = tags.map(t => `<span class="text-[9px] bg-[#2A060B] text-[#F3E5AB] border border-[#D4AF37]/30 px-2 py-0.5 rounded-full font-medium">#${t.trim()}</span>`).join('');
 
         return `
-          <div class="card-theme card-theme-hover rounded-2xl overflow-hidden flex flex-col group">
-            <div class="relative overflow-hidden cursor-pointer bg-[#140204]/90 flex items-center justify-center h-52 p-4 border-b border-[#D4AF37]/20" onclick="window.openModal('${(w.imageUrl || w.image || '').replace(/'/g, "\\'")}', '${(w.name || '').replace(/'/g, "\\'")}', '${(w.sku || '').replace(/'/g, "\\'")}')">
+          <div class="card-theme card-theme-hover rounded-2xl overflow-hidden flex flex-col group ${!isAvailable ? 'opacity-75' : ''}">
+            <div class="relative overflow-hidden cursor-pointer bg-[#140204]/90 flex items-center justify-center h-52 p-4 border-b border-[#D4AF37]/20" onclick="window.openModal('${w.sku}')">
               <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-xl" />
               <span class="absolute top-3 left-3 bg-[#2D070D]/90 text-[#F3E5AB] border border-[#D4AF37]/40 text-xs px-2.5 py-0.5 rounded font-mono font-semibold">${w.vintage || '2024'}</span>
               <span class="absolute top-3 right-3 text-[11px] px-2.5 py-0.5 rounded font-mono font-bold border ${stockBadgeClass}">
@@ -805,7 +802,7 @@
                     -
                   </button>
                   <span class="w-7 text-center text-sm font-extrabold gold-gradient-text font-mono">${qty}</span>
-                  <button onclick="updateQty('${w.sku}', 1)" ${!isClientSelected || qty >= stockQty ? 'disabled' : ''} class="w-8 h-8 rounded-lg btn-gold disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 font-bold text-sm transition flex items-center justify-center">
+                  <button onclick="updateQty('${w.sku}', 1)" ${!isClientSelected || !isAvailable || qty >= stockQty ? 'disabled' : ''} class="w-8 h-8 rounded-lg btn-gold disabled:opacity-30 disabled:cursor-not-allowed text-slate-950 font-bold text-sm transition flex items-center justify-center">
                     +
                   </button>
                 </div>
@@ -1157,11 +1154,13 @@
     const modalTitle = document.getElementById('modal-title');
     const modalCaption = document.getElementById('modal-caption');
 
-    window.openModal = function (imgSrc, title, sku) {
-      modalImg.src = imgSrc;
-      modalImg.alt = title;
-      modalTitle.textContent = title;
-      modalCaption.textContent = `SKU: ${sku}`;
+    window.openModal = function (sku) {
+      const wine = currentWines.find(w => w.sku === sku);
+      if (!wine) return;
+      modalImg.src = wine.imageUrl || wine.image || 'images/34172 DGB Oude kaap_Cab Merlot.png';
+      modalImg.alt = wine.name || 'Wine';
+      modalTitle.textContent = wine.name || 'Wine';
+      modalCaption.textContent = `SKU: ${wine.sku}`;
       modal.classList.remove('hidden');
       setTimeout(() => modal.classList.remove('opacity-0'), 10);
     };

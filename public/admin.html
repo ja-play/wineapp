@@ -1053,8 +1053,9 @@
         document.getElementById('form-category').value = wineObj.category || detectWineCategory(wineObj);
         document.getElementById('form-tags').value = Array.isArray(wineObj.tags) ? wineObj.tags.join(', ') : (wineObj.tags || '');
         document.getElementById('form-region').value = wineObj.region || '';
-        document.getElementById('form-stock-quantity').value = (wineObj && wineObj.stockQuantity !== undefined && wineObj.stockQuantity !== null && !isNaN(Number(wineObj.stockQuantity))) ? Number(wineObj.stockQuantity) : 0;
-        document.getElementById('form-stock-available').value = String(wineObj.stockAvailable !== false);
+        const currentStock = (wineObj && wineObj.stockQuantity !== undefined && wineObj.stockQuantity !== null && !isNaN(Number(wineObj.stockQuantity))) ? Number(wineObj.stockQuantity) : 0;
+        document.getElementById('form-stock-quantity').value = currentStock;
+        document.getElementById('form-stock-available').value = String(wineObj.stockAvailable !== false && currentStock > 0);
         document.getElementById('form-price-bottle-ht').value = wineObj.priceBottleHT || '';
         document.getElementById('form-price-case-ht').value = wineObj.priceCaseHT || '';
         document.getElementById('form-deposit-case').value = wineObj.depositCase || 1.35;
@@ -1114,7 +1115,7 @@
         const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(Boolean) : [];
         const region = document.getElementById('form-region').value.trim();
         const stockQuantity = parseInt(document.getElementById('form-stock-quantity').value, 10) || 0;
-        const stockAvailable = document.getElementById('form-stock-available').value === 'true' && stockQuantity > 0;
+        const stockAvailable = stockQuantity > 0;
         const priceBottleHT = parseFloat(document.getElementById('form-price-bottle-ht').value);
         const priceCaseHT = parseFloat(document.getElementById('form-price-case-ht').value);
         const depositCase = parseFloat(document.getElementById('form-deposit-case').value) || 1.35;
