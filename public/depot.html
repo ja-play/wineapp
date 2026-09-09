@@ -542,7 +542,7 @@
         return;
       }
 
-      const stockQty = typeof found.stockQuantity === 'number' ? found.stockQuantity : 50;
+      const stockQty = (found && found.stockQuantity !== undefined && found.stockQuantity !== null && !isNaN(Number(found.stockQuantity))) ? Number(found.stockQuantity) : 0;
       const isLowStock = stockQty < 10 && stockQty > 0;
 
       resContainer.innerHTML = `
@@ -581,7 +581,7 @@
     window.adjustDepotStock = async function(docId, delta) {
       const w = currentWines.find(x => x.id === docId);
       if (!w) return;
-      const currentQty = typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
+      const currentQty = (w && w.stockQuantity !== undefined && w.stockQuantity !== null && !isNaN(Number(w.stockQuantity))) ? Number(w.stockQuantity) : 0;
       const nextQty = Math.max(0, currentQty + delta);
 
       try {

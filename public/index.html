@@ -742,7 +742,7 @@
         const categoryBadge = getCategoryBadge(category);
         const tags = Array.isArray(w.tags) ? w.tags : (w.tags ? String(w.tags).split(',') : []);
 
-        const stockQty = typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
+        const stockQty = (w.stockQuantity !== undefined && w.stockQuantity !== null && !isNaN(Number(w.stockQuantity))) ? Number(w.stockQuantity) : 0;
         const isLowStock = stockQty < 10 && stockQty > 0;
         const bottlePriceHT = typeof w.priceBottleHT === 'number' ? w.priceBottleHT : (parseFloat((w.priceBottle || '').replace(/[^0-9.]/g, '')) || 5.50);
         const casePriceHT = typeof w.priceCaseHT === 'number' ? w.priceCaseHT : (parseFloat((w.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
@@ -822,7 +822,7 @@
         return;
       }
       const wine = currentWines.find(w => w.sku === sku);
-      const stockQty = wine && typeof wine.stockQuantity === 'number' ? wine.stockQuantity : 50;
+      const stockQty = wine && (wine.stockQuantity !== undefined && wine.stockQuantity !== null && !isNaN(Number(wine.stockQuantity))) ? Number(wine.stockQuantity) : 0;
       const current = cart[sku] || 0;
       const next = Math.max(0, Math.min(stockQty, current + delta));
 
@@ -948,7 +948,7 @@
           });
 
           // Deduct stock quantity in Firestore
-          const currentQty = typeof wine.stockQuantity === 'number' ? wine.stockQuantity : 50;
+          const currentQty = (wine.stockQuantity !== undefined && wine.stockQuantity !== null && !isNaN(Number(wine.stockQuantity))) ? Number(wine.stockQuantity) : 0;
           const nextQty = Math.max(0, currentQty - qty);
           await updateDoc(doc(db, "wines", wine.id), {
             stockQuantity: nextQty,

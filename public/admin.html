@@ -668,7 +668,7 @@
         return;
       }
 
-      const stockQty = typeof found.stockQuantity === 'number' ? found.stockQuantity : 50;
+      const stockQty = (found && found.stockQuantity !== undefined && found.stockQuantity !== null && !isNaN(Number(found.stockQuantity))) ? Number(found.stockQuantity) : 0;
 
       resContainer.innerHTML = `
         <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row gap-6 items-center">
@@ -706,7 +706,7 @@
     window.adjustStock = async function(docId, delta) {
       const w = currentWines.find(x => x.id === docId);
       if (!w) return;
-      const currentQty = typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
+      const currentQty = (w && w.stockQuantity !== undefined && w.stockQuantity !== null && !isNaN(Number(w.stockQuantity))) ? Number(w.stockQuantity) : 0;
       const nextQty = Math.max(0, currentQty + delta);
       const isAvailable = nextQty > 0;
 
@@ -931,7 +931,7 @@
         const categoryBadge = getCategoryBadge(category);
         const tags = Array.isArray(w.tags) ? w.tags : (w.tags ? String(w.tags).split(',') : []);
 
-        const stockQty = typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
+        const stockQty = (w && w.stockQuantity !== undefined && w.stockQuantity !== null && !isNaN(Number(w.stockQuantity))) ? Number(w.stockQuantity) : 0;
         const isAvailable = w.stockAvailable !== false && stockQty > 0;
         const isLowStock = isAvailable && stockQty < 10;
         const bottlePrice = typeof w.priceBottleHT === 'number' ? `€${w.priceBottleHT.toFixed(2)}` : (w.priceBottle || '€0.00');
@@ -1009,8 +1009,8 @@
     window.toggleStockStatus = async function(docId, newStatus) {
       try {
         const w = currentWines.find(x => x.id === docId);
-        const currentQty = w && typeof w.stockQuantity === 'number' ? w.stockQuantity : 50;
-        const targetQty = newStatus ? (currentQty > 0 ? currentQty : 50) : 0;
+        const currentQty = (w && w.stockQuantity !== undefined && w.stockQuantity !== null && !isNaN(Number(w.stockQuantity))) ? Number(w.stockQuantity) : 0;
+        const targetQty = newStatus ? (currentQty > 0 ? currentQty : 10) : 0;
         await updateDoc(doc(db, "wines", docId), { stockAvailable: newStatus, stockQuantity: targetQty });
         showToast(newStatus ? "Product set to In Stock" : "Product set to Out of Stock");
       } catch (err) {
@@ -1038,7 +1038,7 @@
         document.getElementById('form-category').value = wineObj.category || detectWineCategory(wineObj);
         document.getElementById('form-tags').value = Array.isArray(wineObj.tags) ? wineObj.tags.join(', ') : (wineObj.tags || '');
         document.getElementById('form-region').value = wineObj.region || '';
-        document.getElementById('form-stock-quantity').value = typeof wineObj.stockQuantity === 'number' ? wineObj.stockQuantity : 50;
+        document.getElementById('form-stock-quantity').value = (wineObj && wineObj.stockQuantity !== undefined && wineObj.stockQuantity !== null && !isNaN(Number(wineObj.stockQuantity))) ? Number(wineObj.stockQuantity) : 0;
         document.getElementById('form-stock-available').value = String(wineObj.stockAvailable !== false);
         document.getElementById('form-price-bottle-ht').value = wineObj.priceBottleHT || '';
         document.getElementById('form-price-case-ht').value = wineObj.priceCaseHT || '';
@@ -1051,7 +1051,7 @@
         existingImageInput.value = "";
         document.getElementById('form-category').value = "Red";
         document.getElementById('form-tags').value = "";
-        document.getElementById('form-stock-quantity').value = "50";
+        document.getElementById('form-stock-quantity').value = "10";
         document.getElementById('form-deposit-case').value = "1.35";
         document.getElementById('form-stock-available').value = "true";
       }
