@@ -87,6 +87,8 @@ function buildNoteDenvoiHtml(orderId, order) {
       <div>${escapeHtml(client.address || '')}</div>
       <div style="margin-top: 6px; font-size: 12px;"><strong>N° TVA Client:</strong> ${escapeHtml(client.vat || 'BE 0000000000')}</div>
       <div style="font-size: 12px;"><strong>N° Client Aurellion:</strong> ${escapeHtml(client.clientNo || 'N/A')}</div>
+      ${client.contactPerson ? `<div style="font-size: 12px;"><strong>Contact Person:</strong> ${escapeHtml(client.contactPerson)}</div>` : ''}
+      ${client.phone ? `<div style="font-size: 12px;"><strong>Téléphone:</strong> ${escapeHtml(client.phone)}</div>` : ''}
     </div>
     <div class="card">
       <div class="card-title">Informations de Livraison</div>

@@ -27,3 +27,18 @@ export function setSafeText(element, text) {
     element.textContent = text || '';
   }
 }
+
+/**
+ * Converts a string to Proper Case (Title Case)
+ * @param {string} str
+ * @returns {string} Proper case string
+ */
+export function toProperCase(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+

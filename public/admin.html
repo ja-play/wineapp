@@ -495,32 +495,45 @@
     </div>
   </div>
 
-  <!-- Add Client Shop Modal -->
+  <!-- Add / Edit Client Shop Modal -->
   <div id="shop-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
     <div class="relative bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl my-8">
       <div class="flex justify-between items-center pb-4 border-b border-slate-700 mb-6">
-        <h3 class="text-xl font-bold text-amber-400">Add Client Shop</h3>
+        <h3 id="shop-modal-header" class="text-xl font-bold text-amber-400">Add Client Shop</h3>
         <button onclick="closeShopModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-700 transition">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
 
       <form onsubmit="handleShopSubmit(event)" class="space-y-4">
+        <input type="hidden" id="shop-id" value="" />
         <div>
           <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Shop Name *</label>
           <input type="text" id="shop-name" required placeholder="e.g. Wine Boutique Gent" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
         </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Client Number *</label>
-          <input type="text" id="shop-client-no" required placeholder="e.g. 3120" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
-        </div>
-        <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Belgian VAT Number *</label>
-          <input type="text" id="shop-vat" required placeholder="e.g. BE 0812345678" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Client Number *</label>
+            <input type="text" id="shop-client-no" required placeholder="e.g. 3120" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Belgian VAT Number *</label>
+            <input type="text" id="shop-vat" required placeholder="e.g. BE 0812345678" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Address *</label>
           <input type="text" id="shop-address" required placeholder="e.g. Veldstraat 45, 9000 Gent" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Contact Person</label>
+            <input type="text" id="shop-contact-person" placeholder="e.g. Jean Dupont" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Phone Number</label>
+            <input type="text" id="shop-phone" placeholder="e.g. +32 470 12 34 56" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+          </div>
         </div>
 
         <div class="pt-4 border-t border-slate-700 flex justify-end gap-3">
@@ -538,11 +551,12 @@
   <script type="module">
     import { db, storage, auth, collection, getDocs, setDoc, doc, deleteDoc, updateDoc, onSnapshot, ref, uploadBytes, getDownloadURL, onAuthStateChanged } from './firebase-config.js';
     import { getUserRole, updateUserRole, setupAuthUI } from './auth-guard.js';
-    import { escapeHtml } from './utils/sanitizer.js';
+    import { escapeHtml, toProperCase } from './utils/sanitizer.js';
     import { calculateOrderTotals } from './utils/tax-calculator.js';
 
     let currentWines = [];
     let currentOrders = [];
+    let allShopsCache = [];
     let snapshotUnsubscribe = null;
     let usersUnsubscribe = null;
     let shopsUnsubscribe = null;
@@ -776,52 +790,106 @@
     };
 
     function renderShops(shops) {
+      allShopsCache = shops || [];
       const container = document.getElementById('shops-container');
       if (!shops || shops.length === 0) {
         container.innerHTML = `<p class="col-span-3 text-center py-8 text-slate-400">No client shops registered.</p>`;
         return;
       }
 
-      container.innerHTML = shops.map(s => `
-        <div class="bg-slate-800 border border-slate-700/80 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
-          <div>
-            <div class="flex justify-between items-start mb-2">
-              <h3 class="font-bold text-lg text-white">${s.name}</h3>
-              <span class="text-xs bg-slate-700 text-amber-400 font-mono font-bold px-2 py-0.5 rounded">Client #${s.clientNo || ''}</span>
+      container.innerHTML = shops.map(s => {
+        const contactInfo = s.contactPerson ? `<p class="text-xs text-slate-300 mt-1">👤 Contact: ${escapeHtml(s.contactPerson)}</p>` : '';
+        const phoneInfo = s.phone ? `<p class="text-xs text-slate-300">📞 Phone: ${escapeHtml(s.phone)}</p>` : '';
+        const properName = escapeHtml(toProperCase(s.name));
+
+        return `
+          <div class="bg-slate-800 border border-slate-700/80 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <h3 class="font-bold text-lg text-white">${properName}</h3>
+                <span class="text-xs bg-slate-700 text-amber-400 font-mono font-bold px-2 py-0.5 rounded">Client #${escapeHtml(s.clientNo || '')}</span>
+              </div>
+              <p class="text-xs font-mono text-emerald-400 mb-1">VAT: ${escapeHtml(s.vat)}</p>
+              <p class="text-xs text-slate-400">${escapeHtml(s.address)}</p>
+              ${contactInfo}
+              ${phoneInfo}
             </div>
-            <p class="text-xs font-mono text-emerald-400 mb-1">VAT: ${s.vat}</p>
-            <p class="text-xs text-slate-400">${s.address}</p>
+            <div class="mt-4 pt-3 border-t border-slate-700/60 flex justify-between items-center">
+              <button onclick="window.editShop('${s.id}')" class="text-xs text-amber-400 hover:text-amber-300 font-semibold transition flex items-center gap-1">
+                ✏️ Edit Shop
+              </button>
+              <button onclick="window.deleteShop('${s.id}', '${escapeHtml(s.name.replace(/'/g, "\\'"))}')" class="text-xs text-rose-400 hover:text-rose-300 font-semibold transition">
+                🗑️ Delete
+              </button>
+            </div>
           </div>
-          <div class="mt-4 pt-3 border-t border-slate-700/60 text-right">
-            <button onclick="window.deleteShop('${s.id}', '${s.name.replace(/'/g, "\\'")}')" class="text-xs text-rose-400 hover:text-rose-300 font-semibold transition">
-              🗑️ Delete Shop
-            </button>
-          </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
-    window.openShopModal = function() {
+    window.openShopModal = function(isEdit = false) {
+      if (!isEdit) {
+        document.getElementById('shop-id').value = '';
+        document.getElementById('shop-name').value = '';
+        document.getElementById('shop-client-no').value = '';
+        document.getElementById('shop-vat').value = '';
+        document.getElementById('shop-address').value = '';
+        document.getElementById('shop-contact-person').value = '';
+        document.getElementById('shop-phone').value = '';
+        const header = document.getElementById('shop-modal-header');
+        if (header) header.textContent = 'Add Client Shop';
+      }
       document.getElementById('shop-modal').classList.remove('hidden');
     };
+
+    window.editShop = function(id) {
+      const shop = allShopsCache.find(s => s.id === id);
+      if (!shop) return;
+      document.getElementById('shop-id').value = shop.id;
+      document.getElementById('shop-name').value = shop.name || '';
+      document.getElementById('shop-client-no').value = shop.clientNo || '';
+      document.getElementById('shop-vat').value = shop.vat || '';
+      document.getElementById('shop-address').value = shop.address || '';
+      document.getElementById('shop-contact-person').value = shop.contactPerson || '';
+      document.getElementById('shop-phone').value = shop.phone || '';
+
+      const header = document.getElementById('shop-modal-header');
+      if (header) header.textContent = 'Edit Client Shop';
+      window.openShopModal(true);
+    };
+
     window.closeShopModal = function() {
       document.getElementById('shop-modal').classList.add('hidden');
     };
 
     window.handleShopSubmit = async function(e) {
       e.preventDefault();
+      const existingId = document.getElementById('shop-id').value.trim();
       const name = document.getElementById('shop-name').value.trim();
       const clientNo = document.getElementById('shop-client-no').value.trim();
       const vat = document.getElementById('shop-vat').value.trim();
       const address = document.getElementById('shop-address').value.trim();
-      const id = 'shop-' + Date.now();
+      const contactPerson = document.getElementById('shop-contact-person').value.trim();
+      const phone = document.getElementById('shop-phone').value.trim();
+      const id = existingId || ('shop-' + Date.now());
+
+      const shopData = {
+        id,
+        name,
+        clientNo,
+        vat,
+        address,
+        contactPerson,
+        phone,
+        updatedAt: new Date().toISOString()
+      };
 
       try {
-        await setDoc(doc(db, 'shops', id), { id, name, clientNo, vat, address });
+        await setDoc(doc(db, 'shops', id), shopData, { merge: true });
         closeShopModal();
-        showToast(`Client shop "${name}" created!`);
+        showToast(existingId ? `Client shop "${name}" updated!` : `Client shop "${name}" created!`);
       } catch (err) {
-        showToast("Error creating shop: " + err.message, true);
+        showToast("Error saving shop: " + err.message, true);
       }
     };
 

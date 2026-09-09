@@ -190,11 +190,11 @@
   <!-- Client Shop Selector Sticky Sub-Header -->
   <div id="client-shop-bar" class="header-theme px-4 py-3 sticky top-[65px] z-30 shadow-md">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-      <div class="flex items-center gap-2 w-full sm:w-auto">
-        <span class="text-xs font-bold uppercase tracking-wider gold-gradient-text whitespace-nowrap">🏪 Client
-          Shop:</span>
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+        <span class="text-xs font-bold uppercase tracking-wider gold-gradient-text whitespace-nowrap">🏪 Client Shop:</span>
+        <input type="text" id="client-shop-filter" placeholder="🔍 Search shop..." class="w-full sm:w-36 input-theme text-xs px-2.5 py-1.5 rounded-xl placeholder-[#C8B69B]/50" title="Type to filter client shop list" />
         <select id="client-shop-select"
-          class="w-full sm:w-80 input-theme text-xs font-semibold px-3 py-2 rounded-xl cursor-pointer shadow">
+          class="w-full sm:w-72 input-theme text-xs font-semibold px-3 py-2 rounded-xl cursor-pointer shadow">
           <option value="" disabled selected>-- Loading Client Shops... --</option>
         </select>
       </div>
@@ -400,7 +400,7 @@
   <script type="module">
     import { db, auth, collection, doc, getDocs, updateDoc, onSnapshot, query, where, addDoc, serverTimestamp, onAuthStateChanged } from './firebase-config.js';
     import { getShops, getUserRole, setupAuthUI } from './auth-guard.js';
-    import { escapeHtml } from './utils/sanitizer.js';
+    import { escapeHtml, toProperCase } from './utils/sanitizer.js';
     import { calculateOrderTotals } from './utils/tax-calculator.js';
     import { formatCurrency } from './app-config.js';
 
@@ -411,6 +411,29 @@
     let availableShops = [];
     let evaluatorOrders = [];
     let shopsUnsubscribe = null;
+
+    // Helper to render shop options in dropdown (Proper Case Shop Name only)
+    function renderShopOptions() {
+      const shopSelect = document.getElementById('client-shop-select');
+      const filterInput = document.getElementById('client-shop-filter');
+      if (!shopSelect) return;
+
+      const currentVal = shopSelect.value;
+      const searchTerm = filterInput ? filterInput.value.trim().toLowerCase() : '';
+
+      const filteredShops = searchTerm 
+        ? availableShops.filter(s => (s.name && s.name.toLowerCase().includes(searchTerm)) || (s.vat && s.vat.toLowerCase().includes(searchTerm)))
+        : availableShops;
+
+      if (!filteredShops || filteredShops.length === 0) {
+        shopSelect.innerHTML = `<option value="" disabled selected>${searchTerm ? '-- No matching shops --' : '-- No Client Shops Available --'}</option>`;
+      } else {
+        shopSelect.innerHTML = `
+          <option value="" disabled ${!currentVal ? 'selected' : ''}>-- Select Customer Shop --</option>
+          ${filteredShops.map(s => `<option value="${escapeHtml(s.id)}" ${s.id === currentVal ? 'selected' : ''}>${escapeHtml(toProperCase(s.name))}</option>`).join('')}
+        `;
+      }
+    }
 
     // Populate Client Selector dynamically with real-time Firestore listener
     function subscribeClientShops(user) {
@@ -446,23 +469,11 @@
           } else {
             availableShops = await getShops();
           }
-
-          if (shopSelect) {
-            const currentVal = shopSelect.value;
-            shopSelect.innerHTML = `
-              <option value="" disabled ${!currentVal ? 'selected' : ''}>-- Select Belgian Customer Shop --</option>
-              ${availableShops.map(s => `<option value="${escapeHtml(s.id)}" ${s.id === currentVal ? 'selected' : ''}>${escapeHtml(s.name)} - ${escapeHtml(s.vat)}</option>`).join('')}
-            `;
-          }
+          renderShopOptions();
         }, async (err) => {
           console.warn("Realtime shops subscription fallback:", err);
           availableShops = await getShops();
-          if (shopSelect) {
-            shopSelect.innerHTML = `
-              <option value="" disabled selected>-- Select Belgian Customer Shop --</option>
-              ${availableShops.map(s => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)} - ${escapeHtml(s.vat)}</option>`).join('')}
-            `;
-          }
+          renderShopOptions();
         });
       } catch (e) {
         console.error("Failed to subscribe to shops:", e);
@@ -477,25 +488,41 @@
       subscribeClientShops(user);
     });
 
-    // Client Selector Listener
-    const shopSelect = document.getElementById('client-shop-select');
-    shopSelect.addEventListener('change', (e) => {
-      const shopId = e.target.value;
-      selectedClient = availableShops.find(s => s.id === shopId) || null;
+    // Client Selector & Filter Listeners
+    const shopSelectEl = document.getElementById('client-shop-select');
+    if (shopSelectEl) {
+      shopSelectEl.addEventListener('change', (e) => {
+        const shopId = e.target.value;
+        selectedClient = availableShops.find(s => s.id === shopId) || null;
 
-      const infoBox = document.getElementById('selected-client-info');
-      if (selectedClient) {
-        infoBox.innerHTML = `
-          <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-md font-mono">
-            N° TVA: ${selectedClient.vat} | N° Client: ${selectedClient.clientNo}
-          </span>
-        `;
-      } else {
-        infoBox.innerHTML = `<span class="text-rose-400 font-medium">⚠️ Select a shop client to enable order placement</span>`;
-      }
-      renderCatalog(currentWines);
-      updateCartTotals();
-    });
+        const infoBox = document.getElementById('selected-client-info');
+        if (selectedClient) {
+          const contactInfo = selectedClient.contactPerson ? ` | 👤 ${escapeHtml(selectedClient.contactPerson)}` : '';
+          const phoneInfo = selectedClient.phone ? ` | 📞 ${escapeHtml(selectedClient.phone)}` : '';
+
+          if (infoBox) {
+            infoBox.innerHTML = `
+              <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-md font-mono">
+                N° TVA: ${escapeHtml(selectedClient.vat)} | N° Client: ${escapeHtml(selectedClient.clientNo)}${contactInfo}${phoneInfo}
+              </span>
+            `;
+          }
+        } else {
+          if (infoBox) {
+            infoBox.innerHTML = `<span class="text-rose-400 font-medium">⚠️ Select a shop client to enable order placement</span>`;
+          }
+        }
+        renderCatalog(currentWines);
+        updateCartTotals();
+      });
+    }
+
+    const shopFilterEl = document.getElementById('client-shop-filter');
+    if (shopFilterEl) {
+      shopFilterEl.addEventListener('input', () => {
+        renderShopOptions();
+      });
+    }
 
     let activeCategory = 'all';
     let searchQuery = '';
@@ -938,10 +965,12 @@
           evaluatorUid: currentUser ? currentUser.uid : 'evaluator-demo-uid',
           evaluatorEmail: currentUser ? currentUser.email : 'evaluator@winedistribution.be',
           client: {
-            name: selectedClient.name,
+            name: toProperCase(selectedClient.name),
             address: selectedClient.address,
             vat: selectedClient.vat,
-            clientNo: selectedClient.clientNo
+            clientNo: selectedClient.clientNo,
+            contactPerson: selectedClient.contactPerson || '',
+            phone: selectedClient.phone || ''
           },
           items: items,
           totals: {

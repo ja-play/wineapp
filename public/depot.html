@@ -455,6 +455,8 @@
                 <div class="text-sm font-bold text-white">${client.name}</div>
                 <div class="text-slate-300">${client.address || 'Address not provided'}</div>
                 <div class="text-slate-400 font-mono">N° TVA: ${client.vat || 'N/A'} | N° Client: ${client.clientNo || 'N/A'}</div>
+                ${client.contactPerson ? `<div class="text-slate-300">👤 Contact: ${client.contactPerson}</div>` : ''}
+                ${client.phone ? `<div class="text-slate-300">📞 Phone: ${client.phone}</div>` : ''}
               </div>
 
               <!-- Price & Case Summary -->
@@ -631,6 +633,7 @@
             <div class="font-bold text-xs text-slate-900">${client.name}</div>
             <div class="text-slate-700">${client.address}</div>
             <div class="font-mono text-slate-600">N° TVA Client: ${client.vat} | N° Client: ${client.clientNo}</div>
+            ${client.contactPerson || client.phone ? `<div class="text-slate-700 font-medium">Contact: ${client.contactPerson || ''}${client.phone ? ' (' + client.phone + ')' : ''}</div>` : ''}
           </div>
           <div>
             <span class="font-bold uppercase text-slate-500 text-[9px] block mb-0.5">Dépôt d'Expédition</span>

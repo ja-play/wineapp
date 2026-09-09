@@ -16,32 +16,7 @@ import {
   signOut 
 } from './firebase-config.js';
 
-// Initial Belgian client shops seed data
-const DEFAULT_BELGIAN_CLIENT_SHOPS = [
-  {
-    id: "shop-001",
-    name: "Food City Bruxelles",
-    vat: "BE 0707843840",
-    clientNo: "2340",
-    address: "Place Saint-Pierre 12, 1040 Bruxelles"
-  },
-  {
-    id: "shop-002",
-    name: "Wine Boutique Gent",
-    vat: "BE 0812345678",
-    clientNo: "3120",
-    address: "Veldstraat 45, 9000 Gent"
-  },
-  {
-    id: "shop-003",
-    name: "Le Caveau Liège",
-    vat: "BE 0987654321",
-    clientNo: "4050",
-    address: "Rue Souverain-Pont 8, 4000 Liège"
-  }
-];
-
-// Fetch client shops dynamically from Firestore 'shops' collection (seeds default if empty)
+// Fetch client shops dynamically from Firestore 'shops' collection
 export async function getShops() {
   if (!auth.currentUser) {
     return [];
@@ -52,19 +27,10 @@ export async function getShops() {
     if (!snap.empty) {
       return snap.docs.map(d => ({ id: d.id, ...d.data() }));
     }
-    
-    // Seed initial client shops if collection is empty (only succeeds if authorized)
-    try {
-      for (const shop of DEFAULT_BELGIAN_CLIENT_SHOPS) {
-        await setDoc(doc(db, 'shops', shop.id), shop);
-      }
-    } catch (seedErr) {
-      // Ignored if current user is not admin
-    }
-    return DEFAULT_BELGIAN_CLIENT_SHOPS;
+    return [];
   } catch (err) {
-    console.warn("Failed to fetch shops from Firestore, using defaults:", err);
-    return DEFAULT_BELGIAN_CLIENT_SHOPS;
+    console.warn("Failed to fetch shops from Firestore:", err);
+    return [];
   }
 }
 
