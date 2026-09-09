@@ -46,6 +46,12 @@ service cloud.firestore {
       allow create: if isEvaluator() || isAdmin();
       allow update, delete: if isDepot() || isAdmin();
     }
+
+    // Contact & B2B Inquiries Collection
+    match /inquiries/{inquiryId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
   }
 }
 
