@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /admin.html
+Disallow: /depot.html
 
 Sitemap: https://aurellionwine.com/sitemap.xml
