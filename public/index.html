@@ -187,8 +187,8 @@
     </div>
   </header>
 
-  <!-- Client Shop Selector Sticky Sub-Header -->
-  <div id="client-shop-bar" class="header-theme px-4 py-3 sticky top-[65px] z-30 shadow-md">
+  <!-- Client Shop Selector Sticky Sub-Header (Hidden by default for guests) -->
+  <div id="client-shop-bar" class="header-theme px-4 py-3 sticky top-[65px] z-30 shadow-md hidden">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
         <span class="text-xs font-bold uppercase tracking-wider gold-gradient-text whitespace-nowrap">🏪 Client Shop:</span>
@@ -435,8 +435,9 @@
       }
     }
 
-    // Populate Client Selector dynamically with real-time Firestore listener
-    function subscribeClientShops(user) {
+    // Populate Client Selector dynamically with real-time Firestore listener (Evaluator & Admin only)
+    function subscribeClientShops(user, role) {
+      const clientShopBar = document.getElementById('client-shop-bar');
       const shopSelect = document.getElementById('client-shop-select');
       const infoBox = document.getElementById('selected-client-info');
 
@@ -445,21 +446,18 @@
         shopsUnsubscribe = null;
       }
 
-      if (!user) {
+      const isAuthorized = user && (role === 'evaluator' || role === 'admin');
+
+      if (!isAuthorized) {
         availableShops = [];
         selectedClient = null;
-        if (shopSelect) {
-          shopSelect.disabled = true;
-          shopSelect.innerHTML = `<option value="" disabled selected>-- Sign in to select Customer Shop --</option>`;
-        }
-        if (infoBox) {
-          infoBox.innerHTML = `<span class="text-amber-300/90 font-medium">⚠️ Sign in as Field Evaluator or Admin to select shop client</span>`;
-        }
+        if (clientShopBar) clientShopBar.classList.add('hidden');
         renderCatalog(currentWines);
         updateCartTotals();
         return;
       }
 
+      if (clientShopBar) clientShopBar.classList.remove('hidden');
       if (shopSelect) shopSelect.disabled = false;
 
       try {
@@ -485,7 +483,7 @@
       currentUser = user;
       const role = await getUserRole(user);
       setupAuthUI(user, role, 'auth-bar-container');
-      subscribeClientShops(user);
+      subscribeClientShops(user, role);
     });
 
     // Client Selector & Filter Listeners
