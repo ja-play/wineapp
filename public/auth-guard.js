@@ -103,27 +103,26 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
   };
 
   const roleLabels = {
-    admin: '👑 Admin Manager',
-    evaluator: '📋 Field Evaluator',
-    depot: '📦 Depot Staff'
+    admin: '👑 Admin',
+    evaluator: '📋 Evaluator',
+    depot: '📦 Depot'
   };
 
   container.innerHTML = `
-    <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-      <span class="text-xs text-[#F5EAE0] font-mono hidden md:inline truncate max-w-[180px]">${user.email}</span>
-      <span class="border text-[11px] px-2.5 py-0.5 rounded-lg font-bold uppercase tracking-wider ${roleColors[userRole] || roleColors.evaluator}">
+    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+      <span class="border text-[11px] px-2.5 py-1 rounded-lg font-bold uppercase tracking-wider ${roleColors[userRole] || roleColors.evaluator}">
         ${roleLabels[userRole] || userRole}
       </span>
       ${userRole === 'admin' ? `
-        <a href="admin.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1.5 rounded-lg font-medium transition">Admin Console</a>
+        <a href="admin.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1 rounded-lg font-medium transition">Admin</a>
       ` : ''}
       ${userRole === 'evaluator' || userRole === 'admin' ? `
-        <a href="index.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1.5 rounded-lg font-medium transition">Ordering Portal</a>
+        <a href="index.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1 rounded-lg font-medium transition">Orders</a>
       ` : ''}
       ${userRole === 'depot' || userRole === 'admin' ? `
-        <a href="depot.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1.5 rounded-lg font-medium transition">Depot View</a>
+        <a href="depot.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1 rounded-lg font-medium transition">Depot</a>
       ` : ''}
-      <button onclick="window.handleAuthSignOut()" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 text-xs px-2.5 py-1.5 rounded-lg border border-rose-800/60 font-semibold transition">
+      <button onclick="window.handleAuthSignOut()" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 text-xs px-2.5 py-1 rounded-lg border border-rose-800/60 font-semibold transition">
         Sign Out
       </button>
     </div>
