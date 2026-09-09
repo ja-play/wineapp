@@ -9,7 +9,10 @@ export const COMPANY_CONFIG = {
   address: "Rue de la Station 48, 1000 Bruxelles",
   vatNumber: "BE 0123.456.789",
   country: "Belgique",
-  contactEmail: "info@winedistribution.be"
+  contactEmail: "info@aurellionwine.com",
+  contactPhone: "+32 476 24 54 74",
+  whatsAppNumber: "32476245474",
+  whatsAppLink: "https://wa.me/32476245474"
 };
 
 export const TAX_CONFIG = {

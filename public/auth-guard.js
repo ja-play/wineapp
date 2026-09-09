@@ -87,7 +87,8 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
   if (!user) {
     container.innerHTML = `
       <div class="flex items-center gap-2">
-        <span class="text-xs text-[#C8B69B] font-mono hidden sm:inline">Guest</span>
+        <a href="index.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1.5 rounded-xl font-medium transition">Orders</a>
+        <a href="contact.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1.5 rounded-xl font-medium transition">Contact</a>
         <button onclick="window.showLoginModal()" class="btn-gold font-bold text-xs px-3.5 py-1.5 rounded-xl transition flex items-center gap-1 shadow">
           <span>Sign In / Register</span>
         </button>
@@ -113,11 +114,10 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
       <span class="border text-[11px] px-2.5 py-1 rounded-lg font-bold uppercase tracking-wider ${roleColors[userRole] || roleColors.evaluator}">
         ${roleLabels[userRole] || userRole}
       </span>
+      <a href="index.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1 rounded-lg font-medium transition">Orders</a>
+      <a href="contact.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1 rounded-lg font-medium transition">Contact</a>
       ${userRole === 'admin' ? `
         <a href="admin.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1 rounded-lg font-medium transition">Admin</a>
-      ` : ''}
-      ${userRole === 'evaluator' || userRole === 'admin' ? `
-        <a href="index.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1 rounded-lg font-medium transition">Orders</a>
       ` : ''}
       ${userRole === 'depot' || userRole === 'admin' ? `
         <a href="depot.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1 rounded-lg font-medium transition">Depot</a>
