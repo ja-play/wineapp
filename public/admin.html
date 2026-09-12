@@ -158,7 +158,7 @@
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 backdrop-blur-sm shadow-xl">
           <div>
             <h2 class="text-2xl font-extrabold text-white">Dynamic Catalog & Stock Management</h2>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1">Manage wholesale SKUs, case stock counts, pricing, deposit vidanges, and photography.</p>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Manage wholesale SKUs, case stock counts, pricing, and photography.</p>
           </div>
           <div class="flex items-center gap-3 flex-wrap">
             <button onclick="openWineModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
@@ -325,7 +325,7 @@
           <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
             <div class="text-xs text-slate-400 uppercase font-semibold mb-1">Net Sales (HT)</div>
             <div id="kpi-total-ht" class="text-3xl font-extrabold text-amber-400 font-mono">€0.00</div>
-            <div class="text-xs text-slate-500 mt-1">Excl. TVA & Vidanges</div>
+            <div class="text-xs text-slate-500 mt-1">Excl. TVA</div>
           </div>
 
           <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
@@ -462,10 +462,6 @@
           <div>
             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Case Price HT (€) *</label>
             <input type="number" step="0.01" id="form-price-case-ht" required placeholder="33.00" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Deposit (Vidange €)</label>
-            <input type="number" step="0.01" id="form-deposit-case" required placeholder="1.35" value="1.35" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
           </div>
         </div>
 
@@ -987,7 +983,6 @@
                 <span class="text-xs font-mono text-slate-400">${w.sku}</span>
                 <span title="${categoryBadge.title}" class="border px-2 py-1 rounded-full font-bold flex items-center justify-center ${categoryBadge.class}">${categoryBadge.html}</span>
                 <span class="text-[10px] bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded font-bold">${caseConfig}</span>
-                <span class="text-[10px] bg-amber-950/80 text-amber-400 border border-amber-800/40 px-1.5 py-0.5 rounded">+${deposit} Vidange</span>
               </div>
               ${tagsHtml ? `<div class="flex items-center gap-1 flex-wrap mb-2">${tagsHtml}</div>` : ''}
               <p class="text-xs text-slate-400 mb-4 line-clamp-2">${w.description || ''}</p>
@@ -1060,7 +1055,6 @@
         document.getElementById('form-stock-available').value = String(wineObj.stockAvailable !== false && currentStock > 0);
         document.getElementById('form-price-bottle-ht').value = wineObj.priceBottleHT || '';
         document.getElementById('form-price-case-ht').value = wineObj.priceCaseHT || '';
-        document.getElementById('form-deposit-case').value = wineObj.depositCase || 1.35;
         document.getElementById('form-description').value = wineObj.description || '';
         existingImageInput.value = wineObj.imageUrl || wineObj.image || '';
       } else {
@@ -1070,7 +1064,6 @@
         document.getElementById('form-category').value = "Red";
         document.getElementById('form-tags').value = "";
         document.getElementById('form-stock-quantity').value = "10";
-        document.getElementById('form-deposit-case').value = "1.35";
         document.getElementById('form-stock-available').value = "true";
       }
       document.getElementById('wine-modal').classList.remove('hidden');
@@ -1120,7 +1113,6 @@
         const stockAvailable = stockQuantity > 0;
         const priceBottleHT = parseFloat(document.getElementById('form-price-bottle-ht').value);
         const priceCaseHT = parseFloat(document.getElementById('form-price-case-ht').value);
-        const depositCase = parseFloat(document.getElementById('form-deposit-case').value) || 1.35;
         const description = document.getElementById('form-description').value.trim();
         const docId = document.getElementById('form-doc-id').value || sku.replace(/[^a-zA-Z0-9_-]/g, '_');
         const fileInput = document.getElementById('form-image-file');
@@ -1172,7 +1164,6 @@
           stockAvailable,
           priceBottleHT,
           priceCaseHT,
-          depositCase,
           vatRate: 0.21,
           description,
           imageUrl,
@@ -1381,7 +1372,7 @@
       }
 
       let csvContent = "data:text/csv;charset=utf-8,";
-      csvContent += "Order ID,Date Placed,Client Name,Client VAT,Client Address,Evaluator,Status,Total Cases,Net Sales HT (EUR),TVA (EUR),Vidanges (EUR),Gross Total TTC (EUR)\n";
+      csvContent += "Order ID,Date Placed,Client Name,Client VAT,Client Address,Evaluator,Status,Total Cases,Net Sales HT (EUR),TVA (EUR),Gross Total TTC (EUR)\n";
 
       filtered.forEach(o => {
         const client = o.client || {};
@@ -1403,7 +1394,6 @@
           totalCases,
           (totals.totalHT || 0).toFixed(2),
           (totals.totalTVA || 0).toFixed(2),
-          (totals.totalVidanges || 0).toFixed(2),
           (totals.totalTTC || 0).toFixed(2)
         ];
         csvContent += row.join(",") + "\n";
@@ -1508,7 +1498,6 @@
           <div class="totals">
             <div class="totals-row">Net Subtotal (HT): <strong>€${totals.totalHT ? totals.totalHT.toFixed(2) : '0.00'}</strong></div>
             <div class="totals-row">Belgian TVA (21%): <strong>€${totals.totalTVA ? totals.totalTVA.toFixed(2) : '0.00'}</strong></div>
-            <div class="totals-row">Vidanges (Crates Deposit): <strong>€${totals.totalVidanges ? totals.totalVidanges.toFixed(2) : '0.00'}</strong></div>
             <div class="grand-total">Total Payable (TTC): €${totals.totalTTC ? totals.totalTTC.toFixed(2) : '0.00'}</div>
           </div>
         </body>

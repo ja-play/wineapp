@@ -67,7 +67,6 @@ wineapp/
   "priceBottle": "€5.50",
   "priceCase": "€33.00 (Case of 6)",
   "stockAvailable": true,
-  "vidangePerCase": 1.35,
   "image": "https://firebasestorage.googleapis.com/v0/b/wine-catalog-belgium.appspot.com/o/wines%2F...",
   "updatedAt": "2026-08-07T15:27:00.000Z"
 }
@@ -81,8 +80,7 @@ wineapp/
   "items": [...],
   "subtotalHT": 198.00,
   "vat21": 41.58,
-  "vidanges": 5.40,
-  "totalTTC": 244.98,
+  "totalTTC": 239.58,
   "status": "ready_for_dispatch",
   "pdfUrl": "https://firebasestorage.googleapis.com/v0/b/wine-catalog-belgium.appspot.com/o/invoices%2F...",
   "createdAt": "2026-09-08T09:40:00.000Z"
@@ -93,7 +91,7 @@ wineapp/
 
 ## ⚡ Core Workflows & Features
 
-1. **Evaluator Field Ordering Flow (`index.html`)**: Select client, filter live in-stock wines, dynamic subtotal HT, 21% VAT, Vidange deposits, TTC grand total calculation, and order submission.
+1. **Evaluator Field Ordering Flow (`index.html`)**: Select client, filter live in-stock wines, dynamic subtotal HT, 21% VAT, TTC grand total calculation, and order submission.
 2. **Admin Portal (`admin.html`)**: Add/edit wine SKUs, update HT bottle & case pricing, toggle stock availability, upload bottle images to Firebase Storage, and seed initial catalog.
 3. **Depot Packing & Dispatch Queue (`depot.html`)**: Live `onSnapshot` feed of orders, dispatch state toggles, and direct print links for generated Note d'Envoi PDFs.
 4. **Cloud Function PDF Generator (`functions/index.js`)**: Listens to `orders/{orderId}` creation, renders an A4 Belgian Note d'Envoi via Puppeteer, stores PDF in Cloud Storage, and links URL to Firestore document.

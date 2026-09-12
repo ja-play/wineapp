@@ -16,8 +16,7 @@ export const COMPANY_CONFIG = {
 };
 
 export const TAX_CONFIG = {
-  VAT_RATE: 0.21, // 21% Belgian VAT
-  DEFAULT_VIDANGE_PER_CASE: 1.35 // Default bottle/case Vidange deposit in EUR
+  VAT_RATE: 0.21 // 21% Belgian VAT
 };
 
 export const FIREBASE_APP_CONFIG = {

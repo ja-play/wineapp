@@ -8,8 +8,8 @@
 - **Development & Project Management**: Workspace rule-based Jira integration (`WINE` project) and pre-commit documentation sync.
 
 ## Core Modules & Roles
-1. **Admin Product Portal (`/admin.html`)**: Role `admin`. Catalog SKU creation/edits, bottle & case HT pricing, deposit vidanges (€1.35), availability toggling (`stockAvailable`), image uploads to Firebase Storage (`wines/{filename}`).
-2. **Evaluator Field Ordering Flow (`/index.html`)**: Role `evaluator`. Belgian client shop selection (Food City, Wine Boutique, Le Caveau), dynamic catalog query (`stockAvailable == true`), inline case quantity selectors, cart drawer with subtotal HT, 21% VAT, Vidanges, and total TTC calculation, order submission to Firestore (`orders/{orderId}`).
+1. **Admin Product Portal (`/admin.html`)**: Role `admin`. Catalog SKU creation/edits, bottle & case HT pricing, availability toggling (`stockAvailable`), image uploads to Firebase Storage (`wines/{filename}`).
+2. **Evaluator Field Ordering Flow (`/index.html`)**: Role `evaluator`. Belgian client shop selection (Food City, Wine Boutique, Le Caveau), dynamic catalog query (`stockAvailable == true`), inline case quantity selectors, cart drawer with subtotal HT, 21% VAT, and total TTC calculation, order submission to Firestore (`orders/{orderId}`).
 3. **Automated Note d'Envoi PDF Engine (`functions/index.js`)**: Background event `onDocumentCreated("orders/{orderId}")`. Compiles A4-compliant Belgian "NOTE D'ENVOI" PDF matching wholesale standards, uploads binary to Firebase Storage (`invoices/{orderId}.pdf`), updates order status to `ready_for_dispatch`.
 4. **Depot Packing & Dispatch Queue (`/depot.html`)**: Role `depot` or `admin`. Real-time `onSnapshot` feed of incoming orders, line item table, and direct "Print Note d'Envoi PDF" action.
 

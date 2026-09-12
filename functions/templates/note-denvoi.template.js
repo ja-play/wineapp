@@ -118,10 +118,6 @@ function buildNoteDenvoiHtml(orderId, order) {
   <div class="totals-wrapper">
     <table class="totals-table">
       <tr>
-        <td><strong>Total des Vidanges Consignées:</strong></td>
-        <td style="text-align: right;">€${Number(totals.totalVidanges || 0).toFixed(2)}</td>
-      </tr>
-      <tr>
         <td><strong>TOTAL HORS TVA (H.TVA):</strong></td>
         <td style="text-align: right;">€${Number(totals.totalHT || 0).toFixed(2)}</td>
       </tr>

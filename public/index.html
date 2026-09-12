@@ -400,14 +400,10 @@
         </div>
 
         <div
-          class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-[#180305]/90 p-3 rounded-xl border border-[#D4AF37]/30 text-xs">
+          class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-[#180305]/90 p-3 rounded-xl border border-[#D4AF37]/30 text-xs">
           <div>
             <div class="text-[#C8B69B]">Subtotal H.TVA</div>
             <div id="cart-subtotal-ht" class="font-bold text-[#F5EAE0]">€0.00</div>
-          </div>
-          <div>
-            <div class="text-[#C8B69B]">Vidanges Consignées</div>
-            <div id="cart-total-vidanges" class="font-bold text-[#F3E5AB]">€0.00</div>
           </div>
           <div>
             <div class="text-[#C8B69B]">Belgian VAT (21%)</div>
@@ -836,10 +832,6 @@
                   <span>Case Price (HT):</span>
                   <span class="font-bold text-[#F3E5AB] text-sm">€${casePriceHT.toFixed(2)}</span>
                 </div>
-                <div class="flex justify-between text-[11px] text-[#D4AF37]/90 italic">
-                  <span>Vidange Consignée:</span>
-                  <span>+€${depositCase.toFixed(2)} / case</span>
-                </div>
               </div>
 
               <!-- Quantity Selector -->
@@ -888,7 +880,6 @@
         if (!wine) continue;
 
         const priceHT = typeof wine.priceCaseHT === 'number' ? wine.priceCaseHT : (parseFloat((wine.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
-        const deposit = wine.depositCase || 1.35;
         const lineHT = priceHT * qty;
 
         totalCases += qty;
@@ -899,7 +890,6 @@
           colis: wine.caseSize ? `1x${wine.caseSize}` : '1x6',
           qty: qty,
           priceHT: priceHT,
-          vidangeRate: deposit,
           montantHT: lineHT,
           tvaRate: 21
         });
@@ -909,7 +899,9 @@
 
       document.getElementById('cart-case-count').textContent = totalCases;
       document.getElementById('cart-subtotal-ht').textContent = `€${totals.totalHT.toFixed(2)}`;
-      document.getElementById('cart-total-vidanges').textContent = `€${totals.totalVidanges.toFixed(2)}`;
+      if (document.getElementById('cart-total-vidanges')) {
+        document.getElementById('cart-total-vidanges').textContent = `€0.00`;
+      }
       document.getElementById('cart-total-tva').textContent = `€${totals.totalTVA.toFixed(2)}`;
       document.getElementById('cart-total-ttc').textContent = `€${totals.totalTTC.toFixed(2)}`;
       document.getElementById('cart-grand-ttc').textContent = `€${totals.totalTTC.toFixed(2)}`;
@@ -966,7 +958,6 @@
 
       try {
         let totalHT = 0;
-        let totalVidanges = 0;
         const items = [];
 
         for (const [sku, qty] of Object.entries(cart)) {
@@ -975,12 +966,9 @@
           if (!wine) continue;
 
           const priceHT = typeof wine.priceCaseHT === 'number' ? wine.priceCaseHT : (parseFloat((wine.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
-          const deposit = wine.depositCase || 1.35;
           const lineHT = priceHT * qty;
-          const lineVidange = deposit * qty;
 
           totalHT += lineHT;
-          totalVidanges += lineVidange;
 
           items.push({
             sku: wine.sku,
@@ -1002,7 +990,7 @@
         }
 
         const totalTVA = totalHT * 0.21;
-        const totalTTC = totalHT + totalVidanges + totalTVA;
+        const totalTTC = totalHT + totalTVA;
 
         const orderPayload = {
           evaluatorUid: currentUser ? currentUser.uid : 'evaluator-demo-uid',
@@ -1018,7 +1006,7 @@
           items: items,
           totals: {
             totalHT: Number(totalHT.toFixed(2)),
-            totalVidanges: Number(totalVidanges.toFixed(2)),
+            totalVidanges: 0,
             totalTVA: Number(totalTVA.toFixed(2)),
             totalTTC: Number(totalTTC.toFixed(2))
           },
@@ -1157,17 +1145,13 @@
 
         <div class="flex justify-between items-start pt-3 border-t border-slate-300 mb-4">
           <div class="text-[10px] text-slate-500 max-w-xs">
-            <p class="font-bold text-slate-700 mb-0.5">Conditions de Livraison & Consignes:</p>
-            <p>Les vidanges et alvéoles consignées restent la propriété de N.V. Aurellion Wines. Remboursables lors des retours.</p>
+            <p class="font-bold text-slate-700 mb-0.5">Conditions de Livraison:</p>
+            <p>Conforme aux normes de transport frigorifique et d'expédition en gros d'Aurellion SRL.</p>
           </div>
           <div class="w-60 bg-slate-50 p-3 rounded-lg border border-slate-200 text-[11px] space-y-1">
             <div class="flex justify-between text-slate-700">
               <span>Sous-total H.TVA:</span>
               <span class="font-mono font-bold">€${Number(totals.totalHT || 0).toFixed(2)}</span>
-            </div>
-            <div class="flex justify-between text-slate-700">
-              <span>Vidanges Consignées:</span>
-              <span class="font-mono font-bold text-amber-700">€${Number(totals.totalVidanges || 0).toFixed(2)}</span>
             </div>
             <div class="flex justify-between text-slate-700">
               <span>T.V.A. Belge (21%):</span>
