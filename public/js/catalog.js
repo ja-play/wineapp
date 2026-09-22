@@ -499,7 +499,7 @@
     window.submitOrder = async function () {
       if (!auth.currentUser) {
         showToast("Please sign in as a Field Evaluator to submit orders!", true);
-        if (window.showLoginModal) window.showLoginModal(false);
+        if (window.showLoginModal) window.showLoginModal();
         return;
       }
 

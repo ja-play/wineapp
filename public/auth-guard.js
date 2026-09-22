@@ -12,7 +12,6 @@ import {
   onSnapshot,
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword,
   signOut 
 } from './firebase-config.js';
 
@@ -81,7 +80,7 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
         <a href="index.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-[#BA1628] border border-slate-200 px-3 py-1.5 rounded-xl font-medium transition">Orders</a>
         <a href="contact.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-[#BA1628] border border-slate-200 px-3 py-1.5 rounded-xl font-medium transition">Contact</a>
         <button onclick="window.showLoginModal()" class="btn-gold font-bold text-xs px-3.5 py-1.5 rounded-xl transition flex items-center gap-1 shadow">
-          <span>Sign In / Register</span>
+          <span>Sign In</span>
         </button>
       </div>
     `;
@@ -129,7 +128,7 @@ window.handleAuthSignOut = async function() {
   }
 };
 
-window.showLoginModal = function(isRegister = false) {
+window.showLoginModal = function() {
   let modal = document.getElementById('auth-modal');
   if (!modal) {
     modal = document.createElement('div');
@@ -142,11 +141,11 @@ window.showLoginModal = function(isRegister = false) {
     <div class="card-theme rounded-2xl max-w-md w-full p-6 shadow-2xl relative bg-white border border-slate-200 text-slate-900">
       <button onclick="document.getElementById('auth-modal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1 font-bold">✕</button>
       <div class="text-center mb-6">
-        <h3 id="modal-title" class="font-serif-title text-xl font-bold text-[#BA1628]">${isRegister ? 'Create Account' : 'Sign In'}</h3>
+        <h3 id="modal-title" class="font-serif-title text-xl font-bold text-[#BA1628]">Sign In</h3>
         <p class="text-xs text-slate-600 mt-1">Aurellion Wines Distribution Portal</p>
       </div>
 
-      <form onsubmit="window.handleAuthSubmit(event, ${isRegister})" class="space-y-4">
+      <form onsubmit="window.handleAuthSubmit(event)" class="space-y-4">
         <div>
           <label class="block text-[11px] text-slate-700 font-semibold uppercase tracking-wider mb-1">Email Address</label>
           <input type="email" id="auth-email" placeholder="user@winedistribution.be" required class="w-full input-theme rounded-xl px-3 py-2.5 text-xs text-slate-900 bg-slate-50 border border-slate-300" />
@@ -159,21 +158,15 @@ window.showLoginModal = function(isRegister = false) {
         <div id="auth-error" class="hidden text-xs text-rose-800 bg-rose-50 border border-rose-200 p-2.5 rounded-lg"></div>
 
         <button type="submit" id="auth-submit-btn" class="w-full btn-gold font-bold text-xs py-3 rounded-xl transition shadow">
-          ${isRegister ? 'Register Account' : 'Sign In'}
+          Sign In
         </button>
       </form>
-
-      <div class="mt-4 text-center border-t border-slate-200 pt-4">
-        <button onclick="window.showLoginModal(${!isRegister})" class="text-xs text-[#BA1628] hover:underline font-medium">
-          ${isRegister ? 'Already have an account? Sign In' : 'Need an account? Register'}
-        </button>
-      </div>
     </div>
   `;
   modal.classList.remove('hidden');
 };
 
-window.handleAuthSubmit = async function(e, isRegister) {
+window.handleAuthSubmit = async function(e) {
   e.preventDefault();
   const email = document.getElementById('auth-email').value.trim();
   const password = document.getElementById('auth-password').value.trim();
@@ -182,28 +175,28 @@ window.handleAuthSubmit = async function(e, isRegister) {
 
   if (errorBox) errorBox.classList.add('hidden');
   submitBtn.disabled = true;
-  submitBtn.textContent = 'Processing...';
+  submitBtn.textContent = 'Signing in...';
 
   try {
-    if (isRegister) {
-      const userCred = await createUserWithEmailAndPassword(auth, email, password);
-      const role = 'evaluator';
-
-      await setDoc(doc(db, 'users', userCred.user.uid), {
-        uid: userCred.user.uid,
-        email: email,
-        role: role,
-        createdAt: new Date().toISOString()
-      });
-    } else {
-      await signInWithEmailAndPassword(auth, email, password);
-    }
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+    const role = await getUserRole(userCred.user);
+    
     const modal = document.getElementById('auth-modal');
     if (modal) modal.classList.add('hidden');
-    window.location.reload();
+
+    // Land on evaluator page (index.html) by default for new/evaluator users
+    const currentPath = window.location.pathname;
+    if (role === 'admin' && currentPath.includes('admin')) {
+      window.location.reload();
+    } else if (role === 'depot' && currentPath.includes('depot')) {
+      window.location.reload();
+    } else {
+      // Default: Always land on Evaluator ordering page
+      window.location.href = 'index.html';
+    }
   } catch (err) {
     submitBtn.disabled = false;
-    submitBtn.textContent = isRegister ? 'Register Account' : 'Sign In';
+    submitBtn.textContent = 'Sign In';
     if (errorBox) {
       errorBox.textContent = `Authentication error: ${err.message}`;
       errorBox.classList.remove('hidden');
