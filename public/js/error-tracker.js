@@ -7,10 +7,8 @@ Sentry.init({
   // TODO: Replace with your actual DSN from Sentry.io after creating a free project
   dsn: "https://examplePublicKey@o0.ingest.sentry.io/0",
   
-  integrations: [
-    new Sentry.BrowserTracing(),
-    new Sentry.Replay(),
-  ],
+  // Integrations are loaded by default in the modern Sentry CDN bundles
+  // depending on which bundle you use.
   
   // Performance Monitoring
   tracesSampleRate: 1.0, 
