@@ -95,19 +95,33 @@
 
         const infoBox = document.getElementById('selected-client-info');
         if (selectedClient) {
-          const contactInfo = selectedClient.contactPerson ? ` | 👤 ${escapeHtml(selectedClient.contactPerson)}` : '';
-          const phoneInfo = selectedClient.phone ? ` | 📞 ${escapeHtml(selectedClient.phone)}` : '';
+          const contactHtml = selectedClient.contactPerson 
+            ? `<span class="text-slate-300">|</span><span class="inline-flex items-center gap-1 text-slate-700"><span>👤</span><span class="font-semibold text-slate-900">${escapeHtml(selectedClient.contactPerson)}</span></span>` 
+            : '';
+          const phoneHtml = selectedClient.phone 
+            ? `<span class="text-slate-300">|</span><a href="tel:${escapeHtml(selectedClient.phone).replace(/\s+/g, '')}" class="inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-900 font-bold hover:underline"><span>📞</span><span>${escapeHtml(selectedClient.phone)}</span></a>` 
+            : '';
 
           if (infoBox) {
             infoBox.innerHTML = `
-              <span class="bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-md font-mono">
-                N° TVA: ${escapeHtml(selectedClient.vat)} | N° Client: ${escapeHtml(selectedClient.clientNo)}${contactInfo}${phoneInfo}
-              </span>
+              <div class="inline-flex items-center gap-2.5 bg-slate-50 border border-slate-200 text-slate-800 px-3.5 py-1.5 rounded-xl text-xs font-mono shadow-sm flex-wrap">
+                <span class="inline-flex items-center gap-1">
+                  <span class="text-slate-500 font-sans text-[10px] uppercase font-bold tracking-wider">N° TVA:</span>
+                  <span class="text-[#BA1628] font-bold">${escapeHtml(selectedClient.vat)}</span>
+                </span>
+                <span class="text-slate-300">|</span>
+                <span class="inline-flex items-center gap-1">
+                  <span class="text-slate-500 font-sans text-[10px] uppercase font-bold tracking-wider">N° Client:</span>
+                  <span class="text-slate-900 font-bold">${escapeHtml(selectedClient.clientNo || 'N/A')}</span>
+                </span>
+                ${contactHtml}
+                ${phoneHtml}
+              </div>
             `;
           }
         } else {
           if (infoBox) {
-            infoBox.innerHTML = `<span class="text-rose-400 font-medium">⚠️ Select a shop client to enable order placement</span>`;
+            infoBox.innerHTML = `<span class="text-amber-800 bg-amber-50 border border-amber-200 px-3 py-1 rounded-xl text-xs font-medium flex items-center gap-1.5 shadow-sm"><span>⚠️</span> Select a shop client to enable order placement</span>`;
           }
         }
         renderCatalog(currentWines);
