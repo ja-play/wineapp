@@ -2,7 +2,7 @@
     import { getShops, getUserRole, setupAuthUI } from '../auth-guard.js';
     import { escapeHtml, toProperCase } from '../utils/sanitizer.js';
     import { calculateOrderTotals } from '../utils/tax-calculator.js';
-    import { formatCurrency, TAX_CONFIG } from '../app-config.js';
+    import { formatCurrency, TAX_CONFIG, COMPANY_CONFIG } from '../app-config.js';
 
     let currentWines = [];
     let cart = {}; // sku -> qty
@@ -625,14 +625,21 @@
           const totals = o.totals || { totalTTC: 0 };
           const dateStr = o.createdAt && o.createdAt.toDate ? o.createdAt.toDate().toLocaleString('fr-BE') : 'Recent';
           return `
-            <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl flex items-center justify-between gap-4">
-              <div>
-                <div class="text-sm font-bold text-white">${client.name}</div>
-                <div class="text-xs text-slate-400">Order #${o.id} • ${dateStr}</div>
-                <div class="text-xs text-amber-400 font-mono font-bold mt-1">Total TTC: €${Number(totals.totalTTC || 0).toFixed(2)}</div>
+            <div class="bg-white border border-slate-200 hover:border-rose-300 p-4 rounded-2xl shadow-sm hover:shadow-md transition flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                  <span class="text-sm font-bold text-slate-900">${escapeHtml(client.name)}</span>
+                  <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Submitted</span>
+                </div>
+                <div class="text-xs text-slate-500 font-mono mt-0.5">Order #${o.id.substring(0, 12)} • ${dateStr}</div>
+                <div class="text-xs font-mono font-bold text-[#BA1628] mt-1.5 flex items-center gap-1.5">
+                  <span class="text-slate-500 font-sans font-medium text-[11px]">Total TTC:</span>
+                  <span class="text-sm text-[#BA1628]">€${Number(totals.totalTTC || 0).toFixed(2)}</span>
+                </div>
               </div>
-              <button onclick="window.printEvaluatorOrder('${o.id}')" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs px-4 py-2 rounded-lg transition">
-                🖨️ Note d'Envoi
+              <button onclick="window.printEvaluatorOrder('${o.id}')" class="inline-flex items-center justify-center gap-2 bg-rose-50 hover:bg-[#BA1628] text-[#BA1628] hover:text-white border border-rose-200 hover:border-[#BA1628] font-bold text-xs px-4 py-2.5 rounded-xl transition shadow-sm flex-shrink-0">
+                <span>🖨️</span>
+                <span>Note d'Envoi</span>
               </button>
             </div>
           `;
@@ -662,12 +669,12 @@
       modalContent.innerHTML = `
         <div class="flex justify-between items-start border-b border-slate-300 pb-4 mb-4">
           <div>
-            <h1 class="text-xl font-black text-slate-900 tracking-tight">🍷 Aurellion Wine Distribution</h1>
-            <p class="text-[11px] text-slate-600">N.V. Aurellion Wines Belux S.A. | Avenue Louise 250, 1050 Bruxelles</p>
-            <p class="text-[11px] text-slate-600">N° TVA: BE 0412 876 543 | RPM Bruxelles</p>
+            <h1 class="text-xl font-black text-slate-900 tracking-tight">🍷 ${escapeHtml(COMPANY_CONFIG.fullName || 'Aurellion SRL')}</h1>
+            <p class="text-[11px] text-slate-600">${escapeHtml(COMPANY_CONFIG.address)}, ${escapeHtml(COMPANY_CONFIG.country || 'Belgique')}</p>
+            <p class="text-[11px] text-slate-600">N° TVA: ${escapeHtml(COMPANY_CONFIG.vatNumber)} | RPM Leuven</p>
           </div>
           <div class="text-right">
-            <h2 class="text-lg font-extrabold text-sky-700 uppercase tracking-wide">NOTE D'ENVOI</h2>
+            <h2 class="text-lg font-extrabold text-[#BA1628] uppercase tracking-wide">NOTE D'ENVOI</h2>
             <div class="text-[11px] font-mono font-bold text-slate-800">N° Document: NE-${order.id.substring(0, 8).toUpperCase()}</div>
             <div class="text-[11px] text-slate-600">Date: ${dateStr}</div>
           </div>
