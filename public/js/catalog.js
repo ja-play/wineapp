@@ -2,7 +2,7 @@
     import { getShops, getUserRole, setupAuthUI } from '../auth-guard.js';
     import { escapeHtml, toProperCase } from '../utils/sanitizer.js';
     import { calculateOrderTotals } from '../utils/tax-calculator.js';
-    import { formatCurrency } from '../app-config.js';
+    import { formatCurrency, TAX_CONFIG } from '../app-config.js';
 
     let currentWines = [];
     let cart = {}; // sku -> qty
@@ -533,7 +533,7 @@
             qty: qty,
             priceHT: priceHT,
             montantHT: lineHT,
-            tvaRate: 21
+            tvaRate: TAX_CONFIG.VAT_RATE * 100
           });
 
           // Deduct stock quantity in Firestore
@@ -545,12 +545,11 @@
           });
         }
 
-        const totalTVA = totalHT * 0.21;
-        const totalTTC = totalHT + totalTVA;
+        const calculatedTotals = calculateOrderTotals(items);
 
         const orderPayload = {
           evaluatorUid: currentUser ? currentUser.uid : 'evaluator-demo-uid',
-          evaluatorEmail: currentUser ? currentUser.email : 'evaluator@winedistribution.be',
+          evaluatorEmail: currentUser ? currentUser.email : 'evaluator@aurellionwine.com',
           client: {
             name: toProperCase(selectedClient.name),
             address: selectedClient.address,
@@ -561,10 +560,10 @@
           },
           items: items,
           totals: {
-            totalHT: Number(totalHT.toFixed(2)),
-            totalVidanges: 0,
-            totalTVA: Number(totalTVA.toFixed(2)),
-            totalTTC: Number(totalTTC.toFixed(2))
+            totalHT: calculatedTotals.totalHT,
+            totalVidanges: calculatedTotals.totalVidanges,
+            totalTVA: calculatedTotals.totalTVA,
+            totalTTC: calculatedTotals.totalTTC
           },
           status: 'submitted',
           createdAt: serverTimestamp(),
