@@ -1,8 +1,8 @@
-    import { db, auth, collection, doc, getDocs, updateDoc, onSnapshot, query, where, addDoc, serverTimestamp, onAuthStateChanged } from './firebase-config.js';
-    import { getShops, getUserRole, setupAuthUI } from './auth-guard.js';
-    import { escapeHtml, toProperCase } from './utils/sanitizer.js';
-    import { calculateOrderTotals } from './utils/tax-calculator.js';
-    import { formatCurrency } from './app-config.js';
+    import { db, auth, collection, doc, getDocs, updateDoc, onSnapshot, query, where, addDoc, serverTimestamp, onAuthStateChanged } from '../firebase-config.js';
+    import { getShops, getUserRole, setupAuthUI } from '../auth-guard.js';
+    import { escapeHtml, toProperCase } from '../utils/sanitizer.js';
+    import { calculateOrderTotals } from '../utils/tax-calculator.js';
+    import { formatCurrency } from '../app-config.js';
 
     let currentWines = [];
     let cart = {}; // sku -> qty
@@ -768,3 +768,4 @@
         toast.classList.add('opacity-0', 'translate-y-16');
       }, 3500);
     }
+

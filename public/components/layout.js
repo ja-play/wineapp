@@ -1,4 +1,3 @@
-import '../js/error-tracker.js';
 
 export function renderHeader(type = 'catalog') {
   let rightSideControls = '';
@@ -90,3 +89,4 @@ document.addEventListener('DOMContentLoaded', () => {
   if (headerEl) headerEl.innerHTML = renderHeader(type);
   if (footerEl) footerEl.innerHTML = renderFooter(systemName);
 });
+
