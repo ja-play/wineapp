@@ -2,17 +2,20 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
+    function isAdmin() {
+      return request.auth != null && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
     match /wines/{allPaths=**} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
     match /wine-images/{allPaths=**} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
     }
     match /invoices/{allPaths=**} {
-      allow read: if request.auth != null;
-      allow write: if true; // Cloud Function / admin
+      allow read, write: if false; // Only accessible via backend Cloud Functions & Signed URLs
     }
   }
 }

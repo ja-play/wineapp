@@ -69,17 +69,18 @@ exports.generateNoteDenvoi = onDocumentCreated({
       metadata: {
         contentType: 'application/pdf',
         metadata: { orderId: orderId }
-      },
-      public: true
+      }
     });
 
-    // Make file public or obtain download URL
-    await file.makePublic().catch(() => {});
-    const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filePath}`;
+    // Generate a long-lived Signed URL for the PDF
+    const [signedUrl] = await file.getSignedUrl({
+      action: 'read',
+      expires: '01-01-2100' // Far future expiry
+    });
 
     // Update Firestore order document
     await snapshot.ref.update({
-      invoicePdfUrl: publicUrl,
+      invoicePdfUrl: signedUrl,
       status: 'ready_for_dispatch',
       processedAt: admin.firestore.FieldValue.serverTimestamp()
     });

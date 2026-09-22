@@ -44,16 +44,7 @@ export async function getUserRole(user) {
     if (userSnap.exists() && userSnap.data().role) {
       return userSnap.data().role;
     } else {
-      // Check if this is the very first user in the system -> make admin, else evaluator
-      let assignedRole = 'evaluator';
-      try {
-        const usersSnap = await getDocs(collection(db, 'users'));
-        if (usersSnap.empty) {
-          assignedRole = 'admin';
-        }
-      } catch (e) {
-        // Fallback
-      }
+      const assignedRole = 'evaluator';
 
       await setDoc(userDocRef, {
         uid: user.uid,
@@ -196,12 +187,7 @@ window.handleAuthSubmit = async function(e, isRegister) {
   try {
     if (isRegister) {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
-      // First registered user becomes admin if users collection is empty
-      let role = 'evaluator';
-      try {
-        const snap = await getDocs(collection(db, 'users'));
-        if (snap.size <= 1) role = 'admin';
-      } catch (e) {}
+      const role = 'evaluator';
 
       await setDoc(doc(db, 'users', userCred.user.uid), {
         uid: userCred.user.uid,
