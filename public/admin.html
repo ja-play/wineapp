@@ -93,7 +93,8 @@
         <a href="index.html" class="flex items-center gap-3 group">
           <div
             class="w-10 h-10 rounded-xl bg-[#BA1628] text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-all">
-            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M8 22h8"></path>
               <path d="M12 15v7"></path>
               <path d="M12 15a7 7 0 0 0 7-7c0-2-1-3.5-2.5-4.5h-9C6 4.5 5 6 5 8a7 7 0 0 0 7 7z"></path>
@@ -101,7 +102,8 @@
             </svg>
           </div>
           <div>
-            <div class="font-serif-title font-black text-xl gold-gradient-text tracking-wide leading-none">AURELLION</div>
+            <div class="font-serif-title font-black text-xl gold-gradient-text tracking-wide leading-none">AURELLION
+            </div>
           </div>
         </a>
         <span
@@ -128,16 +130,16 @@
 
     <!-- Access Guard Banner for Non-Admin -->
     <div id="access-denied-sec"
-      class="hidden max-w-lg mx-auto my-12 bg-slate-800 border border-rose-800/60 rounded-2xl p-8 shadow-2xl text-center">
+      class="hidden max-w-lg mx-auto my-12 bg-white border border-rose-200 rounded-2xl p-8 shadow-xl text-center">
       <div
-        class="w-12 h-12 bg-rose-900/40 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-3 border border-rose-700">
+        class="w-12 h-12 bg-rose-50 text-[#BA1628] rounded-full flex items-center justify-center mx-auto mb-3 border border-rose-200">
         🔒
       </div>
-      <h2 class="text-2xl font-bold text-white mb-2">Admin Access Required</h2>
-      <p class="text-xs text-slate-300 mb-6">Your current logged-in role does not have Admin privileges. Please sign in
+      <h2 class="text-2xl font-bold text-slate-900 mb-2">Admin Access Required</h2>
+      <p class="text-xs text-slate-600 mb-6">Your current logged-in role does not have Admin privileges. Please sign in
         with an Admin account.</p>
       <button onclick="window.showLoginModal()"
-        class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl transition shadow">
+        class="btn-gold font-bold text-xs px-5 py-2.5 rounded-xl transition shadow">
         Sign In as Admin
       </button>
     </div>
@@ -146,25 +148,25 @@
     <div id="admin-dashboard">
 
       <!-- Console Navigation Tabs -->
-      <div class="flex items-center gap-2 border-b border-slate-800 mb-8 overflow-x-auto pb-2">
+      <div class="flex items-center gap-2 border-b border-slate-200 mb-8 overflow-x-auto pb-2">
         <button id="tab-btn-catalog" onclick="switchAdminTab('catalog')"
-          class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-amber-500 text-slate-950 shadow">
+          class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-[#BA1628] text-white shadow-md">
           <span>🍷 Product Catalog</span>
         </button>
         <button id="tab-btn-scanner" onclick="switchAdminTab('scanner')"
-          class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+          class="px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition flex items-center gap-2 bg-white text-slate-700 hover:bg-rose-50 hover:text-[#BA1628] border border-slate-200 shadow-sm">
           <span>📱 Barcode & Inventory Scanner</span>
         </button>
         <button id="tab-btn-users" onclick="switchAdminTab('users')"
-          class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+          class="px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition flex items-center gap-2 bg-white text-slate-700 hover:bg-rose-50 hover:text-[#BA1628] border border-slate-200 shadow-sm">
           <span>👥 User & Role Management</span>
         </button>
         <button id="tab-btn-shops" onclick="switchAdminTab('shops')"
-          class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+          class="px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition flex items-center gap-2 bg-white text-slate-700 hover:bg-rose-50 hover:text-[#BA1628] border border-slate-200 shadow-sm">
           <span>🏬 Client Shops</span>
         </button>
         <button id="tab-btn-reports" onclick="switchAdminTab('reports')"
-          class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+          class="px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition flex items-center gap-2 bg-white text-slate-700 hover:bg-rose-50 hover:text-[#BA1628] border border-slate-200 shadow-sm">
           <span>📊 Orders & Sales Reports</span>
         </button>
       </div>
@@ -172,15 +174,15 @@
       <!-- TAB 1: PRODUCT CATALOG -->
       <div id="tab-sec-catalog">
         <div
-          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 backdrop-blur-sm shadow-xl">
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
           <div>
-            <h2 class="text-2xl font-extrabold text-white">Dynamic Catalog & Stock Management</h2>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1">Manage wholesale SKUs, case stock counts, pricing, and
+            <h2 class="text-2xl font-extrabold text-slate-900">Dynamic Catalog & Stock Management</h2>
+            <p class="text-slate-600 text-xs sm:text-sm mt-1">Manage wholesale SKUs, case stock counts, pricing, and
               photography.</p>
           </div>
           <div class="flex items-center gap-3 flex-wrap">
             <button onclick="openWineModal()"
-              class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+              class="btn-gold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow transition flex items-center gap-2">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
               </svg>
@@ -191,44 +193,43 @@
 
         <div id="loading-state" class="text-center py-16">
           <div
-            class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-amber-500 border-t-transparent mb-3">
+            class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-[#BA1628] border-t-transparent mb-3">
           </div>
-          <p class="text-slate-400 text-sm">Connecting to Firestore Catalog...</p>
+          <p class="text-slate-600 text-sm font-medium">Connecting to Firestore Catalog...</p>
         </div>
 
         <div id="wines-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden">
           <!-- Wine SKU cards injected dynamically -->
         </div>
 
-        <div id="empty-state" class="hidden text-center py-16 bg-slate-800/40 rounded-2xl border border-slate-800">
-          <p class="text-slate-300 font-semibold text-lg">No wines found in Firestore</p>
-          <p class="text-slate-400 text-xs sm:text-sm mt-1">Use the "Add New Wine SKU" button above to add wholesale
+        <div id="empty-state" class="hidden text-center py-16 bg-white rounded-2xl border border-slate-200 shadow-sm">
+          <p class="text-slate-800 font-semibold text-lg">No wines found in Firestore</p>
+          <p class="text-slate-600 text-xs sm:text-sm mt-1">Use the "Add New Wine SKU" button above to add wholesale
             wine SKUs to the catalog.</p>
         </div>
       </div>
 
       <!-- TAB 2: BARCODE & INVENTORY SCANNER TOOL -->
       <div id="tab-sec-scanner" class="hidden">
-        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl mb-8">
-          <h2 class="text-2xl font-extrabold text-white flex items-center gap-3">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md mb-8">
+          <h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-3">
             <span>📱 Barcode & SKU Inventory Scanner</span>
             <span
-              class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs px-2.5 py-0.5 rounded-full font-mono">Scanner
+              class="bg-emerald-50 text-emerald-700 border border-emerald-300 text-xs px-2.5 py-0.5 rounded-full font-mono font-bold">Scanner
               Active</span>
           </h2>
-          <p class="text-slate-400 text-xs sm:text-sm mt-1">Scan bottle/case barcodes using USB/Bluetooth barcode guns
+          <p class="text-slate-600 text-xs sm:text-sm mt-1">Scan bottle/case barcodes using USB/Bluetooth barcode guns
             or type SKU code to instantly inspect and adjust warehouse case inventory.</p>
         </div>
 
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl mb-8">
-          <label class="block text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">Scan SKU Barcode / Enter
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-md mb-8">
+          <label class="block text-xs font-bold uppercase tracking-wider text-[#BA1628] mb-2">Scan SKU Barcode / Enter
             Code:</label>
           <div class="flex gap-3">
             <input type="text" id="scanner-input" placeholder="e.g. OK-CABMER-2023-750 or scan barcode..."
-              class="flex-1 bg-slate-950 border border-amber-500/50 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-amber-400 shadow-inner"
+              class="flex-1 bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm text-slate-900 font-mono focus:outline-none focus:border-[#BA1628] focus:ring-2 focus:ring-rose-100"
               onkeydown="if(event.key==='Enter') lookupScannedSKU()" />
-            <button onclick="lookupScannedSKU()"
-              class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-6 py-3 rounded-xl shadow transition">
+            <button onclick="lookupScannedSKU()" class="btn-gold text-xs px-6 py-3 rounded-xl shadow transition">
               🔍 Look Up SKU
             </button>
           </div>
@@ -241,17 +242,16 @@
 
       <!-- TAB 3: USER & ROLE MANAGEMENT -->
       <div id="tab-sec-users" class="hidden">
-        <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 backdrop-blur-sm shadow-xl mb-8">
-          <h2 class="text-2xl font-extrabold text-white">User & Role Management</h2>
-          <p class="text-slate-400 text-xs sm:text-sm mt-1">Manage permissions for registered users in real-time. Roles
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-md mb-8">
+          <h2 class="text-2xl font-extrabold text-slate-900">User & Role Management</h2>
+          <p class="text-slate-600 text-xs sm:text-sm mt-1">Manage permissions for registered users in real-time. Roles
             dictate access rights across ordering, dispatch, and system administration.</p>
         </div>
 
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden shadow-xl">
+        <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-md">
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs sm:text-sm">
-              <thead
-                class="bg-slate-950 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-700">
+              <thead class="bg-slate-50 text-slate-700 uppercase tracking-wider font-bold border-b border-slate-200">
                 <tr>
                   <th class="px-6 py-4">User Account</th>
                   <th class="px-6 py-4">User ID (UID)</th>
@@ -259,9 +259,9 @@
                   <th class="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody id="users-table-body" class="divide-y divide-slate-700/60">
+              <tbody id="users-table-body" class="divide-y divide-slate-200">
                 <tr>
-                  <td colspan="4" class="px-6 py-8 text-center text-slate-400">Loading user records...</td>
+                  <td colspan="4" class="px-6 py-8 text-center text-slate-500">Loading user records...</td>
                 </tr>
               </tbody>
             </table>
@@ -272,14 +272,14 @@
       <!-- TAB 4: CLIENT SHOPS -->
       <div id="tab-sec-shops" class="hidden">
         <div
-          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 backdrop-blur-sm shadow-xl">
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
           <div>
-            <h2 class="text-2xl font-extrabold text-white">Client Shop Management</h2>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1">Manage Belgian wholesale client accounts available for
+            <h2 class="text-2xl font-extrabold text-slate-900">Client Shop Management</h2>
+            <p class="text-slate-600 text-xs sm:text-sm mt-1">Manage Belgian wholesale client accounts available for
               field order placement.</p>
           </div>
           <button onclick="openShopModal()"
-            class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+            class="btn-gold text-xs sm:text-sm px-5 py-2.5 rounded-xl shadow transition flex items-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -295,21 +295,21 @@
       <!-- TAB 5: ORDERS & SALES REPORTS -->
       <div id="tab-sec-reports" class="hidden">
         <div
-          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 backdrop-blur-sm shadow-xl">
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
           <div>
-            <h2 class="text-2xl font-extrabold text-white flex items-center gap-3">
+            <h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-3">
               <span>📊 Historical Orders & Financial Reports</span>
               <span
-                class="bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2.5 py-0.5 rounded-full font-mono">Firestore
+                class="bg-rose-50 text-[#BA1628] border border-rose-200 text-xs px-2.5 py-0.5 rounded-full font-mono font-bold">Firestore
                 Audit Log</span>
             </h2>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1">Audit complete order history across all dispatch states
+            <p class="text-slate-600 text-xs sm:text-sm mt-1">Audit complete order history across all dispatch states
               (`submitted`, `packing`, `dispatched`, `delivered`). Filter by date range, export CSV data, or print sales
               summary.</p>
           </div>
           <div class="flex items-center gap-3 flex-wrap">
             <button onclick="window.exportOrdersCSV()"
-              class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl transition shadow flex items-center gap-2">
+              class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl transition shadow flex items-center gap-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h55.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
@@ -318,7 +318,7 @@
               📥 Export CSV
             </button>
             <button onclick="window.printSalesReport()"
-              class="bg-slate-700 hover:bg-slate-600 text-amber-300 border border-amber-500/30 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2">
+              class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z">
@@ -330,13 +330,13 @@
         </div>
 
         <!-- Filter Controls Card -->
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl mb-8">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-md mb-8">
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div>
-              <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Date Range
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Date Range
                 Preset:</label>
               <select id="report-date-preset" onchange="window.handleReportPresetChange()"
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500">
+                class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]">
                 <option value="all" selected>📅 All Time (Full History)</option>
                 <option value="today">Today</option>
                 <option value="week">This Week</option>
@@ -346,22 +346,22 @@
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">From Date:</label>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">From Date:</label>
               <input type="date" id="report-start-date" onchange="window.renderReportsView()"
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500" />
+                class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">To Date:</label>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">To Date:</label>
               <input type="date" id="report-end-date" onchange="window.renderReportsView()"
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500" />
+                class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
             </div>
 
             <div>
-              <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">Filter Order
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Filter Order
                 Status:</label>
               <select id="report-status-filter" onchange="window.renderReportsView()"
-                class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white focus:outline-none focus:border-amber-500">
+                class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]">
                 <option value="all" selected>All Statuses (Active & Delivered)</option>
                 <option value="delivered">✅ Delivered & Completed Only</option>
                 <option value="active">⏳ Active Dispatch Queue Only</option>
@@ -375,49 +375,48 @@
 
         <!-- KPI Metrics Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
-          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
-            <div class="text-xs text-slate-400 uppercase font-semibold mb-1">Total Orders</div>
-            <div id="kpi-total-orders" class="text-3xl font-extrabold text-white font-mono">0</div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="text-xs text-slate-500 uppercase font-bold mb-1">Total Orders</div>
+            <div id="kpi-total-orders" class="text-3xl font-extrabold text-slate-900 font-mono">0</div>
             <div class="text-xs text-slate-500 mt-1">In selected range</div>
           </div>
 
-          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
-            <div class="text-xs text-slate-400 uppercase font-semibold mb-1">Net Sales (HT)</div>
-            <div id="kpi-total-ht" class="text-3xl font-extrabold text-amber-400 font-mono">€0.00</div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="text-xs text-slate-500 uppercase font-bold mb-1">Net Sales (HT)</div>
+            <div id="kpi-total-ht" class="text-3xl font-extrabold text-[#BA1628] font-mono">€0.00</div>
             <div class="text-xs text-slate-500 mt-1">Excl. TVA</div>
           </div>
 
-          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
-            <div class="text-xs text-slate-400 uppercase font-semibold mb-1">TVA (21%)</div>
-            <div id="kpi-total-tva" class="text-3xl font-extrabold text-sky-400 font-mono">€0.00</div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="text-xs text-slate-500 uppercase font-bold mb-1">TVA (21%)</div>
+            <div id="kpi-total-tva" class="text-3xl font-extrabold text-sky-700 font-mono">€0.00</div>
             <div class="text-xs text-slate-500 mt-1">Belgian tax collected</div>
           </div>
 
-          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
-            <div class="text-xs text-slate-400 uppercase font-semibold mb-1">Gross Revenue (TTC)</div>
-            <div id="kpi-total-ttc" class="text-3xl font-extrabold text-emerald-400 font-mono">€0.00</div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="text-xs text-slate-500 uppercase font-bold mb-1">Gross Revenue (TTC)</div>
+            <div id="kpi-total-ttc" class="text-3xl font-extrabold text-emerald-700 font-mono">€0.00</div>
             <div class="text-xs text-slate-500 mt-1">Incl. Tax & Deposits</div>
           </div>
 
-          <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 shadow-lg">
-            <div class="text-xs text-slate-400 uppercase font-semibold mb-1">Total Cases Sold</div>
-            <div id="kpi-total-cases" class="text-3xl font-extrabold text-purple-400 font-mono">0</div>
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="text-xs text-slate-500 uppercase font-bold mb-1">Total Cases Sold</div>
+            <div id="kpi-total-cases" class="text-3xl font-extrabold text-purple-700 font-mono">0</div>
             <div class="text-xs text-slate-500 mt-1">Wholesale cases</div>
           </div>
         </div>
 
         <!-- Orders Table -->
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl overflow-hidden shadow-xl mb-8">
-          <div class="p-4 bg-slate-950 border-b border-slate-800 flex justify-between items-center">
-            <h3 class="font-bold text-white text-base">Filtered Orders Feed</h3>
-            <span id="report-record-count" class="text-xs font-mono text-amber-400 font-semibold">0 records
+        <div class="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-md mb-8">
+          <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+            <h3 class="font-bold text-slate-900 text-base">Filtered Orders Feed</h3>
+            <span id="report-record-count" class="text-xs font-mono text-[#BA1628] font-bold">0 records
               matching</span>
           </div>
 
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs sm:text-sm">
-              <thead
-                class="bg-slate-900 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-700">
+              <thead class="bg-slate-50 text-slate-700 uppercase tracking-wider font-bold border-b border-slate-200">
                 <tr>
                   <th class="px-4 py-3">Order ID</th>
                   <th class="px-4 py-3">Date Placed</th>
@@ -429,9 +428,9 @@
                   <th class="px-4 py-3 text-center">Action</th>
                 </tr>
               </thead>
-              <tbody id="reports-table-body" class="divide-y divide-slate-700/60 font-mono">
+              <tbody id="reports-table-body" class="divide-y divide-slate-200 font-mono">
                 <tr>
-                  <td colspan="8" class="px-6 py-8 text-center text-slate-400 font-sans">No orders match the specified
+                  <td colspan="8" class="px-6 py-8 text-center text-slate-500 font-sans">No orders match the specified
                     filter criteria.</td>
                 </tr>
               </tbody>
@@ -445,12 +444,13 @@
 
   <!-- Add / Edit Wine SKU Modal -->
   <div id="wine-modal"
-    class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="relative bg-slate-800 border border-slate-700 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8">
-      <div class="flex justify-between items-center pb-4 border-b border-slate-700 mb-6">
-        <h3 id="modal-header-title" class="text-xl font-bold text-amber-400">Add New Wine Product SKU</h3>
+    class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div
+      class="relative bg-white border border-slate-200 rounded-2xl max-w-2xl w-full p-6 shadow-2xl my-8 text-slate-900">
+      <div class="flex justify-between items-center pb-4 border-b border-slate-200 mb-6">
+        <h3 id="modal-header-title" class="text-xl font-bold text-[#BA1628]">Add New Wine Product SKU</h3>
         <button onclick="closeWineModal()"
-          class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-700 transition">
+          class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
@@ -459,26 +459,26 @@
 
       <form id="wine-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
         <div id="form-error"
-          class="hidden bg-rose-900/50 border border-rose-700 text-rose-200 text-xs p-3 rounded-lg font-medium"></div>
+          class="hidden bg-rose-50 border border-rose-200 text-rose-800 text-xs p-3 rounded-lg font-medium"></div>
         <input type="hidden" id="form-doc-id" value="" />
         <input type="hidden" id="existing-image-url" value="" />
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">SKU Code *</label>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">SKU Code *</label>
             <input type="text" id="form-sku" required placeholder="e.g. OK-CABMER-2023-750"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Vintage *</label>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Vintage *</label>
             <input type="text" id="form-vintage" required placeholder="e.g. 2024"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Case Config
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Case Config
               *</label>
             <select id="form-case-size" required
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]">
               <option value="6">1x6 (Case of 6)</option>
               <option value="12">1x12 (Case of 12)</option>
             </select>
@@ -486,17 +486,17 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Wine Name *</label>
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Wine Name *</label>
           <input type="text" id="form-name" required placeholder="e.g. Oude Kaap Cabernet Sauvignon Merlot"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+            class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-amber-400 uppercase tracking-wider mb-1">Category / Type
+            <label class="block text-xs font-semibold text-[#BA1628] uppercase tracking-wider mb-1">Category / Type
               *</label>
             <select id="form-category" required
-              class="w-full bg-slate-900 border border-amber-500/50 rounded-lg px-3 py-2 text-sm text-amber-300 font-semibold focus:outline-none focus:border-amber-400">
+              class="w-full bg-slate-50 border border-rose-200 rounded-lg px-3 py-2 text-sm text-slate-900 font-semibold focus:outline-none focus:border-[#BA1628]">
               <option value="Red">Red 🍷</option>
               <option value="White">White 🥂</option>
               <option value="Rosé">Rosé 🌸</option>
@@ -505,30 +505,30 @@
             </select>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Tags
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Tags
               (Comma-separated)</label>
             <input type="text" id="form-tags" placeholder="e.g. Reserve, Oak-Aged, Bio"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
           </div>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Region *</label>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Region *</label>
             <input type="text" id="form-region" required placeholder="e.g. Franschhoek, South Africa"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-amber-400 uppercase tracking-wider mb-1">Stock Cases (Qty)
+            <label class="block text-xs font-semibold text-[#BA1628] uppercase tracking-wider mb-1">Stock Cases (Qty)
               *</label>
             <input type="number" id="form-stock-quantity" required min="0" placeholder="50" value="50"
-              class="w-full bg-slate-900 border border-amber-500/50 rounded-lg px-3 py-2 text-sm text-amber-300 font-mono focus:outline-none focus:border-amber-500" />
+              class="w-full bg-slate-50 border border-rose-200 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono focus:outline-none focus:border-[#BA1628]" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Availability
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Availability
               Status</label>
             <select id="form-stock-available"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500">
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]">
               <option value="true">Available in Stock</option>
               <option value="false">Out of Stock (Hidden from Field Order)</option>
             </select>
@@ -537,39 +537,39 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Bottle Price HT (€)
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Bottle Price HT (€)
               *</label>
             <input type="number" step="0.01" id="form-price-bottle-ht" required placeholder="5.50"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Case Price HT (€)
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Case Price HT (€)
               *</label>
             <input type="number" step="0.01" id="form-price-case-ht" required placeholder="33.00"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
           </div>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Description</label>
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Description</label>
           <textarea id="form-description" rows="2" placeholder="Brief tasting notes and flavor profile..."
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500"></textarea>
+            class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]"></textarea>
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Wine Bottle
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Wine Bottle
             Photography</label>
           <input type="file" id="form-image-file" accept="image/*"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-400 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-amber-600 file:text-white hover:file:bg-amber-500" />
+            class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-600 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-[#BA1628] file:text-white hover:file:bg-[#9E1020]" />
           <p class="text-xs text-slate-500 mt-1">Upload JPEG/PNG file. Automatically optimized and compressed for
             instant loading.</p>
         </div>
 
-        <div class="pt-4 border-t border-slate-700 flex justify-end gap-3">
+        <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
           <button type="button" onclick="closeWineModal()"
-            class="px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white transition">Cancel</button>
+            class="px-4 py-2 rounded-lg text-sm text-slate-600 hover:text-slate-900 transition">Cancel</button>
           <button type="submit" id="save-submit-btn"
-            class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm px-6 py-2 rounded-lg transition flex items-center gap-2">
+            class="btn-gold font-bold text-sm px-6 py-2 rounded-lg transition flex items-center gap-2">
             <span id="save-btn-text">Save Wine Product</span>
           </button>
         </div>
@@ -579,12 +579,13 @@
 
   <!-- Add / Edit Client Shop Modal -->
   <div id="shop-modal"
-    class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="relative bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl my-8">
-      <div class="flex justify-between items-center pb-4 border-b border-slate-700 mb-6">
-        <h3 id="shop-modal-header" class="text-xl font-bold text-amber-400">Add Client Shop</h3>
+    class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div
+      class="relative bg-white border border-slate-200 rounded-2xl max-w-md w-full p-6 shadow-2xl my-8 text-slate-900">
+      <div class="flex justify-between items-center pb-4 border-b border-slate-200 mb-6">
+        <h3 id="shop-modal-header" class="text-xl font-bold text-[#BA1628]">Add Client Shop</h3>
         <button onclick="closeShopModal()"
-          class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-700 transition">
+          class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
@@ -594,55 +595,54 @@
       <form onsubmit="handleShopSubmit(event)" class="space-y-4">
         <input type="hidden" id="shop-id" value="" />
         <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Shop Name *</label>
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Shop Name *</label>
           <input type="text" id="shop-name" required placeholder="e.g. Wine Boutique Gent"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+            class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Client Number
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Client Number
               *</label>
             <input type="text" id="shop-client-no" required placeholder="e.g. 3120"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Belgian VAT Number
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Belgian VAT Number
               *</label>
             <input type="text" id="shop-vat" required placeholder="e.g. BE 0812345678"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
           </div>
         </div>
         <div>
-          <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Address *</label>
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Address *</label>
           <input type="text" id="shop-address" required placeholder="e.g. Veldstraat 45, 9000 Gent"
-            class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+            class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Contact
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Contact
               Person</label>
             <input type="text" id="shop-contact-person" placeholder="e.g. Jean Dupont"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Phone Number</label>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Phone Number</label>
             <input type="text" id="shop-phone" placeholder="e.g. +32 470 12 34 56"
-              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-500" />
+              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
           </div>
         </div>
 
-        <div class="pt-4 border-t border-slate-700 flex justify-end gap-3">
+        <div class="pt-4 border-t border-slate-200 flex justify-end gap-3">
           <button type="button" onclick="closeShopModal()"
-            class="px-4 py-2 rounded-lg text-sm text-slate-400 hover:text-white transition">Cancel</button>
-          <button type="submit"
-            class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm px-6 py-2 rounded-lg transition">Save
+            class="px-4 py-2 rounded-lg text-sm text-slate-600 hover:text-slate-900 transition">Cancel</button>
+          <button type="submit" class="btn-gold font-bold text-sm px-6 py-2 rounded-lg transition">Save
             Client Shop</button>
         </div>
       </form>
     </div>
   </div>
 
-  <footer class="bg-slate-950 text-slate-500 text-xs py-6 text-center border-t border-slate-800 mt-auto">
+  <footer class="bg-white text-slate-600 text-xs py-6 text-center border-t border-slate-200 mt-auto">
     <p>&copy; 2026 Aurellion Wine Distribution Belgium. Client Catalog Admin System.</p>
   </footer>
 
@@ -751,7 +751,7 @@
         const btn = document.getElementById(`tab-btn-${t}`);
         if (t === tabName) {
           sec.classList.remove('hidden');
-          btn.className = "px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-amber-500 text-slate-950 shadow";
+          btn.className = "px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-[#BA1628] text-white shadow-md";
           if (t === 'scanner') {
             setTimeout(() => {
               const input = document.getElementById('scanner-input');
@@ -762,7 +762,7 @@
           }
         } else {
           sec.classList.add('hidden');
-          btn.className = "px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700";
+          btn.className = "px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm transition flex items-center gap-2 bg-white text-slate-700 hover:bg-rose-50 hover:text-[#BA1628] border border-slate-200 shadow-sm";
         }
       });
     };
@@ -780,7 +780,7 @@
       const found = currentWines.find(w => w.sku.toLowerCase() === queryStr || w.id.toLowerCase() === queryStr || (w.name && w.name.toLowerCase().includes(queryStr)));
       if (!found) {
         resContainer.innerHTML = `
-          <div class="bg-rose-950/40 border border-rose-800 p-6 rounded-2xl text-center text-rose-300">
+          <div class="bg-rose-50 border border-rose-200 p-6 rounded-2xl text-center text-rose-800 font-medium">
             ❌ SKU / Barcode "${input.value}" not found in catalog.
           </div>
         `;
@@ -791,31 +791,31 @@
       const stockQty = (found && found.stockQuantity !== undefined && found.stockQuantity !== null && !isNaN(Number(found.stockQuantity))) ? Number(found.stockQuantity) : 0;
 
       resContainer.innerHTML = `
-        <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col md:flex-row gap-6 items-center">
-          <div class="w-32 h-40 bg-slate-900/80 p-2 rounded-xl border border-slate-700 flex items-center justify-center">
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-md flex flex-col md:flex-row gap-6 items-center">
+          <div class="w-32 h-40 bg-slate-50 p-2 rounded-xl border border-slate-200 flex items-center justify-center">
             <img src="${found.imageUrl || found.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" class="h-full object-contain" />
           </div>
 
           <div class="flex-1 space-y-2">
             <div class="flex items-center gap-2">
-              <span class="text-xs font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded">${found.sku}</span>
-              <span class="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded font-bold">${found.vintage || '2024'}</span>
+              <span class="text-xs font-mono font-bold bg-rose-50 text-[#BA1628] border border-rose-200 px-2 py-0.5 rounded">${found.sku}</span>
+              <span class="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-bold">${found.vintage || '2024'}</span>
             </div>
-            <h3 class="text-xl font-bold text-white">${found.name}</h3>
-            <p class="text-xs text-slate-400">${found.region || 'Belgique'} | Case Size: 1x${found.caseSize || 6}</p>
+            <h3 class="text-xl font-bold text-slate-900">${found.name}</h3>
+            <p class="text-xs text-slate-600">${found.region || 'Belgique'} | Case Size: 1x${found.caseSize || 6}</p>
 
             <div class="pt-2 flex items-center gap-4 text-sm font-mono">
-              <span class="text-slate-300">Current Warehouse Inventory:</span>
-              <span class="text-2xl font-extrabold text-amber-400">${stockQty} Cases</span>
+              <span class="text-slate-700 font-semibold">Current Warehouse Inventory:</span>
+              <span class="text-2xl font-extrabold text-[#BA1628]">${stockQty} Cases</span>
             </div>
 
             <!-- Quick Adjuster -->
             <div class="pt-4 flex flex-wrap items-center gap-3">
-              <span class="text-xs font-bold text-slate-300 uppercase">Quick Adjust:</span>
-              <button onclick="window.adjustStock('${found.id}', 5)" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg transition">+5 Cases</button>
-              <button onclick="window.adjustStock('${found.id}', 10)" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs px-3 py-2 rounded-lg transition">+10 Cases</button>
-              <button onclick="window.adjustStock('${found.id}', -1)" class="bg-slate-700 hover:bg-slate-600 text-rose-300 font-bold text-xs px-3 py-2 rounded-lg transition">-1 Case</button>
-              <button onclick="window.adjustStock('${found.id}', -5)" class="bg-slate-700 hover:bg-slate-600 text-rose-300 font-bold text-xs px-3 py-2 rounded-lg transition">-5 Cases</button>
+              <span class="text-xs font-bold text-slate-700 uppercase">Quick Adjust:</span>
+              <button onclick="window.adjustStock('${found.id}', 5)" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-2 rounded-lg transition">+5 Cases</button>
+              <button onclick="window.adjustStock('${found.id}', 10)" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-2 rounded-lg transition">+10 Cases</button>
+              <button onclick="window.adjustStock('${found.id}', -1)" class="bg-slate-100 hover:bg-slate-200 text-rose-700 font-bold text-xs px-3 py-2 rounded-lg border border-slate-200 transition">-1 Case</button>
+              <button onclick="window.adjustStock('${found.id}', -5)" class="bg-slate-100 hover:bg-slate-200 text-rose-700 font-bold text-xs px-3 py-2 rounded-lg border border-slate-200 transition">-5 Cases</button>
             </div>
           </div>
         </div>
@@ -846,34 +846,34 @@
     function renderUsers(users) {
       const tbody = document.getElementById('users-table-body');
       if (!users || users.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-6 text-center text-slate-400">No users found in database.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-6 text-center text-slate-500">No users found in database.</td></tr>`;
         return;
       }
 
       const roleBadges = {
-        admin: 'bg-amber-500/20 text-amber-400 border-amber-500/40',
-        evaluator: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/40',
-        depot: 'bg-sky-500/20 text-sky-400 border-sky-500/40'
+        admin: 'bg-rose-100 text-[#BA1628] border-rose-300',
+        evaluator: 'bg-slate-100 text-slate-700 border-slate-300',
+        depot: 'bg-purple-100 text-purple-800 border-purple-300'
       };
 
       tbody.innerHTML = users.map(u => `
-        <tr class="hover:bg-slate-750/50 transition">
-          <td class="px-6 py-4 font-medium text-white">
+        <tr class="hover:bg-rose-50/50 transition">
+          <td class="px-6 py-4 font-medium text-slate-900">
             <div>${u.email || 'No email registered'}</div>
           </td>
-          <td class="px-6 py-4 font-mono text-xs text-slate-400">${u.uid || u.id}</td>
+          <td class="px-6 py-4 font-mono text-xs text-slate-500">${u.uid || u.id}</td>
           <td class="px-6 py-4">
             <span class="inline-block border text-[11px] px-2.5 py-1 rounded-md font-bold uppercase tracking-wider ${roleBadges[u.role] || roleBadges.evaluator}">
               ${u.role || 'evaluator'}
             </span>
           </td>
           <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
-            <select onchange="window.handleRoleChange('${u.id}', this.value)" class="bg-slate-900 border border-slate-700 text-xs font-bold rounded-lg px-3 py-1.5 text-slate-200 focus:outline-none focus:border-amber-500">
+            <select onchange="window.handleRoleChange('${u.id}', this.value)" class="bg-slate-50 border border-slate-300 text-xs font-bold rounded-lg px-3 py-1.5 text-slate-800 focus:outline-none focus:border-[#BA1628]">
               <option value="evaluator" ${u.role === 'evaluator' ? 'selected' : ''}>📋 Field Evaluator</option>
               <option value="depot" ${u.role === 'depot' ? 'selected' : ''}>📦 Depot Staff</option>
               <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>👑 Admin Manager</option>
             </select>
-            <button onclick="window.deleteUserProfile('${u.id}', '${(u.email || '').replace(/'/g, "\\'")}')" class="text-xs bg-rose-950/60 hover:bg-rose-900 text-rose-300 border border-rose-800/60 px-2.5 py-1.5 rounded-lg transition font-medium">
+            <button onclick="window.deleteUserProfile('${u.id}', '${(u.email || '').replace(/'/g, "\\'")}')" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 px-2.5 py-1.5 rounded-lg transition font-medium">
               🗑️
             </button>
           </td>
@@ -906,32 +906,32 @@
       allShopsCache = shops || [];
       const container = document.getElementById('shops-container');
       if (!shops || shops.length === 0) {
-        container.innerHTML = `<p class="col-span-3 text-center py-8 text-slate-400">No client shops registered.</p>`;
+        container.innerHTML = `<p class="col-span-3 text-center py-8 text-slate-500">No client shops registered.</p>`;
         return;
       }
 
       container.innerHTML = shops.map(s => {
-        const contactInfo = s.contactPerson ? `<p class="text-xs text-slate-300 mt-1">👤 Contact: ${escapeHtml(s.contactPerson)}</p>` : '';
-        const phoneInfo = s.phone ? `<p class="text-xs text-slate-300">📞 Phone: ${escapeHtml(s.phone)}</p>` : '';
+        const contactInfo = s.contactPerson ? `<p class="text-xs text-slate-600 mt-1">👤 Contact: ${escapeHtml(s.contactPerson)}</p>` : '';
+        const phoneInfo = s.phone ? `<p class="text-xs text-slate-600">📞 Phone: ${escapeHtml(s.phone)}</p>` : '';
         const properName = escapeHtml(toProperCase(s.name));
 
         return `
-          <div class="bg-slate-800 border border-slate-700/80 rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+          <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-md flex flex-col justify-between hover:border-[#BA1628] transition">
             <div>
               <div class="flex justify-between items-start mb-2">
-                <h3 class="font-bold text-lg text-white">${properName}</h3>
-                <span class="text-xs bg-slate-700 text-amber-400 font-mono font-bold px-2 py-0.5 rounded">Client #${escapeHtml(s.clientNo || '')}</span>
+                <h3 class="font-bold text-lg text-slate-900">${properName}</h3>
+                <span class="text-xs bg-slate-100 text-slate-800 border border-slate-200 font-mono font-bold px-2 py-0.5 rounded">Client #${escapeHtml(s.clientNo || '')}</span>
               </div>
-              <p class="text-xs font-mono text-emerald-400 mb-1">VAT: ${escapeHtml(s.vat)}</p>
-              <p class="text-xs text-slate-400">${escapeHtml(s.address)}</p>
+              <p class="text-xs font-mono text-[#BA1628] font-bold mb-1">VAT: ${escapeHtml(s.vat)}</p>
+              <p class="text-xs text-slate-600">${escapeHtml(s.address)}</p>
               ${contactInfo}
               ${phoneInfo}
             </div>
-            <div class="mt-4 pt-3 border-t border-slate-700/60 flex justify-between items-center">
-              <button onclick="window.editShop('${s.id}')" class="text-xs text-amber-400 hover:text-amber-300 font-semibold transition flex items-center gap-1">
+            <div class="mt-4 pt-3 border-t border-slate-200 flex justify-between items-center">
+              <button onclick="window.editShop('${s.id}')" class="text-xs text-[#BA1628] hover:text-[#9E1020] font-bold transition flex items-center gap-1">
                 ✏️ Edit Shop
               </button>
-              <button onclick="window.deleteShop('${s.id}', '${escapeHtml(s.name.replace(/'/g, "\\'"))}')" class="text-xs text-rose-400 hover:text-rose-300 font-semibold transition">
+              <button onclick="window.deleteShop('${s.id}', '${escapeHtml(s.name.replace(/'/g, "\\'"))}')" class="text-xs text-rose-700 hover:text-rose-900 font-bold transition">
                 🗑️ Delete
               </button>
             </div>
@@ -1030,17 +1030,17 @@
     function getCategoryBadge(category) {
       switch (category) {
         case 'Red':
-          return { html: '<span class="w-3.5 h-3.5 rounded-full bg-[#CC0000] border border-red-400 inline-block shadow-sm"></span>', class: 'bg-red-950 border-red-900', title: 'Red Wine' };
+          return { html: '<span class="w-3.5 h-3.5 rounded-full bg-[#BA1628] border border-red-400 inline-block shadow-sm"></span>', class: 'bg-rose-50 border-rose-200', title: 'Red Wine' };
         case 'White':
-          return { html: '<span class="w-3.5 h-3.5 rounded-full bg-amber-100 border border-amber-300 inline-block shadow-sm"></span>', class: 'bg-slate-900 border-slate-700', title: 'White Wine' };
+          return { html: '<span class="w-3.5 h-3.5 rounded-full bg-amber-100 border border-amber-300 inline-block shadow-sm"></span>', class: 'bg-slate-100 border-slate-200', title: 'White Wine' };
         case 'Rosé':
-          return { html: '<span class="w-3.5 h-3.5 rounded-full bg-[#FFB3DA] border border-pink-400 inline-block shadow-sm"></span>', class: 'bg-pink-950/80 border-pink-700/80', title: 'Rosé Wine' };
+          return { html: '<span class="w-3.5 h-3.5 rounded-full bg-[#FFB3DA] border border-pink-400 inline-block shadow-sm"></span>', class: 'bg-pink-50 border-pink-200', title: 'Rosé Wine' };
         case 'Sparkling':
-          return { html: '<span class="w-3.5 h-3.5 rounded-full bg-cyan-300 border border-cyan-200 inline-block shadow-sm"></span>', class: 'bg-cyan-950/80 border-cyan-800/80', title: 'Sparkling Wine' };
+          return { html: '<span class="w-3.5 h-3.5 rounded-full bg-cyan-300 border border-cyan-200 inline-block shadow-sm"></span>', class: 'bg-cyan-50 border-cyan-200', title: 'Sparkling Wine' };
         case 'Dessert':
-          return { html: '<span class="w-3.5 h-3.5 rounded-full bg-purple-500 border border-purple-400 inline-block shadow-sm"></span>', class: 'bg-purple-950/80 border-purple-800/80', title: 'Dessert Wine' };
+          return { html: '<span class="w-3.5 h-3.5 rounded-full bg-purple-500 border border-purple-400 inline-block shadow-sm"></span>', class: 'bg-purple-50 border-purple-200', title: 'Dessert Wine' };
         default:
-          return { html: '<span class="w-3.5 h-3.5 rounded-full bg-slate-400 border border-slate-500 inline-block shadow-sm"></span>', class: 'bg-slate-800 border-slate-700', title: 'Wine' };
+          return { html: '<span class="w-3.5 h-3.5 rounded-full bg-slate-400 border border-slate-500 inline-block shadow-sm"></span>', class: 'bg-slate-100 border-slate-200', title: 'Wine' };
       }
     }
 
@@ -1057,13 +1057,12 @@
         const bottlePrice = typeof w.priceBottleHT === 'number' ? `€${w.priceBottleHT.toFixed(2)}` : (w.priceBottle || '€0.00');
         const casePrice = typeof w.priceCaseHT === 'number' ? `€${w.priceCaseHT.toFixed(2)}` : (w.priceCase || '€0.00');
         const caseConfig = w.caseSize ? `1x${w.caseSize}` : '1x6';
-        const deposit = w.depositCase ? `€${Number(w.depositCase).toFixed(2)}` : '€1.35';
 
         const stockBadgeClass = !isAvailable
-          ? 'bg-rose-900/50 text-rose-300 border-rose-700'
+          ? 'bg-rose-100 text-rose-800 border-rose-300'
           : (isLowStock
-            ? 'bg-amber-500/30 text-amber-300 border-amber-500/60 animate-pulse font-extrabold'
-            : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40');
+            ? 'bg-amber-100 text-amber-800 border-amber-300 animate-pulse font-extrabold'
+            : 'bg-emerald-100 text-emerald-800 border-emerald-300');
 
         const stockBadgeText = !isAvailable
           ? '○ Out of Stock'
@@ -1071,51 +1070,51 @@
             ? `⚠️ Low Stock: ${stockQty} Cases`
             : `● ${stockQty} Cases`);
 
-        const tagsHtml = tags.map(t => `<span class="text-[9px] bg-slate-700/80 text-slate-300 border border-slate-600 px-1.5 py-0.5 rounded-full font-medium">#${t.trim()}</span>`).join('');
+        const tagsHtml = tags.map(t => `<span class="text-[9px] bg-slate-100 text-slate-700 border border-slate-200 px-1.5 py-0.5 rounded-full font-medium">#${t.trim()}</span>`).join('');
 
         return `
-          <div class="bg-slate-800 border ${isAvailable ? (isLowStock ? 'border-amber-500/60' : 'border-slate-700/80') : 'border-rose-900/60 opacity-75'} rounded-2xl overflow-hidden shadow-lg flex flex-col hover:border-slate-600 transition">
-            <div class="h-44 bg-slate-900/60 p-3 relative flex items-center justify-center border-b border-slate-700/50">
-              <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain drop-shadow-md" />
-              <span class="absolute top-3 left-3 bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2 py-0.5 rounded font-mono font-semibold">${w.vintage || '2024'}</span>
+          <div class="bg-white border ${isAvailable ? (isLowStock ? 'border-amber-300 shadow-md' : 'border-slate-200') : 'border-rose-200 opacity-80'} rounded-2xl overflow-hidden shadow-md flex flex-col hover:border-[#BA1628] hover:shadow-lg transition">
+            <div class="h-44 bg-slate-50 p-3 relative flex items-center justify-center border-b border-slate-100">
+              <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain drop-shadow-sm" />
+              <span class="absolute top-3 left-3 bg-rose-50 text-[#BA1628] border border-rose-200 text-xs px-2 py-0.5 rounded font-mono font-bold">${w.vintage || '2024'}</span>
               <button onclick="toggleStockStatus('${w.id}', ${!isAvailable})" class="absolute top-3 right-3 text-[11px] font-bold px-2.5 py-1 rounded-full border transition ${stockBadgeClass}">
                 ${stockBadgeText}
               </button>
             </div>
             <div class="p-5 flex flex-col flex-grow">
               <div class="flex justify-between items-start mb-1">
-                <h3 class="text-base font-bold text-white leading-snug">${w.name}</h3>
+                <h3 class="text-base font-bold text-slate-900 leading-snug">${w.name}</h3>
               </div>
               <div class="flex items-center gap-2 mb-2 flex-wrap">
-                <span class="text-xs font-mono text-slate-400">${w.sku}</span>
+                <span class="text-xs font-mono text-slate-500">${w.sku}</span>
                 <span title="${categoryBadge.title}" class="border px-2 py-1 rounded-full font-bold flex items-center justify-center ${categoryBadge.class}">${categoryBadge.html}</span>
-                <span class="text-[10px] bg-slate-700 text-slate-300 px-1.5 py-0.5 rounded font-bold">${caseConfig}</span>
+                <span class="text-[10px] bg-slate-100 text-slate-700 border border-slate-200 px-1.5 py-0.5 rounded font-bold">${caseConfig}</span>
               </div>
               ${tagsHtml ? `<div class="flex items-center gap-1 flex-wrap mb-2">${tagsHtml}</div>` : ''}
-              <p class="text-xs text-slate-400 mb-4 line-clamp-2">${w.description || ''}</p>
+              <p class="text-xs text-slate-600 mb-4 line-clamp-2">${w.description || ''}</p>
               
-              <div class="mt-auto border-t border-slate-700/60 pt-3 space-y-1.5 text-xs">
-                <div class="flex justify-between text-slate-300">
+              <div class="mt-auto border-t border-slate-100 pt-3 space-y-1.5 text-xs">
+                <div class="flex justify-between text-slate-600">
                   <span>Warehouse Inventory:</span>
-                  <span class="font-bold ${isLowStock ? 'text-amber-400 font-mono font-extrabold flex items-center gap-1' : 'text-amber-400 font-mono'}">
+                  <span class="font-bold ${isLowStock ? 'text-amber-700 font-mono font-extrabold flex items-center gap-1' : 'text-slate-900 font-mono'}">
                     ${isLowStock ? `⚠️ ${stockQty} Cases (Low Stock)` : `${stockQty} Cases`}
                   </span>
                 </div>
-                <div class="flex justify-between text-slate-300">
+                <div class="flex justify-between text-slate-600">
                   <span>Bottle Price (HT):</span>
-                  <span class="font-bold text-slate-200">${bottlePrice}</span>
+                  <span class="font-bold text-slate-900">${bottlePrice}</span>
                 </div>
-                <div class="flex justify-between text-slate-300">
+                <div class="flex justify-between text-slate-600">
                   <span>Case Price (HT):</span>
-                  <span class="font-bold text-emerald-400">${casePrice} (${caseConfig})</span>
+                  <span class="font-bold text-[#BA1628]">${casePrice} (${caseConfig})</span>
                 </div>
               </div>
 
-              <div class="mt-4 pt-3 border-t border-slate-700/60 flex gap-2">
-                <button onclick="editWine('${w.id}')" class="flex-1 bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold py-1.5 px-3 rounded-lg transition flex items-center justify-center gap-1">
+              <div class="mt-4 pt-3 border-t border-slate-100 flex gap-2">
+                <button onclick="editWine('${w.id}')" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold py-1.5 px-3 rounded-lg border border-slate-200 transition flex items-center justify-center gap-1">
                   ✏️ Edit
                 </button>
-                <button onclick="deleteWine('${w.id}', '${w.name.replace(/'/g, "\\'")}')" class="bg-rose-900/40 hover:bg-rose-800/60 text-rose-300 text-xs font-semibold py-1.5 px-3 rounded-lg transition border border-rose-800/40">
+                <button onclick="deleteWine('${w.id}', '${w.name.replace(/'/g, "\\'")}')" class="bg-rose-50 hover:bg-rose-100 text-[#BA1628] text-xs font-bold py-1.5 px-3 rounded-lg transition border border-rose-200">
                   🗑️ Delete
                 </button>
               </div>
@@ -1186,10 +1185,10 @@
     };
 
     window.deleteWine = async function (id, name) {
-      if (confirm(`Are you sure you want to delete SKU "${name}"?`)) {
+      if (confirm(`Are you sure you want to delete SKU "${name}" ? `)) {
         try {
           await deleteDoc(doc(db, "wines", id));
-          showToast(`Deleted ${name}`);
+          showToast(`Deleted ${ name } `);
         } catch (err) {
           console.error("Delete error:", err);
           showToast("Failed to delete item: " + err.message, true);
@@ -1275,8 +1274,8 @@
           description,
           imageUrl,
           image: imageUrl,
-          priceBottle: `€${priceBottleHT.toFixed(2)}`,
-          priceCase: `€${priceCaseHT.toFixed(2)} (Case of ${caseSize})`,
+          priceBottle: `€${ priceBottleHT.toFixed(2) } `,
+          priceCase: `€${ priceCaseHT.toFixed(2) } (Case of ${ caseSize })`,
           updatedAt: new Date().toISOString()
         };
 
@@ -1383,11 +1382,11 @@
       const recordCount = document.getElementById('report-record-count');
 
       if (kpiOrders) kpiOrders.textContent = filtered.length;
-      if (kpiHT) kpiHT.textContent = `€${totalHT.toFixed(2)}`;
-      if (kpiTVA) kpiTVA.textContent = `€${totalTVA.toFixed(2)}`;
-      if (kpiTTC) kpiTTC.textContent = `€${totalTTC.toFixed(2)}`;
+      if (kpiHT) kpiHT.textContent = `€${ totalHT.toFixed(2) } `;
+      if (kpiTVA) kpiTVA.textContent = `€${ totalTVA.toFixed(2) } `;
+      if (kpiTTC) kpiTTC.textContent = `€${ totalTTC.toFixed(2) } `;
       if (kpiCases) kpiCases.textContent = totalCases;
-      if (recordCount) recordCount.textContent = `${filtered.length} order${filtered.length === 1 ? '' : 's'} matching criteria`;
+      if (recordCount) recordCount.textContent = `${ filtered.length } order${ filtered.length === 1 ? '' : 's' } matching criteria`;
 
       // Render Table Rows
       const tbody = document.getElementById('reports-table-body');
@@ -1395,12 +1394,12 @@
 
       if (filtered.length === 0) {
         tbody.innerHTML = `
-          <tr>
-            <td colspan="8" class="px-6 py-8 text-center text-slate-400 font-sans">
-              No orders found matching your selected date and status filters.
-            </td>
-          </tr>
-        `;
+      < tr >
+      <td colspan="8" class="px-6 py-8 text-center text-slate-400 font-sans">
+        No orders found matching your selected date and status filters.
+      </td>
+          </tr >
+      `;
         return;
       }
 
@@ -1421,7 +1420,7 @@
           : (o.createdAt ? new Date(o.createdAt).toLocaleString('fr-BE') : 'N/A');
 
         return `
-          <tr class="hover:bg-slate-700/40 transition">
+      < tr class="hover:bg-slate-700/40 transition" >
             <td class="px-4 py-3 font-bold text-amber-400">#${o.id.substring(0, 8)}...</td>
             <td class="px-4 py-3 text-slate-300 text-xs">${dateStr}</td>
             <td class="px-4 py-3 font-sans text-white font-medium">
@@ -1437,8 +1436,8 @@
                 🖨️ Note
               </button>
             </td>
-          </tr>
-        `;
+          </tr >
+      `;
       }).join('');
     };
 
@@ -1494,27 +1493,27 @@
           `"${o.id}"`,
           `"${dateStr}"`,
           `"${(client.name || '').replace(/"/g, '""')}"`,
-          `"${(client.vat || '').replace(/"/g, '""')}"`,
-          `"${(client.address || '').replace(/"/g, '""')}"`,
-          `"${(o.userEmail || o.userId || '').replace(/"/g, '""')}"`,
-          `"${o.status || 'submitted'}"`,
-          totalCases,
-          (totals.totalHT || 0).toFixed(2),
-          (totals.totalTVA || 0).toFixed(2),
-          (totals.totalTTC || 0).toFixed(2)
+      `"${(client.vat || '').replace(/"/g, '""')}"`,
+      `"${(client.address || '').replace(/"/g, '""')}"`,
+      `"${(o.userEmail || o.userId || '').replace(/"/g, '""')}"`,
+      `"${o.status || 'submitted'}"`,
+      totalCases,
+      (totals.totalHT || 0).toFixed(2),
+      (totals.totalTVA || 0).toFixed(2),
+      (totals.totalTTC || 0).toFixed(2)
         ];
-        csvContent += row.join(",") + "\n";
+    csvContent += row.join(",") + "\n";
       });
 
-      const encodedUri = encodeURI(csvContent);
-      const link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", `aurellion_orders_report_${new Date().toISOString().split('T')[0]}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `aurellion_orders_report_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-      showToast(`Exported ${filtered.length} order records to CSV!`);
+    showToast(`Exported ${filtered.length} order records to CSV!`);
     };
 
     window.printSalesReport = function () {

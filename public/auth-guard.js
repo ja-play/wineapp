@@ -87,8 +87,8 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
   if (!user) {
     container.innerHTML = `
       <div class="flex items-center gap-2">
-        <a href="index.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1.5 rounded-xl font-medium transition">Orders</a>
-        <a href="contact.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1.5 rounded-xl font-medium transition">Contact</a>
+        <a href="index.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-[#BA1628] border border-slate-200 px-3 py-1.5 rounded-xl font-medium transition">Orders</a>
+        <a href="contact.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-[#BA1628] border border-slate-200 px-3 py-1.5 rounded-xl font-medium transition">Contact</a>
         <button onclick="window.showLoginModal()" class="btn-gold font-bold text-xs px-3.5 py-1.5 rounded-xl transition flex items-center gap-1 shadow">
           <span>Sign In / Register</span>
         </button>
@@ -98,9 +98,9 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
   }
 
   const roleColors = {
-    admin: 'bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/60',
-    evaluator: 'bg-[#2A060B] text-[#F3E5AB] border border-[#D4AF37]/40',
-    depot: 'bg-[#180B20] text-[#E0C3FC] border border-purple-500/40'
+    admin: 'bg-rose-100 text-[#BA1628] border border-rose-300',
+    evaluator: 'bg-slate-100 text-slate-700 border border-slate-300',
+    depot: 'bg-purple-100 text-purple-800 border border-purple-300'
   };
 
   const roleLabels = {
@@ -114,15 +114,15 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
       <span class="border text-[11px] px-2.5 py-1 rounded-lg font-bold uppercase tracking-wider ${roleColors[userRole] || roleColors.evaluator}">
         ${roleLabels[userRole] || userRole}
       </span>
-      <a href="index.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1 rounded-lg font-medium transition">Orders</a>
-      <a href="contact.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1 rounded-lg font-medium transition">Contact</a>
+      <a href="index.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-800 hover:text-[#BA1628] border border-slate-200 px-2.5 py-1 rounded-lg font-medium transition">Orders</a>
+      <a href="contact.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-800 hover:text-[#BA1628] border border-slate-200 px-2.5 py-1 rounded-lg font-medium transition">Contact</a>
       ${userRole === 'admin' ? `
-        <a href="admin.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1 rounded-lg font-medium transition">Admin</a>
+        <a href="admin.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-800 hover:text-[#BA1628] border border-slate-200 px-2.5 py-1 rounded-lg font-medium transition">Admin</a>
       ` : ''}
       ${userRole === 'depot' || userRole === 'admin' ? `
-        <a href="depot.html" class="text-xs bg-[#2A060B] hover:bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/40 px-2.5 py-1 rounded-lg font-medium transition">Depot</a>
+        <a href="depot.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-800 hover:text-[#BA1628] border border-slate-200 px-2.5 py-1 rounded-lg font-medium transition">Depot</a>
       ` : ''}
-      <button onclick="window.handleAuthSignOut()" class="bg-rose-950/80 hover:bg-rose-900 text-rose-300 text-xs px-2.5 py-1 rounded-lg border border-rose-800/60 font-semibold transition">
+      <button onclick="window.handleAuthSignOut()" class="bg-rose-50 hover:bg-rose-100 text-[#BA1628] text-xs px-2.5 py-1 rounded-lg border border-rose-200 font-semibold transition">
         Sign Out
       </button>
     </div>
@@ -143,37 +143,37 @@ window.showLoginModal = function(isRegister = false) {
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'auth-modal';
-    modal.className = 'fixed inset-0 bg-[#0F0204]/90 backdrop-blur-md z-50 flex items-center justify-center p-4';
+    modal.className = 'fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4';
     document.body.appendChild(modal);
   }
 
   modal.innerHTML = `
-    <div class="card-theme rounded-2xl max-w-md w-full p-6 shadow-2xl relative">
-      <button onclick="document.getElementById('auth-modal').classList.add('hidden')" class="absolute top-4 right-4 text-[#F3E5AB] hover:text-white p-1">✕</button>
+    <div class="card-theme rounded-2xl max-w-md w-full p-6 shadow-2xl relative bg-white border border-slate-200 text-slate-900">
+      <button onclick="document.getElementById('auth-modal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 p-1 font-bold">✕</button>
       <div class="text-center mb-6">
-        <h3 id="modal-title" class="font-serif-title text-xl font-bold gold-gradient-text">${isRegister ? 'Create Account' : 'Sign In'}</h3>
-        <p class="text-xs text-[#C8B69B] mt-1">Aurellion Wines Distribution Portal</p>
+        <h3 id="modal-title" class="font-serif-title text-xl font-bold text-[#BA1628]">${isRegister ? 'Create Account' : 'Sign In'}</h3>
+        <p class="text-xs text-slate-600 mt-1">Aurellion Wines Distribution Portal</p>
       </div>
 
       <form onsubmit="window.handleAuthSubmit(event, ${isRegister})" class="space-y-4">
         <div>
-          <label class="block text-[11px] text-[#C8B69B] uppercase tracking-wider mb-1">Email Address</label>
-          <input type="email" id="auth-email" placeholder="user@winedistribution.be" required class="w-full input-theme rounded-xl px-3 py-2.5 text-xs text-white" />
+          <label class="block text-[11px] text-slate-700 font-semibold uppercase tracking-wider mb-1">Email Address</label>
+          <input type="email" id="auth-email" placeholder="user@winedistribution.be" required class="w-full input-theme rounded-xl px-3 py-2.5 text-xs text-slate-900 bg-slate-50 border border-slate-300" />
         </div>
         <div>
-          <label class="block text-[11px] text-[#C8B69B] uppercase tracking-wider mb-1">Password</label>
-          <input type="password" id="auth-password" placeholder="••••••••" required class="w-full input-theme rounded-xl px-3 py-2.5 text-xs text-white" />
+          <label class="block text-[11px] text-slate-700 font-semibold uppercase tracking-wider mb-1">Password</label>
+          <input type="password" id="auth-password" placeholder="••••••••" required class="w-full input-theme rounded-xl px-3 py-2.5 text-xs text-slate-900 bg-slate-50 border border-slate-300" />
         </div>
 
-        <div id="auth-error" class="hidden text-xs text-rose-300 bg-rose-950/60 border border-rose-800 p-2.5 rounded-lg"></div>
+        <div id="auth-error" class="hidden text-xs text-rose-800 bg-rose-50 border border-rose-200 p-2.5 rounded-lg"></div>
 
         <button type="submit" id="auth-submit-btn" class="w-full btn-gold font-bold text-xs py-3 rounded-xl transition shadow">
           ${isRegister ? 'Register Account' : 'Sign In'}
         </button>
       </form>
 
-      <div class="mt-4 text-center border-t border-[#D4AF37]/20 pt-4">
-        <button onclick="window.showLoginModal(${!isRegister})" class="text-xs text-[#F3E5AB] hover:underline font-medium">
+      <div class="mt-4 text-center border-t border-slate-200 pt-4">
+        <button onclick="window.showLoginModal(${!isRegister})" class="text-xs text-[#BA1628] hover:underline font-medium">
           ${isRegister ? 'Already have an account? Sign In' : 'Need an account? Register'}
         </button>
       </div>
