@@ -1428,7 +1428,161 @@
     };
 
     window.printSalesReport = function () {
-      window.print();
+      const startDateStr = document.getElementById('report-start-date')?.value;
+      const endDateStr = document.getElementById('report-end-date')?.value;
+      const statusFilter = document.getElementById('report-status-filter')?.value || 'all';
+
+      let filtered = [...currentOrders];
+
+      if (startDateStr) {
+        const startMs = new Date(startDateStr + 'T00:00:00').getTime();
+        filtered = filtered.filter(o => {
+          const t = o.createdAt?.seconds ? o.createdAt.seconds * 1000 : (o.createdAt ? new Date(o.createdAt).getTime() : 0);
+          return t >= startMs;
+        });
+      }
+
+      if (endDateStr) {
+        const endMs = new Date(endDateStr + 'T23:59:59').getTime();
+        filtered = filtered.filter(o => {
+          const t = o.createdAt?.seconds ? o.createdAt.seconds * 1000 : (o.createdAt ? new Date(o.createdAt).getTime() : 0);
+          return t <= endMs;
+        });
+      }
+
+      if (statusFilter === 'delivered') {
+        filtered = filtered.filter(o => o.status === 'delivered');
+      } else if (statusFilter === 'active') {
+        filtered = filtered.filter(o => o.status !== 'delivered');
+      } else if (statusFilter !== 'all') {
+        filtered = filtered.filter(o => o.status === statusFilter);
+      }
+
+      if (filtered.length === 0) {
+        showToast("No orders available to print for current filter", true);
+        return;
+      }
+
+      let totalHT = 0;
+      let totalTVA = 0;
+      let totalTTC = 0;
+      let totalCases = 0;
+
+      filtered.forEach(o => {
+        const totals = o.totals || { totalHT: 0, totalTVA: 0, totalTTC: 0 };
+        totalHT += (totals.totalHT || 0);
+        totalTVA += (totals.totalTVA || 0);
+        totalTTC += (totals.totalTTC || 0);
+        const items = o.items || [];
+        totalCases += items.reduce((sum, it) => sum + (it.qty || 0), 0);
+      });
+
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Sales & Financial Audit Report - Aurellion Wine</title>
+          <style>
+            body { font-family: system-ui, -apple-system, sans-serif; padding: 20px; color: #0f172a; max-width: 1000px; margin: 0 auto; }
+            .header { border-bottom: 2px solid #ba1628; padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+            .title { font-size: 22px; font-weight: bold; color: #ba1628; }
+            .subtitle { font-size: 13px; color: #64748b; margin-top: 4px; }
+            .kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 20px; }
+            .kpi-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px 12px; border-radius: 8px; }
+            .kpi-label { font-size: 11px; text-transform: uppercase; font-weight: bold; color: #64748b; }
+            .kpi-value { font-size: 18px; font-weight: bold; color: #0f172a; margin-top: 4px; font-family: monospace; }
+            .kpi-value.highlight { color: #ba1628; }
+            .kpi-value.emerald { color: #059669; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th, td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; font-size: 12px; }
+            th { background: #f1f5f9; font-weight: bold; color: #334155; text-transform: uppercase; font-size: 11px; }
+            .text-right { text-align: right; }
+            .text-center { text-align: center; }
+            .mono { font-family: monospace; font-weight: bold; }
+            @media print {
+              body { padding: 0; }
+              @page { size: A4 landscape; margin: 10mm; }
+            }
+          </style>
+        </head>
+        <body onload="window.print()">
+          <div class="header">
+            <div>
+              <div class="title">🍷 Aurellion Wine Distribution - Sales & Financial Report</div>
+              <div class="subtitle">Generated on ${new Date().toLocaleString('fr-BE')} | ${filtered.length} Orders matching filter criteria</div>
+            </div>
+            <div style="text-align: right; font-size: 12px; color: #64748b;">
+              <strong>Date Filter:</strong> ${startDateStr || 'All Time'} ${endDateStr ? 'to ' + endDateStr : ''}<br>
+              <strong>Status:</strong> ${statusFilter.toUpperCase()}
+            </div>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <div class="kpi-label">Total Orders</div>
+              <div class="kpi-value">${filtered.length}</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Total Cases</div>
+              <div class="kpi-value">${totalCases}</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Net Sales (HT)</div>
+              <div class="kpi-value highlight">€${totalHT.toFixed(2)}</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">TVA (21%)</div>
+              <div class="kpi-value">€${totalTVA.toFixed(2)}</div>
+            </div>
+            <div class="kpi-card">
+              <div class="kpi-label">Gross Total (TTC)</div>
+              <div class="kpi-value emerald">€${totalTTC.toFixed(2)}</div>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Date Placed</th>
+                <th>Client Shop</th>
+                <th>VAT Number</th>
+                <th>Status</th>
+                <th class="text-right">Cases</th>
+                <th class="text-right">Net HT (€)</th>
+                <th class="text-right">Gross TTC (€)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${filtered.map(o => {
+                const client = o.client || { name: 'N/A', vat: 'N/A' };
+                const totals = o.totals || { totalHT: 0, totalTTC: 0 };
+                const items = o.items || [];
+                const orderCases = items.reduce((sum, it) => sum + (it.qty || 0), 0);
+                const dateStr = o.createdAt && o.createdAt.toDate
+                  ? o.createdAt.toDate().toLocaleString('fr-BE')
+                  : (o.createdAt ? new Date(o.createdAt).toLocaleString('fr-BE') : 'N/A');
+
+                return `
+                  <tr>
+                    <td class="mono">#${o.id.substring(0, 8)}...</td>
+                    <td>${dateStr}</td>
+                    <td>${client.name || 'N/A'}</td>
+                    <td style="font-family: monospace;">${client.vat || 'N/A'}</td>
+                    <td style="text-transform: capitalize;">${o.status || 'submitted'}</td>
+                    <td class="text-right font-bold">${orderCases}</td>
+                    <td class="text-right">€${(totals.totalHT || 0).toFixed(2)}</td>
+                    <td class="text-right font-bold" style="color: #059669;">€${(totals.totalTTC || 0).toFixed(2)}</td>
+                  </tr>
+                `;
+              }).join('')}
+            </tbody>
+          </table>
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
     };
 
     window.viewOrderReceiptModal = function (orderId) {
