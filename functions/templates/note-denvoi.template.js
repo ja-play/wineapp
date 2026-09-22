@@ -66,8 +66,7 @@ function buildNoteDenvoiHtml(orderId, order) {
 <body>
   <div class="header">
     <div>
-      <div class="brand">🍷 ${escapeHtml(config.COMPANY.name)}</div>
-      <div class="subbrand">${escapeHtml(config.COMPANY.subTitle)}</div>
+      <div class="brand">${escapeHtml(config.COMPANY.name)}</div>
       <div style="font-size: 11px; color: #475569; margin-top: 6px;">
         ${escapeHtml(config.COMPANY.address)} | N° TVA: ${escapeHtml(config.COMPANY.vatNumber)}
       </div>

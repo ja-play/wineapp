@@ -1,3 +1,7 @@
+---
+trigger: manual
+---
+
 # MANDATORY RULE: Jira Integration & Git Commit Workflow
 
 For **EVERY SINGLE CODE CHANGE / PUSH TO MAIN**:

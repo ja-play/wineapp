@@ -8,8 +8,8 @@ module.exports = {
   TIMEOUT_SECONDS: 120,
   VAT_RATE: 0.21,
   COMPANY: {
-    name: "Aurellion Wine Selection",
-    fullName: "Aurellion Wine SRL",
+    name: "Aurellion",
+    fullName: "Aurellion SRL",
     subTitle: "Distribution Grossiste Vins Belgique - Direct Import",
     address: "Rue de la Station 48, 1000 Bruxelles",
     vatNumber: "BE 0123.456.789",

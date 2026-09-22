@@ -12,10 +12,13 @@
       window.location.href = window.location.href.replace('http:', 'https:');
     }
   </script>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📦</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
@@ -28,7 +31,7 @@
 
     body {
       background-color: #120204;
-      background-image: 
+      background-image:
         linear-gradient(180deg, rgba(18, 2, 4, 0.88) 0%, rgba(42, 6, 11, 0.75) 45%, rgba(10, 1, 2, 0.96) 100%),
         url('images/vineyard_bg.jpg');
       background-size: cover;
@@ -90,6 +93,7 @@
         size: A4 portrait;
         margin: 10mm 12mm;
       }
+
       body {
         background: white !important;
         color: black !important;
@@ -98,9 +102,14 @@
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
       }
-      header, main, footer, .no-print {
+
+      header,
+      main,
+      footer,
+      .no-print {
         display: none !important;
       }
+
       #delivery-note-modal {
         position: static !important;
         display: block !important;
@@ -110,6 +119,7 @@
         width: 100% !important;
         box-shadow: none !important;
       }
+
       #printable-note-container {
         position: static !important;
         width: 100% !important;
@@ -132,15 +142,22 @@
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
       <div class="flex items-center gap-3">
         <a href="index.html" class="flex items-center gap-3 group">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#400B12] to-[#1C0407] border border-[#D4AF37]/60 flex items-center justify-center shadow-lg group-hover:border-[#D4AF37]">
-            <span class="text-xl">🍷</span>
+          <div
+            class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#400B12] to-[#1C0407] border border-[#D4AF37]/60 flex items-center justify-center shadow-lg group-hover:border-[#D4AF37] transition-all">
+            <svg class="w-6 h-6 text-[#D4AF37]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 22h8"></path>
+              <path d="M12 15v7"></path>
+              <path d="M12 15a7 7 0 0 0 7-7c0-2-1-3.5-2.5-4.5h-9C6 4.5 5 6 5 8a7 7 0 0 0 7 7z"></path>
+              <path d="M7 3.5 12 7l5-3.5"></path>
+            </svg>
           </div>
           <div>
-            <div class="font-serif-title font-black text-lg gold-gradient-text tracking-wide leading-none">AURELLION</div>
-            <div class="text-[9px] text-[#C8B69B] tracking-[0.25em] uppercase font-semibold mt-0.5">WINE DISTRIBUTION & IMPORT</div>
+            <div class="font-serif-title font-black text-xl gold-gradient-text tracking-wide leading-none">AURELLION</div>
           </div>
         </a>
-        <span class="bg-[#180B20] text-[#E0C3FC] border border-purple-500/40 text-xs px-2.5 py-0.5 rounded-full font-semibold">Depot Dispatch Queue</span>
+        <span
+          class="bg-[#180B20] text-[#E0C3FC] border border-purple-500/40 text-xs px-2.5 py-0.5 rounded-full font-semibold">Depot
+          Dispatch Queue</span>
       </div>
 
       <div id="auth-bar-container" class="flex items-center gap-2">
@@ -153,52 +170,66 @@
   <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
 
     <!-- Access Denied Banner -->
-    <div id="access-denied-sec" class="hidden max-w-lg mx-auto my-12 bg-slate-800 border border-rose-800/60 rounded-2xl p-8 shadow-2xl text-center">
-      <div class="w-12 h-12 bg-rose-900/40 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-3 border border-rose-700">
+    <div id="access-denied-sec"
+      class="hidden max-w-lg mx-auto my-12 bg-slate-800 border border-rose-800/60 rounded-2xl p-8 shadow-2xl text-center">
+      <div
+        class="w-12 h-12 bg-rose-900/40 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-3 border border-rose-700">
         🔒
       </div>
       <h2 class="text-2xl font-bold text-white mb-2">Depot Access Required</h2>
-      <p class="text-xs text-slate-300 mb-6">Your account role does not have Depot Dispatch permissions. Please sign in with Depot staff or Admin credentials.</p>
-      <button onclick="window.showLoginModal()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl transition shadow">
+      <p class="text-xs text-slate-300 mb-6">Your account role does not have Depot Dispatch permissions. Please sign in
+        with Depot staff or Admin credentials.</p>
+      <button onclick="window.showLoginModal()"
+        class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs px-5 py-2.5 rounded-xl transition shadow">
         Sign In as Depot Staff
       </button>
     </div>
 
     <!-- Depot Dispatch View Content -->
     <div id="depot-content">
-      
+
       <!-- Depot Navigation Tabs -->
       <div class="flex items-center gap-2 border-b border-slate-800 mb-8 overflow-x-auto pb-2">
-        <button id="tab-btn-queue" onclick="switchDepotTab('queue')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-sky-500 text-slate-950 shadow">
+        <button id="tab-btn-queue" onclick="switchDepotTab('queue')"
+          class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-sky-500 text-slate-950 shadow">
           <span>📦 Active Dispatch Queue</span>
         </button>
-        <button id="tab-btn-scanner" onclick="switchDepotTab('scanner')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+        <button id="tab-btn-scanner" onclick="switchDepotTab('scanner')"
+          class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
           <span>📱 Barcode & Inventory Scanner</span>
         </button>
-        <button id="tab-btn-history" onclick="switchDepotTab('history')" class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
+        <button id="tab-btn-history" onclick="switchDepotTab('history')"
+          class="px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 bg-slate-800 text-slate-300 hover:bg-slate-700">
           <span>✅ Completed Deliveries</span>
         </button>
       </div>
 
       <!-- TAB 1: ACTIVE DISPATCH QUEUE -->
       <div id="tab-sec-queue">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl backdrop-blur-sm">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl backdrop-blur-sm">
           <div>
             <h2 class="text-2xl font-extrabold text-white flex items-center gap-3">
               <span>📦 Incoming Wholesale Dispatch Queue</span>
-              <span id="order-count-badge" class="bg-sky-500/20 text-sky-400 border border-sky-500/40 text-xs font-mono px-2.5 py-0.5 rounded-full">0 Orders</span>
+              <span id="order-count-badge"
+                class="bg-sky-500/20 text-sky-400 border border-sky-500/40 text-xs font-mono px-2.5 py-0.5 rounded-full">0
+                Orders</span>
             </h2>
-            <p class="text-slate-400 text-xs sm:text-sm mt-1">Real-time Firestore feed. Advance orders through picking, packing, dispatch, and delivery completion.</p>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">Real-time Firestore feed. Advance orders through picking,
+              packing, dispatch, and delivery completion.</p>
           </div>
 
-          <button onclick="window.location.reload()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-600 transition flex items-center gap-1.5">
+          <button onclick="window.location.reload()"
+            class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl border border-slate-600 transition flex items-center gap-1.5">
             🔄 Refresh Stream
           </button>
         </div>
 
         <!-- Loading State -->
         <div id="orders-loading" class="text-center py-16">
-          <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-sky-500 border-t-transparent mb-3"></div>
+          <div
+            class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-sky-500 border-t-transparent mb-3">
+          </div>
           <p class="text-slate-400 text-sm">Listening for incoming orders from Firestore...</p>
         </div>
 
@@ -206,7 +237,8 @@
         <div id="orders-empty" class="hidden text-center py-16 bg-slate-800/40 rounded-2xl border border-slate-800">
           <div class="text-4xl mb-3">📋</div>
           <p class="text-slate-300 font-semibold text-lg">No active dispatch orders</p>
-          <p class="text-slate-400 text-sm mt-1 mb-4">Orders submitted by Field Evaluators will appear here in real-time.</p>
+          <p class="text-slate-400 text-sm mt-1 mb-4">Orders submitted by Field Evaluators will appear here in
+            real-time.</p>
         </div>
 
         <!-- Active Orders Feed -->
@@ -220,16 +252,24 @@
         <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl mb-8">
           <h2 class="text-2xl font-extrabold text-white flex items-center gap-3">
             <span>📱 Barcode & Inventory Scanner</span>
-            <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs px-2.5 py-0.5 rounded-full font-mono">Scanner Ready</span>
+            <span
+              class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs px-2.5 py-0.5 rounded-full font-mono">Scanner
+              Ready</span>
           </h2>
-          <p class="text-slate-400 text-xs sm:text-sm mt-1">Scan bottle/case barcodes with handheld guns or enter SKU code to adjust warehouse case stock levels.</p>
+          <p class="text-slate-400 text-xs sm:text-sm mt-1">Scan bottle/case barcodes with handheld guns or enter SKU
+            code to adjust warehouse case stock levels.</p>
         </div>
 
         <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl mb-8">
-          <label class="block text-xs font-bold uppercase tracking-wider text-sky-400 mb-2">Scan Barcode / Enter SKU Code:</label>
+          <label class="block text-xs font-bold uppercase tracking-wider text-sky-400 mb-2">Scan Barcode / Enter SKU
+            Code:</label>
           <div class="flex gap-3">
-            <input type="text" id="depot-scanner-input" placeholder="Scan barcode or enter SKU (e.g. OK-CABMER-2023-750)..." class="flex-1 bg-slate-950 border border-sky-500/50 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-sky-400 shadow-inner" onkeydown="if(event.key==='Enter') lookupDepotSKU()" />
-            <button onclick="lookupDepotSKU()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs px-6 py-3 rounded-xl shadow transition">
+            <input type="text" id="depot-scanner-input"
+              placeholder="Scan barcode or enter SKU (e.g. OK-CABMER-2023-750)..."
+              class="flex-1 bg-slate-950 border border-sky-500/50 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-sky-400 shadow-inner"
+              onkeydown="if(event.key==='Enter') lookupDepotSKU()" />
+            <button onclick="lookupDepotSKU()"
+              class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs px-6 py-3 rounded-xl shadow transition">
               🔍 Look Up Product
             </button>
           </div>
@@ -244,7 +284,8 @@
       <div id="tab-sec-history" class="hidden">
         <div class="bg-slate-800/80 p-6 rounded-2xl border border-slate-700/60 shadow-xl mb-8">
           <h2 class="text-2xl font-extrabold text-white">✅ Completed Deliveries Archive</h2>
-          <p class="text-slate-400 text-xs sm:text-sm mt-1">Archive of orders marked as delivered and signed by wholesale clients.</p>
+          <p class="text-slate-400 text-xs sm:text-sm mt-1">Archive of orders marked as delivered and signed by
+            wholesale clients.</p>
         </div>
 
         <div id="completed-orders-feed" class="space-y-6">
@@ -256,21 +297,25 @@
   </main>
 
   <!-- Printable Delivery Note Modal -->
-  <div id="delivery-note-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+  <div id="delivery-note-modal"
+    class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
     <div class="relative max-w-4xl w-full my-8">
       <div class="flex justify-between items-center mb-4 no-print">
         <span class="text-xs font-bold text-sky-400 uppercase tracking-wider">📄 Belgian Note d'Envoi Preview</span>
         <div class="flex items-center gap-3">
-          <button onclick="window.printDeliveryNote()" class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+          <button onclick="window.printDeliveryNote()"
+            class="bg-sky-500 hover:bg-sky-400 text-slate-950 font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
             🖨️ Print Delivery Note (A4)
           </button>
-          <button onclick="window.closeNoteModal()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl border border-slate-700 transition">
+          <button onclick="window.closeNoteModal()"
+            class="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl border border-slate-700 transition">
             ✕ Close
           </button>
         </div>
       </div>
 
-      <div id="printable-note-container" class="bg-white text-slate-900 rounded-2xl p-8 shadow-2xl border border-slate-200">
+      <div id="printable-note-container"
+        class="bg-white text-slate-900 rounded-2xl p-8 shadow-2xl border border-slate-200">
         <div id="note-modal-content">
           <!-- Injected dynamically -->
         </div>
@@ -338,7 +383,7 @@
       }
     });
 
-    window.switchDepotTab = function(tabName) {
+    window.switchDepotTab = function (tabName) {
       ['queue', 'scanner', 'history'].forEach(t => {
         const sec = document.getElementById(`tab-sec-${t}`);
         const btn = document.getElementById(`tab-btn-${t}`);
@@ -398,8 +443,8 @@
         delivered: '<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-xs px-3 py-1 rounded-full font-bold">✅ Delivered & Signed</span>'
       };
 
-      const dateStr = order.createdAt && order.createdAt.toDate 
-        ? order.createdAt.toDate().toLocaleString('fr-BE') 
+      const dateStr = order.createdAt && order.createdAt.toDate
+        ? order.createdAt.toDate().toLocaleString('fr-BE')
         : (order.createdAt ? new Date(order.createdAt).toLocaleString('fr-BE') : 'Just now');
 
       const totalCases = items.reduce((sum, item) => sum + (item.qty || 0), 0);
@@ -511,7 +556,7 @@
       `;
     }
 
-    window.updateOrderStatus = async function(orderId, newStatus) {
+    window.updateOrderStatus = async function (orderId, newStatus) {
       try {
         await updateDoc(doc(db, "orders", orderId), {
           status: newStatus,
@@ -522,7 +567,7 @@
       }
     };
 
-    window.lookupDepotSKU = function() {
+    window.lookupDepotSKU = function () {
       const input = document.getElementById('depot-scanner-input');
       const queryStr = (input.value || '').trim().toLowerCase();
       const resContainer = document.getElementById('depot-scanner-result');
@@ -576,7 +621,7 @@
       resContainer.classList.remove('hidden');
     };
 
-    window.adjustDepotStock = async function(docId, delta) {
+    window.adjustDepotStock = async function (docId, delta) {
       const w = currentWines.find(x => x.id === docId);
       if (!w) return;
       const currentQty = (w && w.stockQuantity !== undefined && w.stockQuantity !== null && !isNaN(Number(w.stockQuantity))) ? Number(w.stockQuantity) : 0;
@@ -595,7 +640,7 @@
     };
 
     // Printable Belgian NOTE D'ENVOI Delivery Note Modal
-    window.viewNoteModal = function(orderId) {
+    window.viewNoteModal = function (orderId) {
       const order = currentOrders.find(o => o.id === orderId);
       if (!order) {
         alert("Order details not found!");
@@ -605,8 +650,8 @@
       const client = order.client || { name: 'Food City Bruxelles', vat: 'BE 0707843840', clientNo: '2340', address: 'Place Saint-Pierre 12, 1040 Bruxelles' };
       const totals = order.totals || { totalHT: 0, totalVidanges: 0, totalTVA: 0, totalTTC: 0 };
       const items = order.items || [];
-      const dateStr = order.createdAt && order.createdAt.toDate 
-        ? order.createdAt.toDate().toLocaleDateString('fr-BE') 
+      const dateStr = order.createdAt && order.createdAt.toDate
+        ? order.createdAt.toDate().toLocaleDateString('fr-BE')
         : new Date().toLocaleDateString('fr-BE');
 
       const modalContent = document.getElementById('note-modal-content');
@@ -702,11 +747,11 @@
       document.getElementById('delivery-note-modal').classList.remove('hidden');
     };
 
-    window.closeNoteModal = function() {
+    window.closeNoteModal = function () {
       document.getElementById('delivery-note-modal').classList.add('hidden');
     };
 
-    window.printDeliveryNote = function() {
+    window.printDeliveryNote = function () {
       window.print();
     };
   </script>

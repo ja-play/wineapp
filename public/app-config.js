@@ -3,8 +3,8 @@
  */
 
 export const COMPANY_CONFIG = {
-  name: "Aurellion Wine Selection",
-  fullName: "Aurellion Wine SRL",
+  name: "Aurellion",
+  fullName: "Aurellion SRL",
   subTitle: "Distribution Grossiste Vins Belgique - Direct Import",
   address: "Rue de la Station 48, 1000 Bruxelles",
   vatNumber: "BE 0123.456.789",

@@ -5,15 +5,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aurellion Wine Selection | B2B Wine Import & Wholesale Belgium</title>
-  <meta name="description" content="Aurellion Wine Selection - Importateur et grossiste de vins exclusifs en Belgique. Distribution B2B pour cavistes, restaurants et professionnels Horeca." />
-  <meta name="keywords" content="grossiste vin belgique, importateur vin bruxelles, B2B wine distribution belgium, wholesale wine, vin horeca belgique, distribution vins" />
+  <meta name="description"
+    content="Aurellion Wine Selection - Importateur et grossiste de vins exclusifs en Belgique. Distribution B2B pour cavistes, restaurants et professionnels Horeca." />
+  <meta name="keywords"
+    content="grossiste vin belgique, importateur vin bruxelles, B2B wine distribution belgium, wholesale wine, vin horeca belgique, distribution vins" />
   <meta name="robots" content="index, follow" />
-  
+
   <!-- Open Graph / Social Sharing -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://aurellionwine.com/" />
   <meta property="og:title" content="Aurellion Wine Selection | B2B Wine Import & Wholesale Belgium" />
-  <meta property="og:description" content="Importateur et grossiste de vins exclusifs en Belgique. Distribution B2B pour cavistes, restaurants et professionnels Horeca." />
+  <meta property="og:description"
+    content="Importateur et grossiste de vins exclusifs en Belgique. Distribution B2B pour cavistes, restaurants et professionnels Horeca." />
   <meta property="og:image" content="https://aurellionwine.com/images/34172%20DGB%20Oude%20kaap_Cab%20Merlot.png" />
 
   <!-- Structured Data / Schema.org -->
@@ -191,14 +194,16 @@
       <div class="flex items-center gap-3">
         <a href="index.html" class="flex items-center gap-3 group">
           <div
-            class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#400B12] to-[#1C0407] border border-[#D4AF37]/60 flex items-center justify-center shadow-lg group-hover:border-[#D4AF37]">
-            <span class="text-xl">🍷</span>
+            class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#400B12] to-[#1C0407] border border-[#D4AF37]/60 flex items-center justify-center shadow-lg group-hover:border-[#D4AF37] transition-all">
+            <svg class="w-6 h-6 text-[#D4AF37]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 22h8"></path>
+              <path d="M12 15v7"></path>
+              <path d="M12 15a7 7 0 0 0 7-7c0-2-1-3.5-2.5-4.5h-9C6 4.5 5 6 5 8a7 7 0 0 0 7 7z"></path>
+              <path d="M7 3.5 12 7l5-3.5"></path>
+            </svg>
           </div>
           <div>
-            <div class="font-serif-title font-black text-lg gold-gradient-text tracking-wide leading-none">AURELLION
-            </div>
-            <div class="text-[9px] text-[#C8B69B] tracking-[0.25em] uppercase font-semibold mt-0.5">WINE DISTRIBUTION &
-              IMPORT</div>
+            <div class="font-serif-title font-black text-xl gold-gradient-text tracking-wide leading-none">AURELLION</div>
           </div>
         </a>
         <span
@@ -222,8 +227,11 @@
   <div id="client-shop-bar" class="header-theme px-4 py-3 sticky top-[65px] z-30 shadow-md hidden">
     <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-        <span class="text-xs font-bold uppercase tracking-wider gold-gradient-text whitespace-nowrap">🏪 Client Shop:</span>
-        <input type="text" id="client-shop-filter" placeholder="🔍 Search shop..." class="w-full sm:w-36 input-theme text-xs px-2.5 py-1.5 rounded-xl placeholder-[#C8B69B]/50" title="Type to filter client shop list" />
+        <span class="text-xs font-bold uppercase tracking-wider gold-gradient-text whitespace-nowrap">🏪 Client
+          Shop:</span>
+        <input type="text" id="client-shop-filter" placeholder="🔍 Search shop..."
+          class="w-full sm:w-36 input-theme text-xs px-2.5 py-1.5 rounded-xl placeholder-[#C8B69B]/50"
+          title="Type to filter client shop list" />
         <select id="client-shop-select"
           class="w-full sm:w-72 input-theme text-xs font-semibold px-3 py-2 rounded-xl cursor-pointer shadow">
           <option value="" disabled selected>-- Loading Client Shops... --</option>
@@ -432,12 +440,14 @@
         <span>•</span>
         <a href="contact.html" class="hover:underline">Contact Us</a>
         <span>•</span>
-        <a href="https://wa.me/32476245474" target="_blank" class="hover:underline text-emerald-400 flex items-center gap-1">
+        <a href="https://wa.me/32476245474" target="_blank"
+          class="hover:underline text-emerald-400 flex items-center gap-1">
           <span>WhatsApp: +32 476 24 54 74</span>
         </a>
       </div>
       <p>© 2026 Aurellion Wine Selection (Aurellion Wine SRL) — Distribution Grossiste Vins Belgique.</p>
-      <p class="font-mono text-[10px]">Tél: +32 476 24 54 74 | Email: info@aurellionwine.com | Rue de la Station 48, 1000 Bruxelles</p>
+      <p class="font-mono text-[10px]">Tél: +32 476 24 54 74 | Email: info@aurellionwine.com | Rue de la Station 48,
+        1000 Bruxelles</p>
     </div>
   </footer>
 
@@ -465,7 +475,7 @@
       const currentVal = shopSelect.value;
       const searchTerm = filterInput ? filterInput.value.trim().toLowerCase() : '';
 
-      const filteredShops = searchTerm 
+      const filteredShops = searchTerm
         ? availableShops.filter(s => (s.name && s.name.toLowerCase().includes(searchTerm)) || (s.vat && s.vat.toLowerCase().includes(searchTerm)))
         : availableShops;
 
