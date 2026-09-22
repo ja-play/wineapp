@@ -79,7 +79,7 @@ Implement role-based access control (Admin, Evaluator, Depot), dynamic Firestore
 - Expand product form: Name, Vintage, SKU, Case Config (1x6, 1x12), Bottle Price HT, Case Price HT, Deposit per Case (Vidange), VAT Rate (21%).
 - Write SKU records to Firestore `wines/{sku}` and upload image to `wine-images/{sku}.jpg`.
 - Add live `stockAvailable` toggle and inline price editing.
-- Add quick seed button for initial `wines.json` migration + user role bootstrapping.
+- Add quick seed button for initial migration + user role bootstrapping.
 
 #### [public/index.html](file:///d:/Learnings/AI/wineapp/public/index.html)
 - Enforce `evaluator` access guard (with fallback login modal).
@@ -113,7 +113,7 @@ Implement role-based access control (Admin, Evaluator, Depot), dynamic Firestore
    - Log in as `evaluator@winedistribution.be` -> verify access to `/index.html`.
    - Log in as `depot@winedistribution.be` -> verify access to `/depot.html`.
 2. **Admin Product Management**:
-   - Seed default wines from `public/wines.json`.
+
    - Add new wine item with Vidange deposit & case configuration.
    - Toggle `stockAvailable` off and verify it disappears from evaluator mobile view.
 3. **Evaluator Field Ordering Flow**:

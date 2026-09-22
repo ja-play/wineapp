@@ -19,146 +19,13 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    :root {
-      --bg-gradient: linear-gradient(180deg, #F8F9FA 0%, #F1F3F5 100%);
-      --vivino-red: #BA1628;
-      --vivino-dark: #1E242B;
-      --vivino-card-border: #E2E8F0;
-      --text-dark: #1E242B;
-      --text-muted: #64748B;
-    }
-
-    body {
-      background: var(--bg-gradient);
-      background-attachment: fixed;
-      color: var(--text-dark);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      min-height: 100vh;
-    }
-
-    .font-serif-title {
-      font-family: 'Cinzel', serif;
-    }
-
-    .gold-gradient-text {
-      color: #BA1628 !important;
-      background: none !important;
-      -webkit-text-fill-color: initial !important;
-    }
-
-    .card-theme {
-      background: #FFFFFF !important;
-      border: 1px solid var(--vivino-card-border) !important;
-      box-shadow: 0 4px 20px rgba(30, 36, 43, 0.04) !important;
-      color: #1E242B !important;
-    }
-
-    .btn-gold {
-      background: #BA1628 !important;
-      color: #FFFFFF !important;
-      font-weight: 700 !important;
-      border: 1px solid #9E1020 !important;
-      box-shadow: 0 4px 14px rgba(186, 22, 40, 0.25) !important;
-      transition: all 0.2s ease !important;
-    }
-
-    .btn-gold:hover {
-      background: #9E1020 !important;
-      box-shadow: 0 6px 18px rgba(186, 22, 40, 0.35) !important;
-    }
-
-    .header-theme {
-      background: #FFFFFF !important;
-      border-bottom: 2px solid #BA1628 !important;
-      box-shadow: 0 2px 16px rgba(30, 36, 43, 0.08) !important;
-      color: #1E242B !important;
-    }
-
-    .input-theme {
-      background: #F8F9FA !important;
-      border: 1px solid #E2E8F0 !important;
-      color: #1E242B !important;
-    }
-
-    @media print {
-      @page {
-        size: A4 portrait;
-        margin: 10mm 12mm;
-      }
-
-      body {
-        background: white !important;
-        color: black !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
-      }
-
-      header,
-      main,
-      footer,
-      .no-print {
-        display: none !important;
-      }
-
-      #delivery-note-modal {
-        position: static !important;
-        display: block !important;
-        background: white !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        width: 100% !important;
-        box-shadow: none !important;
-      }
-
-      #printable-note-container {
-        position: static !important;
-        width: 100% !important;
-        max-width: 100% !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        box-shadow: none !important;
-        border: none !important;
-        border-radius: 0 !important;
-        background: white !important;
-      }
-    }
-  </style>
-</head>
+  <link rel="stylesheet" href="output.css">
+<script type="module" src="components/layout.js"></script>`n</head>
 
 <body class="antialiased min-h-screen flex flex-col">
 
   <!-- Header Navigation -->
-  <header class="header-theme text-white sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
-      <div class="flex items-center gap-3">
-        <a href="index.html" class="flex items-center gap-3 group">
-          <div
-            class="w-10 h-10 rounded-xl bg-[#BA1628] text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-all">
-            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M8 22h8"></path>
-              <path d="M12 15v7"></path>
-              <path d="M12 15a7 7 0 0 0 7-7c0-2-1-3.5-2.5-4.5h-9C6 4.5 5 6 5 8a7 7 0 0 0 7 7z"></path>
-              <path d="M7 3.5 12 7l5-3.5"></path>
-            </svg>
-          </div>
-          <div>
-            <div class="font-serif-title font-black text-xl gold-gradient-text tracking-wide leading-none">AURELLION</div>
-          </div>
-        </a>
-        <span
-          class="bg-[#FFF0F2] text-[#BA1628] border border-[#FCA5A5] text-xs px-2.5 py-0.5 rounded-full font-bold">Depot
-          Dispatch Queue</span>
-      </div>
-
-      <div id="auth-bar-container" class="flex items-center gap-2">
-        <!-- Auth widget injected here -->
-      </div>
-    </div>
-  </header>
+  <div id="app-header"></div>
 
   <!-- Main Content -->
   <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
@@ -317,9 +184,7 @@
     </div>
   </div>
 
-  <footer class="bg-white text-slate-600 text-xs py-6 text-center border-t border-slate-200 mt-auto">
-    <p>&copy; 2026 Aurellion Wine Distribution Belgium. Depot Logistics System.</p>
-  </footer>
+  <div id="app-footer"></div>
 
   <script type="module">
     import { db, auth, collection, doc, updateDoc, onSnapshot, query, orderBy, onAuthStateChanged } from './firebase-config.js';
@@ -752,3 +617,5 @@
 </body>
 
 </html>
+
+

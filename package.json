@@ -1,0 +1,26 @@
+{
+  "name": "wineapp",
+  "version": "1.0.0",
+  "description": "A lightweight, high-performance B2B wholesale wine catalog, real-time ordering system, automated PDF delivery note generator, and non-technical management dashboard built for **Wine Distribution Belgium**.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:css": "npx @tailwindcss/cli -i ./src/input.css -o ./public/output.css --minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ja-play/wineapp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ja-play/wineapp/issues"
+  },
+  "homepage": "https://github.com/ja-play/wineapp#readme",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}

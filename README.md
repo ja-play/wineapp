@@ -46,7 +46,7 @@ wineapp/
     ├── i18n.js                         # Multilingual translations (FR/NL/EN)
     ├── robots.txt                      # Search engine crawler directives
     ├── sitemap.xml                     # Canonical HTTPS sitemap
-    ├── wines.json                      # Fallback initial dataset (10 volume wines)
+
     ├── images/                         # Static bottle asset fallback directory
     └── utils/                          # Belgian tax & VAT calculation helpers
 ```

@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-gradient: linear-gradient(180deg, #F8F9FA 0%, #F1F3F5 100%);
+    --vivino-red: #BA1628;
+    --vivino-dark: #1E242B;
+    --vivino-card-border: #E2E8F0;
+    --text-dark: #1E242B;
+    --text-muted: #64748B;
+  }
+
+  body {
+    background: var(--bg-gradient);
+    background-attachment: fixed;
+    color: var(--text-dark);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    min-height: 100vh;
+  }
+}
+
+@layer components {
+  .font-serif-title {
+    font-family: 'Cinzel', serif;
+  }
+
+  .gold-gradient-text {
+    color: #BA1628 !important;
+    background: none !important;
+    -webkit-text-fill-color: initial !important;
+  }
+
+  .card-theme {
+    background: #FFFFFF !important;
+    border: 1px solid var(--vivino-card-border) !important;
+    box-shadow: 0 4px 20px rgba(30, 36, 43, 0.04) !important;
+    transition: all 0.25s ease !important;
+  }
+
+  .card-theme-hover:hover {
+    border-color: #BA1628 !important;
+    box-shadow: 0 8px 28px rgba(186, 22, 40, 0.12) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  .btn-gold {
+    background: #BA1628 !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    border: 1px solid #9E1020 !important;
+    box-shadow: 0 4px 14px rgba(186, 22, 40, 0.25) !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .btn-gold:hover {
+    background: #9E1020 !important;
+    box-shadow: 0 6px 18px rgba(186, 22, 40, 0.35) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .header-theme {
+    background: #FFFFFF !important;
+    border-bottom: 2px solid #BA1628 !important;
+    box-shadow: 0 2px 16px rgba(30, 36, 43, 0.08) !important;
+    color: #1E242B !important;
+  }
+
+  .input-theme {
+    background: #F8F9FA !important;
+    border: 1px solid #E2E8F0 !important;
+    color: #1E242B !important;
+  }
+
+  .input-theme:focus {
+    border-color: #BA1628 !important;
+    box-shadow: 0 0 0 3px rgba(186, 22, 40, 0.12) !important;
+    outline: none;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  header,
+  main,
+  footer,
+  #order-drawer,
+  #client-shop-bar,
+  .no-print {
+    display: none !important;
+  }
+
+  #delivery-note-modal {
+    position: static !important;
+    display: block !important;
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    box-shadow: none !important;
+  }
+
+  #printable-note-container {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: white !important;
+  }
+}
