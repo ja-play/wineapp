@@ -103,16 +103,18 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
   }
 
   const roleColors = {
-    admin: 'bg-rose-100 text-[#BA1628] border border-rose-300',
-    evaluator: 'bg-slate-100 text-slate-700 border border-slate-300',
-    depot: 'bg-purple-100 text-purple-800 border border-purple-300'
+    admin: 'bg-rose-50 text-[#BA1628] border-rose-200',
+    evaluator: 'bg-slate-50 text-slate-700 border-slate-200',
+    depot: 'bg-purple-50 text-purple-800 border-purple-200'
   };
 
-  const roleLabels = {
-    admin: '👑 Admin',
-    evaluator: '📋 Evaluator',
-    depot: '📦 Depot'
+  const roleIcons = {
+    admin: '👑',
+    evaluator: '📋',
+    depot: '📦'
   };
+
+  const userIdentity = user.email || user.uid || 'User';
 
   container.innerHTML = `
     <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
@@ -143,9 +145,10 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
       <div class="h-4 w-px bg-slate-200 mx-0.5 hidden sm:block"></div>
 
       <div class="flex items-center gap-2">
-        <span class="border text-[11px] px-2.5 py-1 rounded-xl font-bold uppercase tracking-wider ${roleColors[userRole] || roleColors.evaluator}">
-          ${roleLabels[userRole] || userRole}
-        </span>
+        <div title="Logged in as ${userIdentity} (${userRole.toUpperCase()})" class="flex items-center gap-1.5 text-xs border px-2.5 py-1 rounded-xl shadow-sm transition ${roleColors[userRole] || roleColors.evaluator}">
+          <span class="text-sm" role="img" aria-label="${userRole}">${roleIcons[userRole] || '👤'}</span>
+          <span class="font-mono text-[11px] font-bold max-w-[130px] sm:max-w-[170px] truncate">${userIdentity}</span>
+        </div>
         <button onclick="window.handleAuthSignOut()" class="bg-rose-50 hover:bg-rose-100 text-[#BA1628] text-xs px-3 py-1.5 rounded-xl border border-rose-200 font-bold transition">
           Sign Out
         </button>
