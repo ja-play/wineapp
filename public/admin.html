@@ -22,23 +22,20 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
-      --burgundy-deep: #140204;
-      --burgundy-card: rgba(34, 5, 9, 0.86);
-      --gold-primary: #D4AF37;
-      --gold-light: #F3E5AB;
-      --gold-dark: #997312;
+      --bg-gradient: linear-gradient(180deg, #F8F9FA 0%, #F1F3F5 100%);
+      --vivino-red: #BA1628;
+      --vivino-dark: #1E242B;
+      --vivino-card-border: #E2E8F0;
+      --text-dark: #1E242B;
+      --text-muted: #64748B;
     }
 
     body {
-      background-color: #120204;
-      background-image:
-        linear-gradient(180deg, rgba(18, 2, 4, 0.88) 0%, rgba(42, 6, 11, 0.75) 45%, rgba(10, 1, 2, 0.96) 100%),
-        url('images/vineyard_bg.jpg');
-      background-size: cover;
-      background-position: center bottom;
+      background: var(--bg-gradient);
       background-attachment: fixed;
-      color: #F5EAE0;
+      color: var(--text-dark);
       font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
     }
 
     .font-serif-title {
@@ -46,46 +43,43 @@
     }
 
     .gold-gradient-text {
-      background: linear-gradient(135deg, #FFF6D6 0%, #F3E5AB 35%, #D4AF37 70%, #B88E1C 100%);
-      -webkit-background-clip: text;
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: 0.04em;
+      color: #BA1628 !important;
+      background: none !important;
+      -webkit-text-fill-color: initial !important;
     }
 
     .card-theme {
-      background: rgba(32, 5, 9, 0.85) !important;
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(212, 175, 55, 0.32) !important;
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(243, 229, 171, 0.12) !important;
+      background: #FFFFFF !important;
+      border: 1px solid var(--vivino-card-border) !important;
+      box-shadow: 0 4px 20px rgba(30, 36, 43, 0.04) !important;
+      color: #1E242B !important;
     }
 
     .btn-gold {
-      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #A67C13 100%) !important;
-      color: #140204 !important;
-      font-weight: 800 !important;
-      border: 1px solid #FFF2C6 !important;
-      box-shadow: 0 4px 18px rgba(212, 175, 55, 0.35) !important;
-      transition: all 0.2s ease-in-out;
+      background: #BA1628 !important;
+      color: #FFFFFF !important;
+      font-weight: 700 !important;
+      border: 1px solid #9E1020 !important;
+      box-shadow: 0 4px 14px rgba(186, 22, 40, 0.25) !important;
+      transition: all 0.2s ease !important;
     }
 
     .btn-gold:hover {
-      filter: brightness(1.12);
-      box-shadow: 0 6px 24px rgba(212, 175, 55, 0.55) !important;
+      background: #9E1020 !important;
+      box-shadow: 0 6px 18px rgba(186, 22, 40, 0.35) !important;
     }
 
     .header-theme {
-      background: rgba(16, 2, 4, 0.94) !important;
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(212, 175, 55, 0.35) !important;
-      box-shadow: 0 6px 30px rgba(0, 0, 0, 0.8) !important;
+      background: #FFFFFF !important;
+      border-bottom: 2px solid #BA1628 !important;
+      box-shadow: 0 2px 16px rgba(30, 36, 43, 0.08) !important;
+      color: #1E242B !important;
     }
 
     .input-theme {
-      background: rgba(20, 3, 5, 0.9) !important;
-      border: 1px solid rgba(212, 175, 55, 0.3) !important;
-      color: #F3E5AB !important;
+      background: #F8F9FA !important;
+      border: 1px solid #E2E8F0 !important;
+      color: #1E242B !important;
     }
   </style>
 </head>
@@ -98,8 +92,8 @@
       <div class="flex items-center gap-3">
         <a href="index.html" class="flex items-center gap-3 group">
           <div
-            class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#400B12] to-[#1C0407] border border-[#D4AF37]/60 flex items-center justify-center shadow-lg group-hover:border-[#D4AF37] transition-all">
-            <svg class="w-6 h-6 text-[#D4AF37]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            class="w-10 h-10 rounded-xl bg-[#BA1628] text-white flex items-center justify-center shadow-lg group-hover:scale-105 transition-all">
+            <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <path d="M8 22h8"></path>
               <path d="M12 15v7"></path>
               <path d="M12 15a7 7 0 0 0 7-7c0-2-1-3.5-2.5-4.5h-9C6 4.5 5 6 5 8a7 7 0 0 0 7 7z"></path>
@@ -111,7 +105,7 @@
           </div>
         </a>
         <span
-          class="bg-[#3D0A11] text-[#F3E5AB] border border-[#D4AF37]/50 text-xs px-2.5 py-0.5 rounded-full font-semibold">Admin
+          class="bg-[#FFF0F2] text-[#BA1628] border border-[#FCA5A5] text-xs px-2.5 py-0.5 rounded-full font-bold">Admin
           Console</span>
       </div>
 
