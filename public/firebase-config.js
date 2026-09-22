@@ -14,7 +14,8 @@ import {
   where,
   orderBy,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  enableIndexedDbPersistence
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { 
   getStorage, 
@@ -48,6 +49,18 @@ firebaseConfig.storageBucket = FIREBASE_APP_CONFIG.storageBucket;
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// Enable Offline Cache Persistence for Lightning Fast Load Times
+try {
+  await enableIndexedDbPersistence(db);
+} catch (err) {
+  if (err.code === 'failed-precondition') {
+    console.warn('Firestore persistence failed: Multiple tabs open');
+  } else if (err.code === 'unimplemented') {
+    console.warn('Firestore persistence not supported by browser');
+  }
+}
+
 const storage = getStorage(app);
 const auth = getAuth(app);
 

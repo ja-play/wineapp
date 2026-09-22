@@ -748,15 +748,15 @@
       renderCatalog(filtered);
     }
 
-    // Subscribe to wines from Firestore
+    // Subscribe to live Firestore updates (Uses IndexedDB local cache for instant load)
     try {
       onSnapshot(collection(db, "wines"), (snapshot) => {
-        document.getElementById('catalog-loading').classList.add('hidden');
+        document.getElementById('catalog-loading')?.classList.add('hidden');
         currentWines = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         applyFilters();
       });
     } catch (e) {
-      console.error(e);
+      console.error("Firestore live snapshot error:", e);
     }
 
     function renderCatalog(wines) {
