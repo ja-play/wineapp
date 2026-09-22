@@ -74,15 +74,30 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
   const container = document.getElementById(containerId);
   if (!container) return;
 
+  const currentPath = window.location.pathname.toLowerCase();
+
+  const isCatalog = currentPath.endsWith('index.html') || currentPath.endsWith('/') || currentPath === '' || (!currentPath.includes('admin') && !currentPath.includes('depot') && !currentPath.includes('contact'));
+  const isDepot = currentPath.includes('depot');
+  const isAdmin = currentPath.includes('admin');
+  const isContact = currentPath.includes('contact');
+
+  const navLinkClass = (active) => active
+    ? 'text-xs bg-[#BA1628] text-white font-bold px-3 py-1.5 rounded-xl shadow transition flex items-center gap-1.5'
+    : 'text-xs bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-[#BA1628] border border-slate-200 font-medium px-3 py-1.5 rounded-xl transition flex items-center gap-1.5';
+
   if (!user) {
     container.innerHTML = `
-      <div class="flex items-center gap-2">
-        <a href="index.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-[#BA1628] border border-slate-200 px-3 py-1.5 rounded-xl font-medium transition">Orders</a>
-        <a href="contact.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-700 hover:text-[#BA1628] border border-slate-200 px-3 py-1.5 rounded-xl font-medium transition">Contact</a>
+      <nav class="flex items-center gap-2">
+        <a href="index.html" class="${navLinkClass(isCatalog)}">
+          <span>🍷 Catalog</span>
+        </a>
+        <a href="contact.html" class="${navLinkClass(isContact)}">
+          <span>📞 Contact</span>
+        </a>
         <button onclick="window.showLoginModal()" class="btn-gold font-bold text-xs px-3.5 py-1.5 rounded-xl transition flex items-center gap-1 shadow">
           <span>Sign In</span>
         </button>
-      </div>
+      </nav>
     `;
     return;
   }
@@ -100,21 +115,41 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
   };
 
   container.innerHTML = `
-    <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-      <span class="border text-[11px] px-2.5 py-1 rounded-lg font-bold uppercase tracking-wider ${roleColors[userRole] || roleColors.evaluator}">
-        ${roleLabels[userRole] || userRole}
-      </span>
-      <a href="index.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-800 hover:text-[#BA1628] border border-slate-200 px-2.5 py-1 rounded-lg font-medium transition">Orders</a>
-      <a href="contact.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-800 hover:text-[#BA1628] border border-slate-200 px-2.5 py-1 rounded-lg font-medium transition">Contact</a>
-      ${userRole === 'admin' ? `
-        <a href="admin.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-800 hover:text-[#BA1628] border border-slate-200 px-2.5 py-1 rounded-lg font-medium transition">Admin</a>
-      ` : ''}
-      ${userRole === 'depot' || userRole === 'admin' ? `
-        <a href="depot.html" class="text-xs bg-slate-100 hover:bg-rose-50 text-slate-800 hover:text-[#BA1628] border border-slate-200 px-2.5 py-1 rounded-lg font-medium transition">Depot</a>
-      ` : ''}
-      <button onclick="window.handleAuthSignOut()" class="bg-rose-50 hover:bg-rose-100 text-[#BA1628] text-xs px-2.5 py-1 rounded-lg border border-rose-200 font-semibold transition">
-        Sign Out
-      </button>
+    <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
+      <nav class="flex items-center gap-1.5 sm:gap-2">
+        <a href="index.html" class="${navLinkClass(isCatalog)}">
+          <span>🍷 Catalog</span>
+        </a>
+        ${isCatalog ? `
+          <button onclick="window.openEvaluatorOrdersModal()" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-3 py-1.5 rounded-xl transition shadow flex items-center gap-1">
+            <span>📋 My Orders</span>
+          </button>
+        ` : ''}
+        ${userRole === 'depot' || userRole === 'admin' ? `
+          <a href="depot.html" class="${navLinkClass(isDepot)}">
+            <span>📦 Depot</span>
+          </a>
+        ` : ''}
+        ${userRole === 'admin' ? `
+          <a href="admin.html" class="${navLinkClass(isAdmin)}">
+            <span>⚙️ Admin</span>
+          </a>
+        ` : ''}
+        <a href="contact.html" class="${navLinkClass(isContact)}">
+          <span>📞 Contact</span>
+        </a>
+      </nav>
+
+      <div class="h-4 w-px bg-slate-200 mx-0.5 hidden sm:block"></div>
+
+      <div class="flex items-center gap-2">
+        <span class="border text-[11px] px-2.5 py-1 rounded-xl font-bold uppercase tracking-wider ${roleColors[userRole] || roleColors.evaluator}">
+          ${roleLabels[userRole] || userRole}
+        </span>
+        <button onclick="window.handleAuthSignOut()" class="bg-rose-50 hover:bg-rose-100 text-[#BA1628] text-xs px-3 py-1.5 rounded-xl border border-rose-200 font-bold transition">
+          Sign Out
+        </button>
+      </div>
     </div>
   `;
 }

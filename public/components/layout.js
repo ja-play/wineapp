@@ -1,34 +1,10 @@
-
 import { COMPANY_CONFIG } from '../app-config.js';
 
 export function renderHeader(type = 'catalog') {
-  let rightSideControls = '';
   let badgeText = 'Field Ordering';
-  
-  if (type === 'catalog') {
-    rightSideControls = `
-      <button onclick="openEvaluatorOrdersModal()" class="btn-gold text-xs px-3.5 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 shadow">
-        <span>🍷 My Placed Orders</span>
-      </button>
-    `;
-  } else if (type === 'admin') {
-    badgeText = 'Admin Panel';
-    rightSideControls = `
-      <a href="depot.html" class="text-xs text-slate-500 hover:text-[#BA1628] font-bold transition">Warehouse</a>
-      <a href="index.html" class="text-xs text-slate-500 hover:text-[#BA1628] font-bold transition">Catalog</a>
-    `;
-  } else if (type === 'depot') {
-    badgeText = 'Warehouse Dispatch';
-    rightSideControls = `
-      <a href="admin.html" class="text-xs text-slate-500 hover:text-[#BA1628] font-bold transition">Admin</a>
-      <a href="index.html" class="text-xs text-slate-500 hover:text-[#BA1628] font-bold transition">Catalog</a>
-    `;
-  } else if (type === 'contact') {
-    badgeText = 'Contact Us';
-    rightSideControls = `
-      <a href="index.html" class="text-xs text-slate-500 hover:text-[#BA1628] font-bold transition">Catalog</a>
-    `;
-  }
+  if (type === 'admin') badgeText = 'Admin Console';
+  else if (type === 'depot') badgeText = 'Warehouse Dispatch';
+  else if (type === 'contact') badgeText = 'Contact Us';
 
   return `
     <header class="header-theme text-white sticky top-0 z-40 w-full">
@@ -44,14 +20,13 @@ export function renderHeader(type = 'catalog') {
               <div class="font-serif-title font-black text-xl gold-gradient-text tracking-wide leading-none">AURELLION</div>
             </div>
           </a>
-          <span class="bg-[#FFF0F2] text-[#BA1628] border border-[#FCA5A5] text-xs px-2.5 py-0.5 rounded-full font-bold">
+          <span class="bg-[#FFF0F2] text-[#BA1628] border border-[#FCA5A5] text-xs px-2.5 py-0.5 rounded-full font-bold hidden sm:inline-block">
             ${badgeText}
           </span>
         </div>
         <div class="flex items-center gap-3">
-          ${rightSideControls}
           <div id="auth-bar-container" class="flex items-center gap-2">
-            <!-- Auth widget injected here by auth-guard.js -->
+            <!-- Auth & Unified Nav injected here by auth-guard.js -->
           </div>
         </div>
       </div>
@@ -74,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const headerEl = document.getElementById('app-header');
   const footerEl = document.getElementById('app-footer');
   
-  // Determine page type based on URL
   const path = window.location.pathname;
   let type = 'catalog';
   let systemName = 'Client Wholesale System';
@@ -92,4 +66,3 @@ document.addEventListener('DOMContentLoaded', () => {
   if (headerEl) headerEl.innerHTML = renderHeader(type);
   if (footerEl) footerEl.innerHTML = renderFooter(systemName);
 });
-
