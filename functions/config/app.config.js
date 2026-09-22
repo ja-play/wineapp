@@ -11,8 +11,8 @@ module.exports = {
     name: "Aurellion",
     fullName: "Aurellion SRL",
     subTitle: "Distribution Grossiste Vins Belgique - Direct Import",
-    address: "Rue de la Station 48, 1000 Bruxelles",
-    vatNumber: "BE 0123.456.789",
+    address: "Stationsstraat 52, 3070 Kortenberg",
+    vatNumber: "BE 1042.846.604",
     carrier: "Aurellion Express Wholesale Logistics"
   }
 };

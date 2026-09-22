@@ -1,4 +1,6 @@
 
+import { COMPANY_CONFIG } from '../app-config.js';
+
 export function renderHeader(type = 'catalog') {
   let rightSideControls = '';
   let badgeText = 'Field Ordering';
@@ -58,10 +60,11 @@ export function renderHeader(type = 'catalog') {
 }
 
 export function renderFooter(systemName = 'Client Wholesale System') {
+  const companyTitle = COMPANY_CONFIG.fullName || 'Aurellion Wine Distribution Belgium';
   return `
     <footer class="bg-white text-slate-600 text-xs py-6 text-center border-t border-slate-200 mt-auto w-full">
       <div class="max-w-7xl mx-auto px-4">
-        <p>&copy; 2026 Aurellion Wine Distribution Belgium. ${systemName}.</p>
+        <p>&copy; 2026 ${companyTitle}. ${systemName}.</p>
       </div>
     </footer>
   `;
