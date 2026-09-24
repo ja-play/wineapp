@@ -146,10 +146,10 @@
       </div>
     </div>
 
-    <div id="catalog-loading" class="text-center py-16">
-      <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-amber-500 border-t-transparent mb-3">
+    <div id="catalog-loading" class="text-center py-20">
+      <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-[#BA1628] border-t-transparent mb-3">
       </div>
-      <p class="text-slate-400 text-sm">Loading available wine stock from Firestore...</p>
+      <p class="text-slate-600 font-medium text-sm">Loading available wine stock from Firestore...</p>
     </div>
 
     <!-- Wine Catalog Grid -->
@@ -157,10 +157,22 @@
     </div>
 
     <!-- Empty Catalog State -->
-    <div id="catalog-empty" class="hidden text-center py-16 bg-slate-800/40 rounded-2xl border border-slate-800">
-      <p class="text-slate-300 font-semibold text-lg">No in-stock wines available</p>
-      <p class="text-slate-400 text-sm mt-1 mb-4">Please contact admin to enable stock availability for wholesale wines.
+    <div id="catalog-empty" class="hidden text-center py-16 px-6 bg-white rounded-3xl border border-slate-200 shadow-sm max-w-xl mx-auto my-8">
+      <div class="w-16 h-16 mx-auto mb-4 bg-rose-50 text-[#BA1628] rounded-2xl flex items-center justify-center border border-rose-100 shadow-sm">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M8 22h8M12 15v7M5 3h14v4a7 7 0 0 1-14 0V3z"/>
+        </svg>
+      </div>
+      <h3 class="font-serif-title font-bold text-xl text-slate-900 tracking-wide">No In-Stock Wines Available</h3>
+      <p class="text-slate-500 text-sm mt-2 mb-6 max-w-md mx-auto leading-relaxed">
+        There are currently no wines available matching this category. Please select another category or browse all wines.
       </p>
+      <button onclick="window.resetCatalogFilter()" class="btn-gold inline-flex items-center gap-2 text-xs uppercase tracking-wider px-5 py-2.5 rounded-xl shadow-md transition cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <span>View All Available Wines</span>
+      </button>
     </div>
 
   </main>

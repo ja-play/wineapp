@@ -279,9 +279,9 @@
         const btn = document.getElementById(`cat-pill-${c}`);
         if (!btn) return;
         if (c === cat) {
-          btn.className = "cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-amber-500 text-slate-950 shadow flex items-center gap-1.5";
+          btn.className = "cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap btn-gold shadow-md flex items-center gap-1.5";
         } else {
-          btn.className = "cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-slate-900 text-slate-300 hover:bg-slate-750 border border-slate-700 flex items-center gap-1.5";
+          btn.className = "cat-pill px-3.5 py-1.5 rounded-xl font-bold text-xs transition whitespace-nowrap bg-white text-[#475569] hover:bg-[#FFF5F5] hover:text-[#BA1628] border border-[#E2E8F0] shadow-sm flex items-center gap-1.5";
         }
       });
       applyFilters();
@@ -291,6 +291,13 @@
       const input = document.getElementById('catalog-search-input');
       searchQuery = (input.value || '').trim().toLowerCase();
       applyFilters();
+    };
+
+    window.resetCatalogFilter = function () {
+      const input = document.getElementById('catalog-search-input');
+      if (input) input.value = '';
+      searchQuery = '';
+      window.setCategoryFilter('all');
     };
 
     function applyFilters() {
