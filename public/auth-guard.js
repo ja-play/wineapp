@@ -89,10 +89,12 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
     container.innerHTML = `
       <nav class="flex items-center gap-2">
         <a href="index.html" class="${navLinkClass(isCatalog)}">
-          <span>🍷 Catalog</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <span>Catalog</span>
         </a>
         <a href="contact.html" class="${navLinkClass(isContact)}">
-          <span>📞 Contact</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <span>Contact</span>
         </a>
         <button onclick="window.showLoginModal()" class="btn-gold font-bold text-xs px-3.5 py-1.5 rounded-xl transition flex items-center gap-1 shadow">
           <span>Sign In</span>
@@ -104,14 +106,14 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
 
   const roleColors = {
     admin: 'bg-rose-50 text-[#BA1628] border-rose-200',
-    evaluator: 'bg-slate-50 text-slate-700 border-slate-200',
+    evaluator: 'bg-indigo-50 text-indigo-700 border-indigo-200',
     depot: 'bg-purple-50 text-purple-800 border-purple-200'
   };
 
-  const roleIcons = {
-    admin: '👑',
-    evaluator: '📋',
-    depot: '📦'
+  const roleSvgIcons = {
+    admin: `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5z"/></svg>`,
+    evaluator: `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>`,
+    depot: `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>`
   };
 
   const userIdentity = user.email || user.uid || 'User';
@@ -120,25 +122,30 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
     <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
       <nav class="flex items-center gap-1.5 sm:gap-2">
         <a href="index.html" class="${navLinkClass(isCatalog)}">
-          <span>🍷 Catalog</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+          <span>Catalog</span>
         </a>
         ${isCatalog ? `
-          <button onclick="window.openEvaluatorOrdersModal()" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-3 py-1.5 rounded-xl transition shadow flex items-center gap-1">
-            <span>📋 My Orders</span>
+          <button onclick="window.openEvaluatorOrdersModal()" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold px-3 py-1.5 rounded-xl transition shadow flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-amber-800" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            <span>My Orders</span>
           </button>
         ` : ''}
         ${userRole === 'depot' || userRole === 'admin' ? `
           <a href="depot.html" class="${navLinkClass(isDepot)}">
-            <span>📦 Depot</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+            <span>Depot</span>
           </a>
         ` : ''}
         ${userRole === 'admin' ? `
           <a href="admin.html" class="${navLinkClass(isAdmin)}">
-            <span>⚙️ Admin</span>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span>Admin</span>
           </a>
         ` : ''}
         <a href="contact.html" class="${navLinkClass(isContact)}">
-          <span>📞 Contact</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          <span>Contact</span>
         </a>
       </nav>
 
@@ -146,7 +153,7 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
 
       <div class="flex items-center gap-2">
         <div title="Logged in as ${userIdentity} (${userRole.toUpperCase()})" class="flex items-center gap-1.5 text-xs border px-2.5 py-1 rounded-xl shadow-sm transition ${roleColors[userRole] || roleColors.evaluator}">
-          <span class="text-sm" role="img" aria-label="${userRole}">${roleIcons[userRole] || '👤'}</span>
+          <span class="flex items-center justify-center">${roleSvgIcons[userRole] || roleSvgIcons.evaluator}</span>
           <span class="font-mono text-[11px] font-bold max-w-[130px] sm:max-w-[170px] truncate">${userIdentity}</span>
         </div>
         <button onclick="window.handleAuthSignOut()" class="bg-rose-50 hover:bg-rose-100 text-[#BA1628] text-xs px-3 py-1.5 rounded-xl border border-rose-200 font-bold transition">
