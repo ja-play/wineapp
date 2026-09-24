@@ -45,8 +45,7 @@
   }
   </script>
 
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍷</text></svg>">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -54,6 +53,7 @@
     rel="stylesheet">
   <link rel="stylesheet" href="output.css">
 <script type="module" src="components/layout.js"></script>
+  <script type="module" src="utils/ui-components.js"></script>
 
   <script src="https://js-de.sentry-cdn.com/bd08dc38e0025a24a42a342cb8db806b.min.js" crossorigin="anonymous"></script>
 </head>
@@ -89,8 +89,10 @@
         <div class="card-theme card-theme-hover rounded-2xl p-6 shadow-xl relative overflow-hidden">
           <div class="flex items-start gap-4">
             <div
-              class="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-2xl flex-shrink-0">
-              📞
+              class="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-[#BA1628] flex-shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+              </svg>
             </div>
             <div class="flex-1 min-w-0">
               <span class="text-[11px] font-mono font-bold text-[#BA1628] uppercase tracking-wider block mb-1">Telephone
@@ -120,8 +122,10 @@
         <div class="card-theme card-theme-hover rounded-2xl p-6 shadow-xl relative overflow-hidden">
           <div class="flex items-start gap-4">
             <div
-              class="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-2xl flex-shrink-0">
-              ✉️
+              class="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-[#BA1628] flex-shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
             </div>
             <div class="flex-1 min-w-0">
               <span
@@ -144,8 +148,10 @@
         <div class="card-theme card-theme-hover rounded-2xl p-6 shadow-xl relative overflow-hidden">
           <div class="flex items-start gap-4">
             <div
-              class="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-2xl flex-shrink-0">
-              🏢
+              class="w-12 h-12 rounded-xl bg-rose-50 border border-rose-200 flex items-center justify-center text-[#BA1628] flex-shrink-0">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+              </svg>
             </div>
             <div class="flex-1 min-w-0">
               <span
@@ -172,7 +178,10 @@
         <!-- Operating Hours -->
         <div class="card-theme rounded-2xl p-5 border border-slate-200 shadow-xl">
           <div class="flex items-center gap-2 mb-2 text-xs font-mono font-bold text-[#BA1628] uppercase">
-            <span>⏱️</span> Operating & Dispatch Hours
+            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>Operating & Dispatch Hours</span>
           </div>
           <div class="text-xs text-slate-600 space-y-1">
             <div class="flex justify-between"><span>Monday – Friday:</span> <span
@@ -305,11 +314,13 @@
           <div id="contact-success"
             class="hidden mt-6 p-5 rounded-2xl bg-emerald-950/80 border border-emerald-500/60 text-emerald-200">
             <div class="flex items-center gap-3">
-              <span class="text-2xl">✅</span>
+              <svg class="w-7 h-7 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
               <div>
                 <h4 class="font-bold text-sm text-white">Demande Envoyée avec Succès</h4>
                 <p class="text-xs text-emerald-300/90 mt-0.5">
-                  Merci! Votre message a bien été transmitted à notre service commercial. Un représentant prendra contact
+                  Merci! Votre message a bien été transmis à notre service commercial. Un représentant prendra contact
                   avec vous dans les plus brefs délais.
                 </p>
               </div>
@@ -461,17 +472,6 @@
         showToast("Demande transmise avec succès!");
       }
     };
-
-    function showToast(msg, isError = false) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-message');
-      toastMsg.textContent = msg;
-      toast.className = `fixed bottom-10 right-5 z-50 transition-all duration-300 font-medium text-sm px-5 py-3 rounded-xl shadow-2xl flex items-center gap-2 text-white ${isError ? 'bg-rose-600' : 'bg-emerald-600'}`;
-      toast.classList.remove('opacity-0', 'translate-y-16');
-      setTimeout(() => {
-        toast.classList.add('opacity-0', 'translate-y-16');
-      }, 3500);
-    }
   </script>
 
 </body>
