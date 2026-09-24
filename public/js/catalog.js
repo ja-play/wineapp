@@ -86,6 +86,10 @@
       const role = await getUserRole(user);
       setupAuthUI(user, role, 'auth-bar-container');
       subscribeClientShops(user, role);
+      if (currentWines && currentWines.length > 0) {
+        renderCatalog(currentWines);
+        updateCartTotals();
+      }
     });
 
     // Client Selector & Filter Listeners
@@ -354,8 +358,19 @@
         const stockQty = (w.stockQuantity !== undefined && w.stockQuantity !== null && !isNaN(Number(w.stockQuantity))) ? Number(w.stockQuantity) : 0;
         const isAvailable = w.stockAvailable !== false && stockQty > 0;
         const isLowStock = isAvailable && stockQty < 10;
+        const isWholesale = Boolean(currentUser);
+
         const bottlePriceHT = typeof w.priceBottleHT === 'number' ? w.priceBottleHT : (parseFloat((w.priceBottle || '').replace(/[^0-9.]/g, '')) || 5.50);
         const casePriceHT = typeof w.priceCaseHT === 'number' ? w.priceCaseHT : (parseFloat((w.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
+
+        const bottlePriceRetail = typeof w.priceBottleRetail === 'number' && w.priceBottleRetail > 0 ? w.priceBottleRetail : Number((bottlePriceHT * 1.5).toFixed(2));
+        const casePriceRetail = typeof w.priceCaseRetail === 'number' && w.priceCaseRetail > 0 ? w.priceCaseRetail : Number((casePriceHT * 1.5).toFixed(2));
+
+        const displayBottlePrice = isWholesale ? bottlePriceHT : bottlePriceRetail;
+        const displayCasePrice = isWholesale ? casePriceHT : casePriceRetail;
+        const bottlePriceLabel = isWholesale ? "Bottle Price (HT):" : "Bottle Price:";
+        const casePriceLabel = isWholesale ? "Case Price (HT):" : "Case Price:";
+
         const caseConfig = w.caseSize ? `1x${w.caseSize}` : '1x6';
         const depositCase = w.depositCase || 1.35;
         const isClientSelected = Boolean(selectedClient);
@@ -398,12 +413,12 @@
 
               <div class="mt-auto border-t border-[#E2E8F0] pt-3 space-y-1.5 text-xs">
                 <div class="flex justify-between text-[#64748B]">
-                  <span>Bottle Price (HT):</span>
-                  <span class="font-bold text-[#1E242B]">€${bottlePriceHT.toFixed(2)}</span>
+                  <span>${bottlePriceLabel}</span>
+                  <span class="font-bold text-[#1E242B]">€${displayBottlePrice.toFixed(2)}</span>
                 </div>
                 <div class="flex justify-between text-[#64748B]">
-                  <span>Case Price (HT):</span>
-                  <span class="font-bold text-[#BA1628] text-sm">€${casePriceHT.toFixed(2)}</span>
+                  <span>${casePriceLabel}</span>
+                  <span class="font-bold text-[#BA1628] text-sm">€${displayCasePrice.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -443,6 +458,21 @@
       updateCartTotals();
     };
 
+    window.setCartDiscount = function (percent) {
+      const discountInput = document.getElementById('cart-discount-input');
+      if (discountInput) {
+        discountInput.value = percent;
+        updateCartTotals();
+      }
+    };
+
+    const cartDiscountInputEl = document.getElementById('cart-discount-input');
+    if (cartDiscountInputEl) {
+      cartDiscountInputEl.addEventListener('input', () => {
+        updateCartTotals();
+      });
+    }
+
     function updateCartTotals() {
       let totalCases = 0;
       const itemsList = [];
@@ -468,10 +498,32 @@
         });
       }
 
-      const totals = calculateOrderTotals(itemsList);
+      const discountInput = document.getElementById('cart-discount-input');
+      const discountPercent = Math.max(0, Math.min(100, parseFloat(discountInput ? discountInput.value : 0) || 0));
+
+      const totals = calculateOrderTotals(itemsList, discountPercent);
 
       document.getElementById('cart-case-count').textContent = totalCases;
-      document.getElementById('cart-subtotal-ht').textContent = `€${totals.totalHT.toFixed(2)}`;
+      document.getElementById('cart-subtotal-ht').textContent = `€${totals.rawSubtotalHT.toFixed(2)}`;
+
+      const discountCol = document.getElementById('cart-discount-col');
+      const discountAmountEl = document.getElementById('cart-discount-amount');
+      const headerDiscountBadge = document.getElementById('cart-header-discount-badge');
+
+      if (discountPercent > 0) {
+        if (discountCol) {
+          discountCol.classList.remove('hidden');
+          discountAmountEl.textContent = `-€${totals.discountAmount.toFixed(2)} (${discountPercent}%)`;
+        }
+        if (headerDiscountBadge) {
+          headerDiscountBadge.classList.remove('hidden');
+          headerDiscountBadge.textContent = `${discountPercent}% OFF`;
+        }
+      } else {
+        if (discountCol) discountCol.classList.add('hidden');
+        if (headerDiscountBadge) headerDiscountBadge.classList.add('hidden');
+      }
+
       if (document.getElementById('cart-total-vidanges')) {
         document.getElementById('cart-total-vidanges').textContent = `€0.00`;
       }
@@ -530,6 +582,9 @@
       submitBtn.innerHTML = `<span class="animate-spin inline-block h-4 w-4 border-2 border-slate-950 border-t-transparent rounded-full mr-2"></span> Submitting Order...`;
 
       try {
+        const discountInput = document.getElementById('cart-discount-input');
+        const discountPercent = Math.max(0, Math.min(100, parseFloat(discountInput ? discountInput.value : 0) || 0));
+        const discountFactor = (100 - discountPercent) / 100;
         let totalHT = 0;
         const items = [];
 
@@ -538,8 +593,11 @@
           const wine = currentWines.find(w => w.sku === sku);
           if (!wine) continue;
 
-          const priceHT = typeof wine.priceCaseHT === 'number' ? wine.priceCaseHT : (parseFloat((wine.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
-          const lineHT = priceHT * qty;
+          const originalPriceHT = typeof wine.priceCaseHT === 'number' ? wine.priceCaseHT : (parseFloat((wine.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
+          // Apply discount directly to effective unit price and line total
+          // so the final bill calculation reflects the discount without explicitly printing a discount line item
+          const effectivePriceHT = Number((originalPriceHT * discountFactor).toFixed(2));
+          const lineHT = Number((effectivePriceHT * qty).toFixed(2));
 
           totalHT += lineHT;
 
@@ -548,7 +606,7 @@
             description: wine.name,
             colis: wine.caseSize ? `1x${wine.caseSize}` : '1x6',
             qty: qty,
-            priceHT: priceHT,
+            priceHT: effectivePriceHT,
             montantHT: lineHT,
             tvaRate: TAX_CONFIG.VAT_RATE * 100
           });
@@ -562,7 +620,7 @@
           });
         }
 
-        const calculatedTotals = calculateOrderTotals(items);
+        const calculatedTotals = calculateOrderTotals(items, 0);
 
         const orderPayload = {
           evaluatorUid: currentUser ? currentUser.uid : 'evaluator-demo-uid',
@@ -582,6 +640,7 @@
             totalTVA: calculatedTotals.totalTVA,
             totalTTC: calculatedTotals.totalTTC
           },
+          discountPercent: discountPercent,
           status: 'submitted',
           createdAt: serverTimestamp(),
           invoicePdfUrl: null
@@ -590,6 +649,7 @@
         const docRef = await addDoc(collection(db, "orders"), orderPayload);
 
         cart = {};
+        if (discountInput) discountInput.value = 0;
         renderCatalog(currentWines);
         updateCartTotals();
 

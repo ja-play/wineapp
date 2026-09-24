@@ -473,18 +473,38 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <!-- Pricing Section: Wholesale and Retail -->
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
           <div>
-            <label for="form-price-bottle-ht" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Bottle Price HT (€)
-              *</label>
-            <input type="number" step="0.01" id="form-price-bottle-ht" name="price-bottle-ht" required placeholder="5.50"
-              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
+            <span class="block text-[11px] font-extrabold text-[#BA1628] uppercase tracking-wider mb-2">Wholesale Pricing (B2B - HT)</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="form-price-bottle-ht" class="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1">Wholesale Bottle HT (€) *</label>
+                <input type="number" step="0.01" id="form-price-bottle-ht" name="price-bottle-ht" required placeholder="5.50"
+                  class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
+              </div>
+              <div>
+                <label for="form-price-case-ht" class="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1">Wholesale Case HT (€) *</label>
+                <input type="number" step="0.01" id="form-price-case-ht" name="price-case-ht" required placeholder="33.00"
+                  class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
+              </div>
+            </div>
           </div>
-          <div>
-            <label for="form-price-case-ht" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Case Price HT (€)
-              *</label>
-            <input type="number" step="0.01" id="form-price-case-ht" name="price-case-ht" required placeholder="33.00"
-              class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
+
+          <div class="pt-2 border-t border-slate-200">
+            <span class="block text-[11px] font-extrabold text-slate-800 uppercase tracking-wider mb-2">Retail Pricing (Public Catalog)</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="form-price-bottle-retail" class="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1">Retail Bottle Price (€) *</label>
+                <input type="number" step="0.01" id="form-price-bottle-retail" name="price-bottle-retail" required placeholder="8.95"
+                  class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
+              </div>
+              <div>
+                <label for="form-price-case-retail" class="block text-[11px] font-semibold text-slate-700 uppercase tracking-wider mb-1">Retail Case Price (€) *</label>
+                <input type="number" step="0.01" id="form-price-case-retail" name="price-case-retail" required placeholder="53.70"
+                  class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]" />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -957,6 +977,8 @@
         const isLowStock = isAvailable && stockQty < 10;
         const bottlePrice = typeof w.priceBottleHT === 'number' ? `€${w.priceBottleHT.toFixed(2)}` : (w.priceBottle || '€0.00');
         const casePrice = typeof w.priceCaseHT === 'number' ? `€${w.priceCaseHT.toFixed(2)}` : (w.priceCase || '€0.00');
+        const retailBottle = typeof w.priceBottleRetail === 'number' && w.priceBottleRetail > 0 ? `€${w.priceBottleRetail.toFixed(2)}` : (typeof w.priceBottleHT === 'number' ? `€${(w.priceBottleHT * 1.5).toFixed(2)}` : '€0.00');
+        const retailCase = typeof w.priceCaseRetail === 'number' && w.priceCaseRetail > 0 ? `€${w.priceCaseRetail.toFixed(2)}` : (typeof w.priceCaseHT === 'number' ? `€${(w.priceCaseHT * 1.5).toFixed(2)}` : '€0.00');
         const caseConfig = w.caseSize ? `1x${w.caseSize}` : '1x6';
 
         const stockBadgeClass = !isAvailable
@@ -1002,12 +1024,12 @@
                   </span>
                 </div>
                 <div class="flex justify-between text-slate-600">
-                  <span>Bottle Price (HT):</span>
-                  <span class="font-bold text-slate-900">${bottlePrice}</span>
+                  <span class="font-medium">Wholesale (HT):</span>
+                  <span class="font-bold text-[#BA1628] font-mono">${bottlePrice} / ${casePrice} (${caseConfig})</span>
                 </div>
                 <div class="flex justify-between text-slate-600">
-                  <span>Case Price (HT):</span>
-                  <span class="font-bold text-[#BA1628]">${casePrice} (${caseConfig})</span>
+                  <span class="font-medium">Public Retail:</span>
+                  <span class="font-bold text-slate-800 font-mono">${retailBottle} / ${retailCase}</span>
                 </div>
               </div>
 
@@ -1066,8 +1088,10 @@
         const currentStock = (wineObj && wineObj.stockQuantity !== undefined && wineObj.stockQuantity !== null && !isNaN(Number(wineObj.stockQuantity))) ? Number(wineObj.stockQuantity) : 0;
         document.getElementById('form-stock-quantity').value = currentStock;
         document.getElementById('form-stock-available').value = String(wineObj.stockAvailable !== false && currentStock > 0);
-        document.getElementById('form-price-bottle-ht').value = wineObj.priceBottleHT || '';
-        document.getElementById('form-price-case-ht').value = wineObj.priceCaseHT || '';
+        document.getElementById('form-price-bottle-ht').value = wineObj.priceBottleHT !== undefined ? wineObj.priceBottleHT : '';
+        document.getElementById('form-price-case-ht').value = wineObj.priceCaseHT !== undefined ? wineObj.priceCaseHT : '';
+        document.getElementById('form-price-bottle-retail').value = wineObj.priceBottleRetail !== undefined ? wineObj.priceBottleRetail : (wineObj.priceBottleHT ? (wineObj.priceBottleHT * 1.5).toFixed(2) : '');
+        document.getElementById('form-price-case-retail').value = wineObj.priceCaseRetail !== undefined ? wineObj.priceCaseRetail : (wineObj.priceCaseHT ? (wineObj.priceCaseHT * 1.5).toFixed(2) : '');
         document.getElementById('form-description').value = wineObj.description || '';
         existingImageInput.value = wineObj.imageUrl || wineObj.image || '';
       } else {
@@ -1078,6 +1102,10 @@
         document.getElementById('form-tags').value = "";
         document.getElementById('form-stock-quantity').value = "10";
         document.getElementById('form-stock-available').value = "true";
+        document.getElementById('form-price-bottle-ht').value = "";
+        document.getElementById('form-price-case-ht').value = "";
+        document.getElementById('form-price-bottle-retail').value = "";
+        document.getElementById('form-price-case-retail').value = "";
       }
       document.getElementById('wine-modal').classList.remove('hidden');
     };
@@ -1124,8 +1152,10 @@
         const region = document.getElementById('form-region').value.trim();
         const stockQuantity = parseInt(document.getElementById('form-stock-quantity').value, 10) || 0;
         const stockAvailable = stockQuantity > 0;
-        const priceBottleHT = parseFloat(document.getElementById('form-price-bottle-ht').value);
-        const priceCaseHT = parseFloat(document.getElementById('form-price-case-ht').value);
+        const priceBottleHT = parseFloat(document.getElementById('form-price-bottle-ht').value) || 0;
+        const priceCaseHT = parseFloat(document.getElementById('form-price-case-ht').value) || 0;
+        const priceBottleRetail = parseFloat(document.getElementById('form-price-bottle-retail').value) || Number((priceBottleHT * 1.5).toFixed(2));
+        const priceCaseRetail = parseFloat(document.getElementById('form-price-case-retail').value) || Number((priceCaseHT * 1.5).toFixed(2));
         const description = document.getElementById('form-description').value.trim();
         const docId = document.getElementById('form-doc-id').value || sku.replace(/[^a-zA-Z0-9_-]/g, '_');
         const fileInput = document.getElementById('form-image-file');
@@ -1177,12 +1207,16 @@
           stockAvailable,
           priceBottleHT,
           priceCaseHT,
+          priceBottleRetail,
+          priceCaseRetail,
           vatRate: 0.21,
           description,
           imageUrl,
           image: imageUrl,
-          priceBottle: `€${ priceBottleHT.toFixed(2) } `,
-          priceCase: `€${ priceCaseHT.toFixed(2) } (Case of ${ caseSize })`,
+          priceBottle: `€${priceBottleHT.toFixed(2)}`,
+          priceCase: `€${priceCaseHT.toFixed(2)} (Case of ${caseSize})`,
+          priceBottleRetailFormatted: `€${priceBottleRetail.toFixed(2)}`,
+          priceCaseRetailFormatted: `€${priceCaseRetail.toFixed(2)}`,
           updatedAt: new Date().toISOString()
         };
 
@@ -1202,6 +1236,37 @@
         saveBtnText.textContent = "Save Wine Product";
       }
     };
+
+    // Auto-calculate case prices and retail suggestions in wine modal
+    const bottleHtInput = document.getElementById('form-price-bottle-ht');
+    const caseHtInput = document.getElementById('form-price-case-ht');
+    const bottleRetailInput = document.getElementById('form-price-bottle-retail');
+    const caseRetailInput = document.getElementById('form-price-case-retail');
+    const caseSizeInput = document.getElementById('form-case-size');
+
+    if (bottleHtInput && caseHtInput && caseSizeInput) {
+      bottleHtInput.addEventListener('input', () => {
+        const bottleVal = parseFloat(bottleHtInput.value);
+        const size = parseInt(caseSizeInput.value, 10) || 6;
+        if (!isNaN(bottleVal) && bottleVal > 0) {
+          caseHtInput.value = (bottleVal * size).toFixed(2);
+          if (!bottleRetailInput.value || parseFloat(bottleRetailInput.value) <= bottleVal) {
+            bottleRetailInput.value = (bottleVal * 1.5).toFixed(2);
+            caseRetailInput.value = ((bottleVal * 1.5) * size).toFixed(2);
+          }
+        }
+      });
+    }
+
+    if (bottleRetailInput && caseRetailInput && caseSizeInput) {
+      bottleRetailInput.addEventListener('input', () => {
+        const retailVal = parseFloat(bottleRetailInput.value);
+        const size = parseInt(caseSizeInput.value, 10) || 6;
+        if (!isNaN(retailVal) && retailVal > 0) {
+          caseRetailInput.value = (retailVal * size).toFixed(2);
+        }
+      });
+    }
 
     window.handleReportPresetChange = function () {
       const preset = document.getElementById('report-date-preset').value;
