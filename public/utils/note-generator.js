@@ -30,6 +30,7 @@ export function generateNoteDenvoiHtml(order, options = {}) {
     address: 'Place Saint-Pierre 12, 1040 Bruxelles'
   };
 
+  const totals = order.totals || {};
   const discountPercent = Number(order.discountPercent || totals.discountPercent || 0);
   const totalHT = Number(totals.totalHT || 0);
   const totalTVA = Number(totals.totalTVA || 0);
