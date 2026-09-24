@@ -133,7 +133,7 @@ function buildNoteDenvoiHtml(orderId, order) {
 
   <div class="footer">
     ${escapeHtml(config.COMPANY.fullName)} - Note d'Envoi Officielle conforme à la réglementation douanière et fiscale belge. <br>
-    Les marchandises restent la propriété d'Aurellion SRL jusqu'au paiement intégral du solde.
+    Les marchandises restent la propriété d'Aurellion Group SRL jusqu'au paiement intégral du solde.
   </div>
 </body>
 </html>

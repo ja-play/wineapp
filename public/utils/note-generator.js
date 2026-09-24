@@ -17,7 +17,7 @@ import { formatEuro, formatDate } from './ui-components.js';
  */
 export function generateNoteDenvoiHtml(order, options = {}) {
   const company = options.company || COMPANY_CONFIG || {
-    fullName: 'Aurellion SRL',
+    fullName: 'Aurellion Group SRL',
     address: 'Avenue Louise 250, 1050 Bruxelles',
     country: 'Belgique',
     vatNumber: 'BE 0412 876 543'
@@ -56,7 +56,7 @@ export function generateNoteDenvoiHtml(order, options = {}) {
             <svg class="w-6 h-6 text-[#BA1628]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8 22h8M12 15v7M5 3h14v4a7 7 0 0 1-14 0V3z"/>
             </svg>
-            <span>${escapeHtml(company.fullName || 'Aurellion SRL')}</span>
+            <span>${escapeHtml(company.fullName || 'Aurellion Group SRL')}</span>
           </h1>
           <p class="text-xs text-slate-600 mt-1">${escapeHtml(company.address || '')}, ${escapeHtml(company.country || 'Belgique')}</p>
           <p class="text-xs text-slate-600">N° TVA: ${escapeHtml(company.vatNumber || '')} | RPM Bruxelles</p>

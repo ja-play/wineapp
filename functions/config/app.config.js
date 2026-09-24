@@ -9,7 +9,7 @@ module.exports = {
   VAT_RATE: 0.21,
   COMPANY: {
     name: "Aurellion",
-    fullName: "Aurellion SRL",
+    fullName: "Aurellion Group SRL",
     subTitle: "Distribution Grossiste Vins Belgique - Direct Import",
     address: "Stationsstraat 52, 3070 Kortenberg",
     vatNumber: "BE 1042.846.604",
