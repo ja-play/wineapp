@@ -1,4 +1,5 @@
 // Firebase SDK Configuration & Initialization (v10 modular CDN)
+import './utils/storage-guard.js';
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { 
   getFirestore, 
@@ -51,10 +52,16 @@ firebaseConfig.storageBucket = FIREBASE_APP_CONFIG.storageBucket;
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firestore with Offline Cache Persistence for Lightning Fast Load Times
-const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
-});
+// Initialize Firestore with Offline Cache Persistence and safe fallback
+let db;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+  });
+} catch (e) {
+  console.warn("Firestore multi-tab cache unavailable, falling back to standard instance:", e);
+  db = getFirestore(app);
+}
 
 const storage = getStorage(app);
 const auth = getAuth(app);
