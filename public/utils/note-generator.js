@@ -45,7 +45,14 @@ export function generateNoteDenvoiHtml(order, options = {}) {
   }
 
   const items = Array.isArray(order.items) ? order.items : [];
-  const dateStr = formatDate(order.createdAt, 'fr-BE', false);
+  
+  // Handle serverTimestamp() token on immediate preview before Firestore sync
+  let safeDate = order.createdAt;
+  if (safeDate && typeof safeDate === 'object' && !safeDate.toDate && !(safeDate instanceof Date)) {
+    safeDate = new Date();
+  }
+  const dateStr = formatDate(safeDate, 'fr-BE', false);
+  
   const docRef = order.id ? `NE-${order.id.substring(0, 8).toUpperCase()}` : 'NE-PENDING';
 
   const bodyContent = `
