@@ -30,12 +30,18 @@ export function generateNoteDenvoiHtml(order, options = {}) {
     address: 'Place Saint-Pierre 12, 1040 Bruxelles'
   };
 
-  const totals = order.totals || {
-    totalHT: 0,
-    totalVidanges: 0,
-    totalTVA: 0,
-    totalTTC: 0
-  };
+  const discountPercent = Number(order.discountPercent || totals.discountPercent || 0);
+  const totalHT = Number(totals.totalHT || 0);
+  const totalTVA = Number(totals.totalTVA || 0);
+  const totalTTC = Number(totals.totalTTC || 0);
+
+  let rawSubtotalHT = Number(totals.rawSubtotalHT || 0);
+  let discountAmount = Number(totals.discountAmount || 0);
+
+  if (discountPercent > 0 && (!rawSubtotalHT || !discountAmount)) {
+    rawSubtotalHT = Number((totalHT / ((100 - discountPercent) / 100)).toFixed(2));
+    discountAmount = Number((rawSubtotalHT - totalHT).toFixed(2));
+  }
 
   const items = Array.isArray(order.items) ? order.items : [];
   const dateStr = formatDate(order.createdAt, 'fr-BE', false);
@@ -59,6 +65,7 @@ export function generateNoteDenvoiHtml(order, options = {}) {
           <div class="text-xs font-mono font-bold text-slate-800">N° Document: ${escapeHtml(docRef)}</div>
           <div class="text-xs text-slate-600">Date: ${escapeHtml(dateStr)}</div>
           <div class="text-xs text-slate-600 font-medium">Statut: ${escapeHtml(order.status || 'Validé')}</div>
+          ${discountPercent > 0 ? `<div class="mt-1 inline-block bg-rose-100 text-[#BA1628] border border-rose-300 text-[10px] font-bold font-mono px-2 py-0.5 rounded-full">Remise Accordée: ${discountPercent}% (-${formatEuro(discountAmount)})</div>` : ''}
         </div>
       </div>
 
@@ -116,18 +123,33 @@ export function generateNoteDenvoiHtml(order, options = {}) {
           <p class="font-bold text-slate-700 mb-1">Conditions de Transport & Réception:</p>
           <p>Conforme aux normes AFSCA de transport frigorifique et d'expédition en gros d'Aurellion Belux.</p>
         </div>
-        <div class="w-64 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1.5">
-          <div class="flex justify-between text-slate-700">
-            <span>Sous-total H.TVA:</span>
-            <span class="font-mono font-bold">${formatEuro(totals.totalHT)}</span>
-          </div>
+        <div class="w-72 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1.5 shadow-xs">
+          ${discountAmount > 0 ? `
+            <div class="flex justify-between text-slate-600">
+              <span>Sous-total Brut H.TVA:</span>
+              <span class="font-mono font-bold">${formatEuro(rawSubtotalHT)}</span>
+            </div>
+            <div class="flex justify-between text-[#BA1628] font-medium">
+              <span>Remise Client (${discountPercent}%):</span>
+              <span class="font-mono font-bold">- ${formatEuro(discountAmount)}</span>
+            </div>
+            <div class="flex justify-between text-slate-900 font-bold border-t border-dashed border-slate-300 pt-1">
+              <span>Sous-total Net H.TVA:</span>
+              <span class="font-mono">${formatEuro(totalHT)}</span>
+            </div>
+          ` : `
+            <div class="flex justify-between text-slate-700">
+              <span>Sous-total H.TVA:</span>
+              <span class="font-mono font-bold">${formatEuro(totalHT)}</span>
+            </div>
+          `}
           <div class="flex justify-between text-slate-700">
             <span>T.V.A. Belge (21%):</span>
-            <span class="font-mono font-bold">${formatEuro(totals.totalTVA)}</span>
+            <span class="font-mono font-bold">${formatEuro(totalTVA)}</span>
           </div>
-          <div class="flex justify-between pt-2 border-t border-slate-300 text-sm font-black text-slate-900">
+          <div class="flex justify-between pt-2 border-t-2 border-slate-300 text-sm font-black text-slate-900">
             <span>TOTAL T.T.C.:</span>
-            <span class="font-mono text-[#BA1628]">${formatEuro(totals.totalTTC)}</span>
+            <span class="font-mono text-[#BA1628]">${formatEuro(totalTTC)}</span>
           </div>
         </div>
       </div>

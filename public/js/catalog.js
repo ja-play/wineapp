@@ -375,17 +375,21 @@
         const depositCase = w.depositCase || 1.35;
         const isClientSelected = Boolean(selectedClient);
 
+        const isAuthenticated = Boolean(currentUser);
+
         const stockBadgeClass = !isAvailable
           ? 'bg-rose-100 text-rose-700 border-rose-300'
-          : (isLowStock
+          : (isLowStock && isAuthenticated
             ? 'bg-amber-100 text-amber-800 border-amber-300 animate-pulse font-extrabold'
             : 'bg-emerald-50 text-emerald-700 border-emerald-300');
 
         const stockBadgeText = !isAvailable
           ? '○ Out of Stock'
-          : (isLowStock
-            ? `Low Stock: ${stockQty} Cases left`
-            : `In Stock: ${stockQty} Cases`);
+          : (isAuthenticated
+            ? (isLowStock
+              ? `Low Stock: ${stockQty} Cases left`
+              : `In Stock: ${stockQty} Cases`)
+            : 'In Stock');
 
         const tagsHtml = tags.map(t => `<span class="text-[9px] bg-slate-100 text-slate-700 border border-slate-200 px-2 py-0.5 rounded-full font-medium">#${t.trim()}</span>`).join('');
 
@@ -584,8 +588,6 @@
       try {
         const discountInput = document.getElementById('cart-discount-input');
         const discountPercent = Math.max(0, Math.min(100, parseFloat(discountInput ? discountInput.value : 0) || 0));
-        const discountFactor = (100 - discountPercent) / 100;
-        let totalHT = 0;
         const items = [];
 
         for (const [sku, qty] of Object.entries(cart)) {
@@ -594,19 +596,14 @@
           if (!wine) continue;
 
           const originalPriceHT = typeof wine.priceCaseHT === 'number' ? wine.priceCaseHT : (parseFloat((wine.priceCase || '').replace(/[^0-9.]/g, '')) || 33.00);
-          // Apply discount directly to effective unit price and line total
-          // so the final bill calculation reflects the discount without explicitly printing a discount line item
-          const effectivePriceHT = Number((originalPriceHT * discountFactor).toFixed(2));
-          const lineHT = Number((effectivePriceHT * qty).toFixed(2));
-
-          totalHT += lineHT;
+          const lineHT = Number((originalPriceHT * qty).toFixed(2));
 
           items.push({
             sku: wine.sku,
             description: wine.name,
             colis: wine.caseSize ? `1x${wine.caseSize}` : '1x6',
             qty: qty,
-            priceHT: effectivePriceHT,
+            priceHT: originalPriceHT,
             montantHT: lineHT,
             tvaRate: TAX_CONFIG.VAT_RATE * 100
           });
@@ -620,7 +617,7 @@
           });
         }
 
-        const calculatedTotals = calculateOrderTotals(items, 0);
+        const calculatedTotals = calculateOrderTotals(items, discountPercent);
 
         const orderPayload = {
           evaluatorUid: currentUser ? currentUser.uid : 'evaluator-demo-uid',
@@ -634,12 +631,7 @@
             phone: selectedClient.phone || ''
           },
           items: items,
-          totals: {
-            totalHT: calculatedTotals.totalHT,
-            totalVidanges: calculatedTotals.totalVidanges,
-            totalTVA: calculatedTotals.totalTVA,
-            totalTTC: calculatedTotals.totalTTC
-          },
+          totals: calculatedTotals,
           discountPercent: discountPercent,
           status: 'submitted',
           createdAt: serverTimestamp(),
@@ -687,12 +679,15 @@
           const client = o.client || { name: 'Shop Client' };
           const totals = o.totals || { totalTTC: 0 };
           const dateStr = o.createdAt && o.createdAt.toDate ? o.createdAt.toDate().toLocaleString('fr-BE') : 'Recent';
+          const discPct = Number(o.discountPercent || totals.discountPercent || 0);
+          const discBadge = discPct > 0 ? `<span class="bg-rose-100 text-[#BA1628] border border-rose-200 text-[10px] font-bold px-2 py-0.5 rounded-full font-mono">-${discPct}% Remise</span>` : '';
           return `
             <div class="bg-white border border-slate-200 hover:border-rose-300 p-4 rounded-2xl shadow-sm hover:shadow-md transition flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div class="min-w-0">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 flex-wrap">
                   <span class="text-sm font-bold text-slate-900">${escapeHtml(client.name)}</span>
                   <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Submitted</span>
+                  ${discBadge}
                 </div>
                 <div class="text-xs text-slate-500 font-mono mt-0.5">Order #${o.id.substring(0, 12)} • ${dateStr}</div>
                 <div class="text-xs font-mono font-bold text-[#BA1628] mt-1.5 flex items-center gap-1.5">
