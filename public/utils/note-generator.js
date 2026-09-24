@@ -45,14 +45,12 @@ export function generateNoteDenvoiHtml(order, options = {}) {
   }
 
   const items = Array.isArray(order.items) ? order.items : [];
-  
   // Handle serverTimestamp() token on immediate preview before Firestore sync
   let safeDate = order.createdAt;
   if (safeDate && typeof safeDate === 'object' && !safeDate.toDate && !(safeDate instanceof Date)) {
     safeDate = new Date();
   }
   const dateStr = formatDate(safeDate, 'fr-BE', false);
-  
   const docRef = order.id ? `NE-${order.id.substring(0, 8).toUpperCase()}` : 'NE-PENDING';
 
   const bodyContent = `
@@ -87,8 +85,8 @@ export function generateNoteDenvoiHtml(order, options = {}) {
         </div>
         <div>
           <span class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Dépôt d'Expédition</span>
-          <div class="font-bold text-sm text-slate-900">Dépôt Central Logistique Belux</div>
-          <div class="text-slate-700">Port de Bruxelles, Quai des Usines 112</div>
+          <div class="font-bold text-sm text-slate-900">Dépôt Central Logistique Benelux</div>
+          <div class="text-slate-700">Wezembeekstraat 5, 1930 Zaventem</div>
           <div class="font-mono text-slate-600 mt-1">Mode: Camion Frigorifique | Commande: #${escapeHtml((order.id || '').substring(0, 12))}</div>
         </div>
       </div>
@@ -106,13 +104,13 @@ export function generateNoteDenvoiHtml(order, options = {}) {
         </thead>
         <tbody class="divide-y divide-slate-200 font-mono text-slate-800">
           ${items.map(item => {
-            const desc = item.description || item.name || 'Vin de Réserve';
-            const sku = item.sku || '-';
-            const colis = item.colis || (item.caseSize ? `1x${item.caseSize}` : '1x6');
-            const qty = Number(item.qty || 0);
-            const price = Number(item.priceHT || item.priceCaseHT || 0);
-            const totalRow = Number(item.montantHT || (price * qty));
-            return `
+    const desc = item.description || item.name || 'Vin de Réserve';
+    const sku = item.sku || '-';
+    const colis = item.colis || (item.caseSize ? `1x${item.caseSize}` : '1x6');
+    const qty = Number(item.qty || 0);
+    const price = Number(item.priceHT || item.priceCaseHT || 0);
+    const totalRow = Number(item.montantHT || (price * qty));
+    return `
               <tr>
                 <td class="py-2 px-3 font-semibold text-slate-600">${escapeHtml(sku)}</td>
                 <td class="py-2 px-3 font-sans font-bold text-slate-900">${escapeHtml(desc)}</td>
@@ -122,14 +120,14 @@ export function generateNoteDenvoiHtml(order, options = {}) {
                 <td class="py-2 px-3 text-right font-bold">${formatEuro(totalRow)}</td>
               </tr>
             `;
-          }).join('')}
+  }).join('')}
         </tbody>
       </table>
 
       <div class="flex justify-between items-start pt-3 border-t border-slate-300 mb-5">
         <div class="text-[11px] text-slate-500 max-w-sm">
           <p class="font-bold text-slate-700 mb-1">Conditions de Transport & Réception:</p>
-          <p>Conforme aux normes AFSCA de transport frigorifique et d'expédition en gros d'Aurellion Belux.</p>
+          <p>Conforme aux normes AFSCA de transport frigorifique et d'expédition en gros d'Aurellion Benelux.</p>
         </div>
         <div class="w-72 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1.5 shadow-xs">
           ${discountAmount > 0 ? `
