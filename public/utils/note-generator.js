@@ -59,7 +59,7 @@ export function generateNoteDenvoiHtml(order, options = {}) {
             <span>${escapeHtml(company.fullName || 'Aurellion Group SRL')}</span>
           </h1>
           <p class="text-xs text-slate-600 mt-1">${escapeHtml(company.address || '')}, ${escapeHtml(company.country || 'Belgique')}</p>
-          <p class="text-xs text-slate-600">N° TVA: ${escapeHtml(company.vatNumber || '')} | RPM Bruxelles</p>
+          <p class="text-xs text-slate-600">N° TVA: ${escapeHtml(company.vatNumber || '')}</p>
         </div>
         <div class="text-right">
           <h2 class="text-lg font-extrabold text-[#BA1628] uppercase tracking-wide">NOTE D'ENVOI</h2>
