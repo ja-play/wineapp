@@ -538,6 +538,15 @@
       const submitBtn = document.getElementById('submit-order-btn');
       submitBtn.disabled = !selectedClient || totalCases === 0;
 
+      const cancelBtn = document.getElementById('cancel-cart-btn');
+      if (cancelBtn) {
+        if (totalCases > 0) {
+          cancelBtn.classList.remove('hidden');
+        } else {
+          cancelBtn.classList.add('hidden');
+        }
+      }
+
       const cartItemsContainer = document.getElementById('cart-items-list');
       if (itemsList.length === 0) {
         cartItemsContainer.innerHTML = `<div class="text-slate-500 text-xs italic">No items selected yet.</div>`;
@@ -556,6 +565,22 @@
         `).join('');
       }
     }
+
+    window.cancelCurrentOrder = function () {
+      if (Object.keys(cart).length === 0) return;
+      cart = {};
+      const discountInput = document.getElementById('cart-discount-input');
+      if (discountInput) discountInput.value = 0;
+
+      const panel = document.getElementById('cart-detail-panel');
+      if (panel) panel.classList.add('hidden');
+      const toggleText = document.getElementById('toggle-cart-text');
+      if (toggleText) toggleText.textContent = "Show Line Items ▲";
+
+      renderCatalog(currentWines);
+      updateCartTotals();
+      showToast("Order selection cancelled.");
+    };
 
     window.toggleCartDetail = function () {
       const panel = document.getElementById('cart-detail-panel');

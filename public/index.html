@@ -277,8 +277,15 @@
 
         <div class="flex items-center gap-3">
           <button onclick="toggleCartDetail()"
-            class="text-xs text-[#1E242B] hover:text-[#BA1628] bg-[#F8F9FA] px-3.5 py-2 rounded-xl border border-[#E2E8F0] font-semibold transition">
+            class="text-xs text-[#1E242B] hover:text-[#BA1628] bg-[#F8F9FA] px-3.5 py-2.5 rounded-xl border border-[#E2E8F0] font-semibold transition">
             <span id="toggle-cart-text">Show Line Items ▲</span>
+          </button>
+          <button id="cancel-cart-btn" onclick="window.cancelCurrentOrder()"
+            class="hidden text-xs text-rose-700 hover:text-white bg-rose-50 hover:bg-[#BA1628] px-3.5 py-2.5 rounded-xl border border-rose-300 font-bold transition flex items-center gap-1.5 shadow-sm">
+            <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            <span>Cancel</span>
           </button>
           <button id="submit-order-btn" onclick="submitOrder()" disabled
             class="btn-gold disabled:opacity-40 disabled:cursor-not-allowed font-extrabold text-sm px-6 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
