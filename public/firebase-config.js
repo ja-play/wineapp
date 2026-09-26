@@ -44,7 +44,18 @@ try {
     firebaseConfig = { ...firebaseConfig, ...hostedConfig };
   }
 } catch (e) {
-  console.log("Not running on Firebase Hosting init endpoint, using central config");
+  // Not on Firebase Hosting — try optional untracked local config file
+}
+
+if (!firebaseConfig.apiKey) {
+  try {
+    const localConfig = await import('./firebase-config.local.js');
+    if (localConfig?.LOCAL_FIREBASE_CONFIG) {
+      firebaseConfig = { ...firebaseConfig, ...localConfig.LOCAL_FIREBASE_CONFIG };
+    }
+  } catch (err) {
+    // Local config is optional
+  }
 }
 
 firebaseConfig.storageBucket = FIREBASE_APP_CONFIG.storageBucket;

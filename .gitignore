@@ -76,3 +76,7 @@ backups/
 
 # User Reference
 Scratchpad/
+
+# Local Untracked Firebase Client Config
+public/firebase-config.local.js
+*.local.js
