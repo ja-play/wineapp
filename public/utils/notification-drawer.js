@@ -77,17 +77,18 @@ export function renderNotifBell() {
         justify-content: center;
         width: 36px;
         height: 36px;
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.12);
-        border: 1px solid rgba(255, 255, 255, 0.25);
-        color: #ffffff;
+        border-radius: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        color: #1e242b;
         cursor: pointer;
         transition: all 0.2s ease;
         flex-shrink: 0;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
       "
-      onmouseover="this.style.background='rgba(255, 255, 255, 0.22)'; this.style.borderColor='rgba(255, 255, 255, 0.4)';"
-      onmouseout="this.style.background='rgba(255, 255, 255, 0.12)'; this.style.borderColor='rgba(255, 255, 255, 0.25)';"
-      onfocus="this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(255, 255, 255, 0.35)';"
+      onmouseover="this.style.background='#fff1f2'; this.style.borderColor='#fca5a5'; this.style.color='#ba1628';"
+      onmouseout="this.style.background='#f8fafc'; this.style.borderColor='#e2e8f0'; this.style.color='#1e242b';"
+      onfocus="this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(186, 22, 40, 0.2)';"
       onblur="this.style.boxShadow='none';">
       <svg style="width: 19px; height: 19px; display: block;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round"
@@ -107,10 +108,10 @@ export function renderNotifBell() {
           font-size: 9.5px;
           font-weight: 800;
           border-radius: 9px;
-          border: 1.5px solid #1E242B;
+          border: 2px solid #ffffff;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+          box-shadow: 0 2px 4px rgba(0,0,0,0.15);
           font-family: 'Plus Jakarta Sans', sans-serif;
         ">
         0

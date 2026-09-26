@@ -20,9 +20,11 @@ export const TAX_CONFIG = {
 };
 
 export const FIREBASE_APP_CONFIG = {
+  apiKey: "AIzaSyB8zVx_PG4j1K3oCK7j8elGnzLWbDF1tbo",
   projectId: "wine-catalog-belgium",
   authDomain: "wine-catalog-belgium.firebaseapp.com",
   storageBucket: "wine-catalog-belgium.appspot.com",
+  messagingSenderId: "253563802962",
   region: "europe-west9"
 };
 
