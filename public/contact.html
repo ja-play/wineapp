@@ -351,6 +351,7 @@
     import { db, collection, addDoc, serverTimestamp, auth, onAuthStateChanged } from './firebase-config.js';
     import { getUserRole, setupAuthUI } from './auth-guard.js';
     import { COMPANY_CONFIG } from './app-config.js';
+    import { notifyContactForm } from './utils/notifications.js';
 
     // Populate company identity dynamically from app-config.js
     function bindCompanyDetails() {
@@ -454,6 +455,9 @@
         } catch (dbErr) {
           console.warn("Could not write to inquiries DB:", dbErr);
         }
+
+        // Notify admin of new B2B enquiry
+        notifyContactForm(name, email).catch(console.warn);
 
         // 2. Deliver Email to info@aurellionwine.com via FormSubmit
         const response = await fetch('https://formsubmit.co/ajax/info@aurellionwine.com', {

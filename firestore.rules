@@ -63,6 +63,14 @@ service cloud.firestore {
                     && request.resource.data.message is string;
       allow read, update, delete: if isAdmin();
     }
+
+    // Per-User Notification Inbox
+    // Users can only read/write their own notifications.
+    // Any authenticated user can write to another user's inbox (needed to broadcast notifications).
+    match /notifications/{userId}/items/{notifId} {
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null;
+    }
   }
 }
 

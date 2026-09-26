@@ -5,6 +5,8 @@
     import { formatCurrency, TAX_CONFIG, COMPANY_CONFIG } from '../app-config.js';
     import { populateNoteModal, openPrintableNote } from '../utils/note-generator.js';
     import { showToast, renderStatusBadge } from '../utils/ui-components.js';
+    import { notifyOrderSubmitted, notifyLowStock } from '../utils/notifications.js';
+    import { initNotificationDrawer, destroyNotificationDrawer } from '../utils/notification-drawer.js';
 
     let currentWines = [];
     let cart = {}; // sku -> qty
@@ -86,6 +88,11 @@
       const role = await getUserRole(user);
       setupAuthUI(user, role, 'auth-bar-container');
       subscribeClientShops(user, role);
+      if (user) {
+        initNotificationDrawer(user);
+      } else {
+        destroyNotificationDrawer();
+      }
       if (currentWines && currentWines.length > 0) {
         renderCatalog(currentWines);
         updateCartTotals();
@@ -641,6 +648,21 @@
             stockQuantity: nextQty,
             stockAvailable: nextQty > 0
           });
+
+          // Low stock alert: fire if threshold configured and not alerted in last 24h
+          try {
+            const threshold = wine.stockAlertThreshold;
+            if (threshold != null && nextQty <= threshold) {
+              const lastAlert = wine.lastStockAlertSentAt;
+              const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+              if (!lastAlert || new Date(lastAlert).getTime() < cutoff) {
+                await updateDoc(doc(db, "wines", wine.id), { lastStockAlertSentAt: new Date().toISOString() });
+                notifyLowStock(wine.id, wine.name, nextQty, threshold);
+              }
+            }
+          } catch (alertErr) {
+            console.warn('Low stock alert error:', alertErr);
+          }
         }
 
         const calculatedTotals = calculateOrderTotals(items, discountPercent);
@@ -665,6 +687,9 @@
         };
 
         const docRef = await addDoc(collection(db, "orders"), orderPayload);
+
+        // Fire in-app notification to Depot + Admin
+        notifyOrderSubmitted(docRef.id, orderPayload.client.name, items.length).catch(console.warn);
 
         cart = {};
         if (discountInput) discountInput.value = 0;

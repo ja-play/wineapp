@@ -298,6 +298,8 @@
     import { renderStatusBadge } from './utils/ui-components.js';
     import { populateNoteModal, openPrintableNote } from './utils/note-generator.js';
     import { setupBarcodeScanner } from './utils/barcode-scanner.js';
+    import { notifyOrderCancelled } from './utils/notifications.js';
+    import { initNotificationDrawer, destroyNotificationDrawer } from './utils/notification-drawer.js';
 
     let snapshotUnsubscribe = null;
     let currentOrders = [];
@@ -313,6 +315,7 @@
       if (user && (role === 'depot' || role === 'admin')) {
         accessDenied.classList.add('hidden');
         depotSec.classList.remove('hidden');
+        initNotificationDrawer(user);
 
         // Subscribe to Wines for barcode scanner
         onSnapshot(collection(db, "wines"), (snap) => {
@@ -685,6 +688,9 @@
           updatedAt: new Date().toISOString(),
           cancelledAt: new Date().toISOString()
         });
+
+        // 3. Fire in-app notification to Admin
+        notifyOrderCancelled(orderId, order.client?.name || 'Wholesale Client').catch(console.warn);
 
         window.closeCancelModal();
         window.closeNoteModal();

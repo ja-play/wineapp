@@ -74,3 +74,5 @@ node_modules/
 # Local Firestore Database Backups
 backups/
 
+# User Reference
+Scratchpad/
