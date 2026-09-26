@@ -70,7 +70,7 @@ export function generateNoteDenvoiHtml(order, options = {}) {
           <h2 class="text-lg font-extrabold text-[#BA1628] uppercase tracking-wide">NOTE D'ENVOI</h2>
           <div class="text-xs font-mono font-bold text-slate-800">N° Document: ${escapeHtml(docRef)}</div>
           <div class="text-xs text-slate-600">Date: ${escapeHtml(dateStr)}</div>
-          <div class="text-xs text-slate-600 font-medium">Statut: ${escapeHtml(order.status || 'Validé')}</div>
+          <div class="text-xs text-slate-600 font-medium">Statut: ${order.status === 'cancelled' ? '<span class="text-[#BA1628] font-bold uppercase tracking-wider">ANNULÉ / CANCELLED</span>' : escapeHtml(order.status || 'Validé')}</div>
           ${discountPercent > 0 ? `<div class="mt-1 inline-block bg-rose-100 text-[#BA1628] border border-rose-300 text-[10px] font-bold font-mono px-2 py-0.5 rounded-full">Remise Accordée: ${discountPercent}% (-${formatEuro(discountAmount)})</div>` : ''}
         </div>
       </div>

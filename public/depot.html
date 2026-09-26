@@ -204,6 +204,13 @@
           <span>Belgian Note d'Envoi Preview</span>
         </span>
         <div class="flex items-center gap-3">
+          <button id="modal-cancel-order-btn" onclick="window.promptCancelFromModal()"
+            class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs px-4 py-2.5 rounded-xl border border-rose-300 transition flex items-center gap-1.5 hidden">
+            <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            <span>Cancel Order</span>
+          </button>
           <button onclick="window.printDeliveryNote()"
             class="btn-gold font-bold text-xs px-5 py-2.5 rounded-xl shadow transition flex items-center gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -223,6 +230,60 @@
         <div id="note-modal-content">
           <!-- Injected dynamically -->
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancel Order Confirmation Modal -->
+  <div id="cancel-order-modal"
+    class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="relative bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 shadow-2xl my-8 text-slate-900">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-lg font-bold text-[#BA1628] flex items-center gap-2">
+          <svg class="w-5 h-5 text-[#BA1628]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          <span>Cancel Order & Restore Inventory</span>
+        </h3>
+        <button onclick="window.closeCancelModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <p class="text-xs text-slate-600">
+          Are you sure you want to cancel <strong id="cancel-modal-order-id" class="text-slate-900 font-mono"></strong> for <strong id="cancel-modal-client-name" class="text-slate-900"></strong>?
+        </p>
+
+        <div class="bg-rose-50 border border-rose-200 rounded-xl p-3.5 text-xs text-rose-900">
+          <div class="font-bold flex items-center gap-1.5 mb-1.5">
+            <svg class="w-4 h-4 text-[#BA1628]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            <span>Stock Cases To Be Restored:</span>
+          </div>
+          <div id="cancel-modal-items-list" class="space-y-1 font-mono text-[11px]">
+            <!-- Items injected dynamically -->
+          </div>
+        </div>
+
+        <p class="text-[11px] text-slate-500 italic">
+          This order will be permanently marked as cancelled, and each product's available inventory will be restored in Firestore.
+        </p>
+      </div>
+
+      <div class="pt-5 border-t border-slate-200 mt-5 flex justify-end gap-2.5">
+        <button type="button" onclick="window.closeCancelModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
+          Keep Order
+        </button>
+        <button type="button" id="confirm-cancel-order-btn" onclick="window.confirmCancelOrderAction()" class="bg-[#BA1628] hover:bg-[#9e1020] text-white font-bold text-xs px-4 py-2 rounded-xl shadow transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+          <span id="confirm-cancel-text">Confirm Cancellation</span>
+        </button>
       </div>
     </div>
   </div>
@@ -309,8 +370,8 @@
     };
 
     function renderOrdersFeed(orders) {
-      const activeOrders = orders.filter(o => o.status !== 'delivered');
-      const completedOrders = orders.filter(o => o.status === 'delivered');
+      const activeOrders = orders.filter(o => o.status !== 'delivered' && o.status !== 'cancelled');
+      const archiveOrders = orders.filter(o => o.status === 'delivered' || o.status === 'cancelled');
 
       document.getElementById('order-count-badge').textContent = `${activeOrders.length} Active Order${activeOrders.length === 1 ? '' : 's'}`;
 
@@ -326,12 +387,12 @@
         feedContainer.innerHTML = activeOrders.map(order => renderOrderCard(order)).join('');
       }
 
-      // Render completed orders tab
+      // Render completed & cancelled orders archive tab
       const historyContainer = document.getElementById('completed-orders-feed');
-      if (completedOrders.length === 0) {
-        historyContainer.innerHTML = `<p class="text-center py-8 text-slate-500 text-xs">No completed deliveries yet.</p>`;
+      if (archiveOrders.length === 0) {
+        historyContainer.innerHTML = `<p class="text-center py-8 text-slate-500 text-xs">No completed or cancelled orders yet.</p>`;
       } else {
-        historyContainer.innerHTML = completedOrders.map(order => renderOrderCard(order, true)).join('');
+        historyContainer.innerHTML = archiveOrders.map(order => renderOrderCard(order, true)).join('');
       }
     }
 
@@ -340,6 +401,7 @@
       const totals = order.totals || { totalHT: 0, totalVidanges: 0, totalTVA: 0, totalTTC: 0 };
       const items = order.items || [];
       const status = order.status || 'submitted';
+      const isCancelled = status === 'cancelled';
 
       const dateStr = order.createdAt && order.createdAt.toDate
         ? order.createdAt.toDate().toLocaleString('fr-BE')
@@ -352,7 +414,7 @@
           <!-- Order Card Header -->
           <div class="bg-slate-50 p-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 bg-rose-50 text-[#BA1628] border border-rose-200 rounded-xl flex items-center justify-center font-bold text-sm font-mono">
+              <div class="w-10 h-10 ${isCancelled ? 'bg-rose-100 text-rose-800 border-rose-300' : 'bg-rose-50 text-[#BA1628] border-rose-200'} border rounded-xl flex items-center justify-center font-bold text-sm font-mono">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                 </svg>
@@ -369,7 +431,7 @@
               ${renderStatusBadge(status)}
 
               <!-- Status Action Stepper -->
-              ${!isCompleted ? `
+              ${!isCompleted && !isCancelled ? `
                 ${status === 'submitted' ? `
                   <button onclick="window.updateOrderStatus('${order.id}', 'packing')" class="btn-gold text-xs px-3 py-1.5 rounded-lg transition inline-flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -396,6 +458,13 @@
                     <span>Mark Delivered</span>
                   </button>
                 ` : ''}
+
+                <button onclick="window.promptCancelOrder('${order.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 text-xs px-3 py-1.5 rounded-lg font-bold transition inline-flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                  <span>Cancel</span>
+                </button>
               ` : ''}
 
               <button onclick="window.viewNoteModal('${order.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 text-xs px-3 py-1.5 rounded-lg font-bold transition inline-flex items-center gap-1.5">
@@ -508,6 +577,9 @@
       if (depotScanner) depotScanner.lookup();
     };
 
+    let currentModalOrderId = null;
+    let orderToCancel = null;
+
     // Printable Belgian NOTE D'ENVOI Delivery Note Modal
     window.viewNoteModal = function (orderId) {
       const order = currentOrders.find(o => o.id === orderId);
@@ -515,12 +587,114 @@
         alert("Order details not found!");
         return;
       }
+      currentModalOrderId = orderId;
       populateNoteModal('note-modal-content', order);
+
+      const cancelBtn = document.getElementById('modal-cancel-order-btn');
+      if (cancelBtn) {
+        if (order.status !== 'delivered' && order.status !== 'cancelled') {
+          cancelBtn.classList.remove('hidden');
+        } else {
+          cancelBtn.classList.add('hidden');
+        }
+      }
+
       document.getElementById('delivery-note-modal').classList.remove('hidden');
     };
 
     window.closeNoteModal = function () {
       document.getElementById('delivery-note-modal').classList.add('hidden');
+      currentModalOrderId = null;
+    };
+
+    window.promptCancelFromModal = function () {
+      if (currentModalOrderId) {
+        window.promptCancelOrder(currentModalOrderId);
+      }
+    };
+
+    window.promptCancelOrder = function (orderId) {
+      const order = currentOrders.find(o => o.id === orderId);
+      if (!order) return;
+      if (order.status === 'delivered' || order.status === 'cancelled') {
+        alert("This order cannot be cancelled as it is already " + (order.status === 'delivered' ? 'Delivered' : 'Cancelled'));
+        return;
+      }
+
+      orderToCancel = order;
+      const orderIdEl = document.getElementById('cancel-modal-order-id');
+      const clientNameEl = document.getElementById('cancel-modal-client-name');
+      const itemsList = document.getElementById('cancel-modal-items-list');
+
+      if (orderIdEl) orderIdEl.textContent = `#${order.id.substring(0, 12)}`;
+      if (clientNameEl) clientNameEl.textContent = order.client?.name || 'Wholesale Client';
+
+      const items = order.items || [];
+      if (items.length === 0) {
+        itemsList.innerHTML = `<div class="text-slate-500 py-1">No items recorded in this order.</div>`;
+      } else {
+        itemsList.innerHTML = items.map(it => `
+          <div class="flex justify-between items-center py-1 border-b border-rose-100 last:border-0">
+            <span class="text-rose-950 font-sans font-medium truncate max-w-[280px]">${escapeHtml(it.description || it.sku)}</span>
+            <span class="font-bold text-[#BA1628] bg-rose-100 px-2 py-0.5 rounded text-[10px]">+${it.qty || 1} Cases</span>
+          </div>
+        `).join('');
+      }
+
+      document.getElementById('cancel-order-modal').classList.remove('hidden');
+    };
+
+    window.closeCancelModal = function () {
+      orderToCancel = null;
+      document.getElementById('cancel-order-modal').classList.add('hidden');
+    };
+
+    window.confirmCancelOrderAction = async function () {
+      if (!orderToCancel) return;
+      const order = orderToCancel;
+      const orderId = order.id;
+      const confirmBtn = document.getElementById('confirm-cancel-order-btn');
+      const confirmText = document.getElementById('confirm-cancel-text');
+
+      try {
+        if (confirmBtn) confirmBtn.disabled = true;
+        if (confirmText) confirmText.textContent = "Restoring Inventory...";
+
+        // 1. Restore stock in Firestore for all items in order
+        const items = order.items || [];
+        for (const item of items) {
+          const wine = currentWines.find(w => (item.wineId && w.id === item.wineId) || w.sku === item.sku);
+          const targetDocId = item.wineId || (wine ? wine.id : item.sku);
+          const wineRef = doc(db, "wines", targetDocId);
+
+          const currentQty = (wine && wine.stockQuantity !== undefined && wine.stockQuantity !== null && !isNaN(Number(wine.stockQuantity)))
+            ? Number(wine.stockQuantity)
+            : 0;
+          const restoredQty = currentQty + (Number(item.qty) || 0);
+
+          await updateDoc(wineRef, {
+            stockQuantity: restoredQty,
+            stockAvailable: true,
+            updatedAt: new Date().toISOString()
+          });
+        }
+
+        // 2. Update order status to 'cancelled'
+        await updateDoc(doc(db, "orders", orderId), {
+          status: 'cancelled',
+          updatedAt: new Date().toISOString(),
+          cancelledAt: new Date().toISOString()
+        });
+
+        window.closeCancelModal();
+        window.closeNoteModal();
+      } catch (err) {
+        console.error("Order cancellation failed:", err);
+        alert("Failed to cancel order: " + err.message);
+      } finally {
+        if (confirmBtn) confirmBtn.disabled = false;
+        if (confirmText) confirmText.textContent = "Confirm Cancellation";
+      }
     };
 
     window.printDeliveryNote = function () {

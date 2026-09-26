@@ -300,9 +300,10 @@
                 Status:</label>
               <select id="report-status-filter" name="report-status-filter" onchange="window.renderReportsView()"
                 class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-900 focus:outline-none focus:border-[#BA1628]">
-                <option value="all" selected>All Statuses (Active & Delivered)</option>
-                <option value="delivered">Delivered & Completed Only</option>
+                <option value="all" selected>All Statuses (Active, Delivered & Cancelled)</option>
                 <option value="active">Active Dispatch Queue Only</option>
+                <option value="delivered">Delivered & Completed Only</option>
+                <option value="cancelled">Cancelled Orders Only</option>
                 <option value="submitted">Submitted (New)</option>
                 <option value="packing">Packing</option>
                 <option value="dispatched">Dispatched</option>
@@ -597,6 +598,60 @@
             Client Shop</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Cancel Order Confirmation Modal (Admin) -->
+  <div id="admin-cancel-order-modal"
+    class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="relative bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 shadow-2xl my-8 text-slate-900">
+      <div class="flex justify-between items-center pb-3 border-b border-slate-200 mb-4">
+        <h3 class="text-lg font-bold text-[#BA1628] flex items-center gap-2">
+          <svg class="w-5 h-5 text-[#BA1628]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+          </svg>
+          <span>Cancel Order & Restore Stock</span>
+        </h3>
+        <button onclick="window.closeAdminCancelModal()" class="text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <p class="text-xs text-slate-600">
+          Are you sure you want to cancel <strong id="admin-cancel-modal-order-id" class="text-slate-900 font-mono"></strong> for <strong id="admin-cancel-modal-client-name" class="text-slate-900"></strong>?
+        </p>
+
+        <div class="bg-rose-50 border border-rose-200 rounded-xl p-3.5 text-xs text-rose-900">
+          <div class="font-bold flex items-center gap-1.5 mb-1.5">
+            <svg class="w-4 h-4 text-[#BA1628]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            <span>Stock Cases To Be Restored:</span>
+          </div>
+          <div id="admin-cancel-modal-items-list" class="space-y-1 font-mono text-[11px]">
+            <!-- Items injected dynamically -->
+          </div>
+        </div>
+
+        <p class="text-[11px] text-slate-500 italic">
+          This will update the order status to Cancelled and increment the warehouse stock counts for the line items above in Firestore.
+        </p>
+      </div>
+
+      <div class="pt-5 border-t border-slate-200 mt-5 flex justify-end gap-2.5">
+        <button type="button" onclick="window.closeAdminCancelModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">
+          Keep Order
+        </button>
+        <button type="button" id="confirm-admin-cancel-btn" onclick="window.confirmAdminCancelAction()" class="bg-[#BA1628] hover:bg-[#9e1020] text-white font-bold text-xs px-4 py-2 rounded-xl shadow transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+          <span id="admin-confirm-cancel-text">Confirm Cancellation</span>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1324,7 +1379,9 @@
       if (statusFilter === 'delivered') {
         filtered = filtered.filter(o => o.status === 'delivered');
       } else if (statusFilter === 'active') {
-        filtered = filtered.filter(o => o.status !== 'delivered');
+        filtered = filtered.filter(o => o.status !== 'delivered' && o.status !== 'cancelled');
+      } else if (statusFilter === 'cancelled') {
+        filtered = filtered.filter(o => o.status === 'cancelled');
       } else if (statusFilter !== 'all') {
         filtered = filtered.filter(o => o.status === statusFilter);
       }
@@ -1336,6 +1393,9 @@
       let totalCases = 0;
 
       filtered.forEach(o => {
+        if (statusFilter !== 'cancelled' && o.status === 'cancelled') {
+          return;
+        }
         const totals = o.totals || { totalHT: 0, totalTVA: 0, totalTTC: 0 };
         totalHT += (totals.totalHT || 0);
         totalTVA += (totals.totalTVA || 0);
@@ -1397,12 +1457,22 @@
             <td class="px-4 py-3 text-right font-bold text-slate-700">${orderCases}</td>
             <td class="px-4 py-3 text-right font-bold text-emerald-600">€${(totals.totalTTC || 0).toFixed(2)}</td>
             <td class="px-4 py-3 text-center">
-              <button onclick="window.viewOrderReceiptModal('${o.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-2.5 py-1 rounded-lg transition border border-slate-200 inline-flex items-center gap-1">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                <span>Note</span>
-              </button>
+              <div class="flex items-center justify-center gap-1.5">
+                <button onclick="window.viewOrderReceiptModal('${o.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-2.5 py-1 rounded-lg transition border border-slate-200 inline-flex items-center gap-1">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  <span>Note</span>
+                </button>
+                ${o.status !== 'delivered' && o.status !== 'cancelled' ? `
+                  <button onclick="window.promptCancelAdminOrder('${o.id}')" class="bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs px-2.5 py-1 rounded-lg transition border border-rose-300 inline-flex items-center gap-1" title="Cancel order and restore stock">
+                    <svg class="w-3.5 h-3.5 text-rose-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    <span>Cancel</span>
+                  </button>
+                ` : ''}
+              </div>
             </td>
           </tr>
         `;
@@ -1435,7 +1505,9 @@
       if (statusFilter === 'delivered') {
         filtered = filtered.filter(o => o.status === 'delivered');
       } else if (statusFilter === 'active') {
-        filtered = filtered.filter(o => o.status !== 'delivered');
+        filtered = filtered.filter(o => o.status !== 'delivered' && o.status !== 'cancelled');
+      } else if (statusFilter === 'cancelled') {
+        filtered = filtered.filter(o => o.status === 'cancelled');
       } else if (statusFilter !== 'all') {
         filtered = filtered.filter(o => o.status === statusFilter);
       }
@@ -1510,7 +1582,9 @@
       if (statusFilter === 'delivered') {
         filtered = filtered.filter(o => o.status === 'delivered');
       } else if (statusFilter === 'active') {
-        filtered = filtered.filter(o => o.status !== 'delivered');
+        filtered = filtered.filter(o => o.status !== 'delivered' && o.status !== 'cancelled');
+      } else if (statusFilter === 'cancelled') {
+        filtered = filtered.filter(o => o.status === 'cancelled');
       } else if (statusFilter !== 'all') {
         filtered = filtered.filter(o => o.status === statusFilter);
       }
@@ -1646,6 +1720,92 @@
       const order = currentOrders.find(o => o.id === orderId);
       if (!order) return;
       openPrintableNote(order);
+    };
+
+    let adminOrderToCancel = null;
+
+    window.promptCancelAdminOrder = function (orderId) {
+      const order = currentOrders.find(o => o.id === orderId);
+      if (!order) return;
+      if (order.status === 'delivered' || order.status === 'cancelled') {
+        showToast("This order cannot be cancelled as it is already " + (order.status === 'delivered' ? 'Delivered' : 'Cancelled'), true);
+        return;
+      }
+
+      adminOrderToCancel = order;
+      const orderIdEl = document.getElementById('admin-cancel-modal-order-id');
+      const clientNameEl = document.getElementById('admin-cancel-modal-client-name');
+      const itemsList = document.getElementById('admin-cancel-modal-items-list');
+
+      if (orderIdEl) orderIdEl.textContent = `#${order.id.substring(0, 12)}`;
+      if (clientNameEl) clientNameEl.textContent = order.client?.name || 'Wholesale Client';
+
+      const items = order.items || [];
+      if (items.length === 0) {
+        itemsList.innerHTML = `<div class="text-slate-500 py-1">No items recorded in this order.</div>`;
+      } else {
+        itemsList.innerHTML = items.map(it => `
+          <div class="flex justify-between items-center py-1 border-b border-rose-100 last:border-0">
+            <span class="text-rose-950 font-sans font-medium truncate max-w-[280px]">${escapeHtml(it.description || it.sku)}</span>
+            <span class="font-bold text-[#BA1628] bg-rose-100 px-2 py-0.5 rounded text-[10px]">+${it.qty || 1} Cases</span>
+          </div>
+        `).join('');
+      }
+
+      document.getElementById('admin-cancel-order-modal').classList.remove('hidden');
+    };
+
+    window.closeAdminCancelModal = function () {
+      adminOrderToCancel = null;
+      document.getElementById('admin-cancel-order-modal').classList.add('hidden');
+    };
+
+    window.confirmAdminCancelAction = async function () {
+      if (!adminOrderToCancel) return;
+      const order = adminOrderToCancel;
+      const orderId = order.id;
+      const confirmBtn = document.getElementById('confirm-admin-cancel-btn');
+      const confirmText = document.getElementById('admin-confirm-cancel-text');
+
+      try {
+        if (confirmBtn) confirmBtn.disabled = true;
+        if (confirmText) confirmText.textContent = "Restoring Inventory...";
+
+        // 1. Restore stock in Firestore for all items in order
+        const items = order.items || [];
+        for (const item of items) {
+          const wine = currentWines.find(w => (item.wineId && w.id === item.wineId) || w.sku === item.sku);
+          const targetDocId = item.wineId || (wine ? wine.id : item.sku);
+          const wineRef = doc(db, "wines", targetDocId);
+
+          const currentQty = (wine && wine.stockQuantity !== undefined && wine.stockQuantity !== null && !isNaN(Number(wine.stockQuantity)))
+            ? Number(wine.stockQuantity)
+            : 0;
+          const restoredQty = currentQty + (Number(item.qty) || 0);
+
+          await updateDoc(wineRef, {
+            stockQuantity: restoredQty,
+            stockAvailable: true,
+            updatedAt: new Date().toISOString()
+          });
+        }
+
+        // 2. Update order status to 'cancelled'
+        await updateDoc(doc(db, "orders", orderId), {
+          status: 'cancelled',
+          updatedAt: new Date().toISOString(),
+          cancelledAt: new Date().toISOString()
+        });
+
+        window.closeAdminCancelModal();
+        showToast(`Order #${orderId.substring(0, 8)} cancelled and inventory restored!`);
+      } catch (err) {
+        console.error("Admin order cancellation failed:", err);
+        showToast("Failed to cancel order: " + err.message, true);
+      } finally {
+        if (confirmBtn) confirmBtn.disabled = false;
+        if (confirmText) confirmText.textContent = "Confirm Cancellation";
+      }
     };
   </script>
 </body>

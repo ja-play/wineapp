@@ -22,6 +22,11 @@ export const ORDER_STATUSES = {
     label: 'Delivered & Signed',
     badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-300',
     dotClass: 'bg-emerald-500'
+  },
+  cancelled: {
+    label: 'Cancelled',
+    badgeClass: 'bg-rose-100 text-rose-800 border-rose-300',
+    dotClass: 'bg-rose-500'
   }
 };
 

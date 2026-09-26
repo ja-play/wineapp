@@ -45,7 +45,7 @@ service cloud.firestore {
     match /wines/{sku} {
       allow read: if true;
       allow create, delete: if isAdmin();
-      allow update: if isEvaluator() || isAdmin();
+      allow update: if isEvaluator() || isDepot() || isAdmin();
     }
 
     // Orders Collection

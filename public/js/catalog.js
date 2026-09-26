@@ -4,7 +4,7 @@
     import { calculateOrderTotals } from '../utils/tax-calculator.js';
     import { formatCurrency, TAX_CONFIG, COMPANY_CONFIG } from '../app-config.js';
     import { populateNoteModal, openPrintableNote } from '../utils/note-generator.js';
-    import { showToast } from '../utils/ui-components.js';
+    import { showToast, renderStatusBadge } from '../utils/ui-components.js';
 
     let currentWines = [];
     let cart = {}; // sku -> qty
@@ -599,6 +599,7 @@
           const lineHT = Number((originalPriceHT * qty).toFixed(2));
 
           items.push({
+            wineId: wine.id,
             sku: wine.sku,
             description: wine.name,
             colis: wine.caseSize ? `1x${wine.caseSize}` : '1x6',
@@ -686,7 +687,7 @@
               <div class="min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
                   <span class="text-sm font-bold text-slate-900">${escapeHtml(client.name)}</span>
-                  <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Submitted</span>
+                  ${renderStatusBadge(o.status || 'submitted')}
                   ${discBadge}
                 </div>
                 <div class="text-xs text-slate-500 font-mono mt-0.5">Order #${o.id.substring(0, 12)} • ${dateStr}</div>
