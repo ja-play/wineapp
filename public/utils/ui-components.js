@@ -4,7 +4,7 @@
 
 export const ORDER_STATUSES = {
   submitted: {
-    label: 'Submitted (New)',
+    label: 'Submitted',
     badgeClass: 'bg-amber-100 text-amber-800 border-amber-300',
     dotClass: 'bg-amber-500'
   },

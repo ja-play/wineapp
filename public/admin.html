@@ -304,7 +304,7 @@
                 <option value="active">Active Dispatch Queue Only</option>
                 <option value="delivered">Delivered & Completed Only</option>
                 <option value="cancelled">Cancelled Orders Only</option>
-                <option value="submitted">Submitted (New)</option>
+                <option value="submitted">Submitted</option>
                 <option value="packing">Packing</option>
                 <option value="dispatched">Dispatched</option>
               </select>
@@ -637,7 +637,7 @@
         </div>
 
         <p class="text-[11px] text-slate-500 italic">
-          This will update the order status to Cancelled and increment the warehouse stock counts for the line items above in Firestore.
+          This will update the order status to Cancelled and return the case quantities above back to available stock.
         </p>
       </div>
 
