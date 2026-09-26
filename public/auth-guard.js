@@ -37,6 +37,11 @@ export async function getShops() {
 export async function getUserRole(user) {
   if (!user) return null;
   try {
+    try {
+      await user.getIdToken();
+    } catch (e) {
+      console.warn("User token refresh warning:", e);
+    }
     const userDocRef = doc(db, 'users', user.uid);
     const userSnap = await getDoc(userDocRef);
     
