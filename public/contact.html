@@ -352,6 +352,7 @@
     import { getUserRole, setupAuthUI } from './auth-guard.js';
     import { COMPANY_CONFIG } from './app-config.js';
     import { notifyContactForm } from './utils/notifications.js';
+    import { initNotificationDrawer, destroyNotificationDrawer } from './utils/notification-drawer.js';
 
     // Populate company identity dynamically from app-config.js
     function bindCompanyDetails() {
@@ -385,6 +386,11 @@
     onAuthStateChanged(auth, async (user) => {
       const role = await getUserRole(user);
       setupAuthUI(user, role, 'auth-bar-container', 'contact');
+      if (user) {
+        initNotificationDrawer(user);
+      } else {
+        destroyNotificationDrawer();
+      }
     });
 
     // Helper: Sanitize string input against XSS

@@ -96,7 +96,7 @@ export async function notifyOrderSubmitted(orderId, clientName, itemCount) {
   const uids = await getUserUidsByRoles(['depot', 'admin']);
   await writeNotification(uids, {
     type: 'order_submitted',
-    title: '🛒 New Order Submitted',
+    title: 'New Order Submitted',
     message: `Order from ${clientName} — ${itemCount} case line(s) awaiting depot processing.`,
     metadata: { orderId, clientName }
   });
@@ -109,7 +109,7 @@ export async function notifyOrderCancelled(orderId, clientName) {
   const uids = await getUserUidsByRoles(['admin']);
   await writeNotification(uids, {
     type: 'order_cancelled',
-    title: '❌ Order Cancelled',
+    title: 'Order Cancelled',
     message: `Order #${orderId.substring(0, 8)} for ${clientName} has been cancelled. Inventory restored.`,
     metadata: { orderId, clientName }
   });
@@ -122,7 +122,7 @@ export async function notifyContactForm(contactName, contactEmail) {
   const uids = await getUserUidsByRoles(['admin']);
   await writeNotification(uids, {
     type: 'contact_form',
-    title: '📨 New B2B Enquiry',
+    title: 'New B2B Enquiry',
     message: `${contactName} (${contactEmail}) submitted a contact enquiry.`,
     metadata: { contactName, contactEmail }
   });
@@ -136,7 +136,7 @@ export async function notifyLowStock(wineId, wineName, currentQty, threshold) {
   const uids = await getUserUidsByRoles(['admin']);
   await writeNotification(uids, {
     type: 'low_stock',
-    title: '⚠️ Low Stock Alert',
+    title: 'Low Stock Alert',
     message: `${wineName} is low: only ${currentQty} case(s) left (threshold: ${threshold}).`,
     metadata: { wineId, wineName, currentQty, threshold }
   });

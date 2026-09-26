@@ -152,6 +152,7 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
       <div class="h-4 w-px bg-slate-200 mx-0.5 hidden sm:block"></div>
 
       <div class="flex items-center gap-2">
+        <div id="notif-bell-container" class="flex items-center"></div>
         <div title="Logged in as ${userIdentity} (${userRole.toUpperCase()})" class="flex items-center gap-1.5 text-xs border px-2.5 py-1 rounded-xl shadow-sm transition ${roleColors[userRole] || roleColors.evaluator}">
           <span class="flex items-center justify-center">${roleSvgIcons[userRole] || roleSvgIcons.evaluator}</span>
           <span class="font-mono text-[11px] font-bold max-w-[130px] sm:max-w-[170px] truncate">${userIdentity}</span>
@@ -162,6 +163,10 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
       </div>
     </div>
   `;
+
+  if (window.renderNotifBell) {
+    window.renderNotifBell();
+  }
 }
 
 window.handleAuthSignOut = async function() {

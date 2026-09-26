@@ -24,39 +24,133 @@ let _userId = null;
 let _notifications = [];
 let _unsubscribe = null;
 
-/** Inject the drawer HTML + bell button into the DOM */
-function injectDrawerHTML() {
-  if (document.getElementById('notif-drawer')) return;
+// Clean leading emojis or symbols from titles so double icons never appear
+function cleanTitle(title) {
+  if (!title) return '';
+  return String(title).replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u, '').trim();
+}
 
-  // Bell button — injected into #auth-bar-container (layout.js renders this)
-  // We use a portal approach: append to body and position absolutely
-  const bellBtn = document.createElement('div');
-  bellBtn.id = 'notif-bell-portal';
-  bellBtn.style.cssText = 'position:fixed;top:14px;right:80px;z-index:9000;';
-  bellBtn.innerHTML = `
-    <button id="notif-bell-btn" onclick="window.toggleNotifDrawer()"
+/** Render/mount the bell button in the navigation header */
+export function renderNotifBell() {
+  if (!_userId) return;
+
+  // Prefer dedicated slot in setupAuthUI, fallback to auth-bar-container
+  let container = document.getElementById('notif-bell-container');
+  if (!container) {
+    container = document.getElementById('auth-bar-container');
+  }
+
+  if (!container) {
+    // Retry once header/auth-bar is ready
+    const observer = new MutationObserver(() => {
+      const target = document.getElementById('notif-bell-container') || document.getElementById('auth-bar-container');
+      if (target) {
+        observer.disconnect();
+        renderNotifBell();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return;
+  }
+
+  // If bell already exists inside this container, just update badge
+  let bellBtn = document.getElementById('notif-bell-btn');
+  if (bellBtn && container.contains(bellBtn)) {
+    updateBadge();
+    return;
+  }
+
+  // Remove any orphaned portal button elsewhere
+  document.getElementById('notif-bell-portal')?.remove();
+
+  const bellWrapper = document.createElement('div');
+  bellWrapper.id = 'notif-bell-portal';
+  bellWrapper.style.cssText = 'display: inline-flex; align-items: center; margin-right: 4px;';
+  bellWrapper.innerHTML = `
+    <button id="notif-bell-btn" type="button" onclick="window.toggleNotifDrawer()"
       aria-label="Notifications"
-      class="relative flex items-center justify-center w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white transition shadow-md">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      title="Notifications"
+      style="
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: #ffffff;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+      "
+      onmouseover="this.style.background='rgba(255, 255, 255, 0.22)'; this.style.borderColor='rgba(255, 255, 255, 0.4)';"
+      onmouseout="this.style.background='rgba(255, 255, 255, 0.12)'; this.style.borderColor='rgba(255, 255, 255, 0.25)';"
+      onfocus="this.style.outline='none'; this.style.boxShadow='0 0 0 2px rgba(255, 255, 255, 0.35)';"
+      onblur="this.style.boxShadow='none';">
+      <svg style="width: 19px; height: 19px; display: block;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round"
           d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
       </svg>
       <span id="notif-badge"
-        class="hidden absolute -top-1 -right-1 w-4 h-4 bg-[#BA1628] text-white text-[9px] font-extrabold rounded-full flex items-center justify-center border border-white shadow">
+        style="
+          display: none;
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          min-width: 17px;
+          height: 17px;
+          padding: 0 4px;
+          background: #BA1628;
+          color: #ffffff;
+          font-size: 9.5px;
+          font-weight: 800;
+          border-radius: 9px;
+          border: 1.5px solid #1E242B;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+          font-family: 'Plus Jakarta Sans', sans-serif;
+        ">
         0
       </span>
     </button>
   `;
-  document.body.appendChild(bellBtn);
+
+  // Prepend to container so it sits in front of the role badge
+  container.prepend(bellWrapper);
+  updateBadge();
+}
+
+window.renderNotifBell = renderNotifBell;
+
+function updateBadge() {
+  const badge = document.getElementById('notif-badge');
+  if (!badge) return;
+  const unreadCount = _notifications.filter(n => !n.read).length;
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount > 99 ? '99+' : String(unreadCount);
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+/** Inject drawer panel and backdrop into document.body */
+function injectDrawerHTML() {
+  renderNotifBell();
+
+  if (document.getElementById('notif-drawer')) return;
 
   // Backdrop
   const backdrop = document.createElement('div');
   backdrop.id = 'notif-backdrop';
   backdrop.onclick = () => window.closeNotifDrawer();
   backdrop.style.cssText = `
-    position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4);
     backdrop-filter: blur(2px); z-index: 9998; display: none;
-    transition: opacity 0.25s;
+    transition: opacity 0.25s; opacity: 0;
   `;
   document.body.appendChild(backdrop);
 
@@ -65,44 +159,47 @@ function injectDrawerHTML() {
   drawer.id = 'notif-drawer';
   drawer.style.cssText = `
     position: fixed; top: 0; right: 0; height: 100vh; width: 380px; max-width: 95vw;
-    background: #fff; z-index: 9999; transform: translateX(100%);
-    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    background: #ffffff; z-index: 9999; transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex; flex-direction: column;
-    box-shadow: -4px 0 40px rgba(0,0,0,0.18);
+    box-shadow: -4px 0 40px rgba(0,0,0,0.2);
   `;
   drawer.innerHTML = `
     <!-- Drawer Header -->
-    <div style="background: linear-gradient(135deg,#1E242B 0%,#BA1628 100%); padding: 20px 20px 18px; flex-shrink:0;">
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <svg style="width:20px;height:20px;color:#f8b400;flex-shrink:0;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <div style="background: linear-gradient(135deg, #1E242B 0%, #BA1628 100%); padding: 18px 20px; flex-shrink: 0;">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <svg style="width: 20px; height: 20px; color: #f8b400; flex-shrink: 0;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round"
               d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
           </svg>
-          <span style="color:#fff; font-weight:800; font-size:15px; letter-spacing:0.3px; font-family:'Plus Jakarta Sans',sans-serif;">
+          <span style="color: #ffffff; font-weight: 800; font-size: 15px; letter-spacing: 0.3px; font-family: 'Plus Jakarta Sans', sans-serif;">
             Notifications
           </span>
         </div>
         <button onclick="window.closeNotifDrawer()"
-          style="background:rgba(255,255,255,0.15); border:none; color:#fff; width:30px; height:30px;
-            border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.2s;"
+          type="button"
+          aria-label="Close"
+          style="background: rgba(255,255,255,0.15); border: none; color: #ffffff; width: 28px; height: 28px;
+            border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"
           onmouseover="this.style.background='rgba(255,255,255,0.25)'"
           onmouseout="this.style.background='rgba(255,255,255,0.15)'">
-          <svg style="width:16px;height:16px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <svg style="width: 15px; height: 15px;" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
           </svg>
         </button>
       </div>
-      <div style="display:flex; align-items:center; justify-content:space-between;">
-        <span id="notif-drawer-count" style="color:rgba(255,255,255,0.7); font-size:11px; font-family:'Plus Jakarta Sans',sans-serif;">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <span id="notif-drawer-count" style="color: rgba(255,255,255,0.75); font-size: 11px; font-family: 'Plus Jakarta Sans', sans-serif;">
           Loading...
         </span>
         <button id="notif-mark-all-btn" onclick="window.markAllRead()"
-          style="background:rgba(255,255,255,0.15); border:none; color:rgba(255,255,255,0.85); font-size:10px;
-            font-weight:700; padding:4px 10px; border-radius:6px; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif;
-            letter-spacing:0.3px; transition:background 0.2s;"
-          onmouseover="this.style.background='rgba(255,255,255,0.25)'"
-          onmouseout="this.style.background='rgba(255,255,255,0.15)'">
+          type="button"
+          style="background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.2); color: #ffffff; font-size: 10px;
+            font-weight: 700; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: 0.3px; transition: background 0.2s;"
+          onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+          onmouseout="this.style.background='rgba(255,255,255,0.18)'">
           Mark all read
         </button>
       </div>
@@ -110,9 +207,9 @@ function injectDrawerHTML() {
 
     <!-- Notification List -->
     <div id="notif-list"
-      style="flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px;
-        background:#f8fafc; scrollbar-width:thin;">
-      <div id="notif-loading" style="display:flex; align-items:center; justify-content:center; height:100%; color:#94a3b8; font-size:12px; font-family:'Plus Jakarta Sans',sans-serif;">
+      style="flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px;
+        background: #f8fafc; scrollbar-width: thin;">
+      <div id="notif-loading" style="display: flex; align-items: center; justify-content: center; height: 100%; color: #94a3b8; font-size: 12px; font-family: 'Plus Jakarta Sans', sans-serif;">
         Loading notifications...
       </div>
     </div>
@@ -135,8 +232,10 @@ window.toggleNotifDrawer = function () {
     window.closeNotifDrawer();
   } else {
     drawer.style.transform = 'translateX(0px)';
-    backdrop.style.display = 'block';
-    setTimeout(() => { backdrop.style.opacity = '1'; }, 10);
+    if (backdrop) {
+      backdrop.style.display = 'block';
+      setTimeout(() => { backdrop.style.opacity = '1'; }, 10);
+    }
   }
 };
 
@@ -145,8 +244,10 @@ window.closeNotifDrawer = function () {
   const backdrop = document.getElementById('notif-backdrop');
   if (!drawer) return;
   drawer.style.transform = 'translateX(100%)';
-  backdrop.style.opacity = '0';
-  setTimeout(() => { backdrop.style.display = 'none'; }, 300);
+  if (backdrop) {
+    backdrop.style.opacity = '0';
+    setTimeout(() => { backdrop.style.display = 'none'; }, 260);
+  }
 };
 
 /** Mark all as read */
@@ -161,25 +262,67 @@ window.markNotifRead = async function (notifId) {
   await markNotificationRead(_userId, notifId);
 };
 
+// Return high-quality SVG icon & colors for each notification type
+function getNotificationTheme(type) {
+  switch (type) {
+    case 'order_submitted':
+      return {
+        svg: `<svg style="width: 17px; height: 17px; color: #b45309;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+              </svg>`,
+        badgeBg: '#fef3c7',
+        badgeBorder: '#fde68a',
+        accentColor: '#d97706',
+        cardBgUnread: '#fffbeb',
+        cardBorderUnread: '#fde68a'
+      };
+    case 'order_cancelled':
+      return {
+        svg: `<svg style="width: 17px; height: 17px; color: #BA1628;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>`,
+        badgeBg: '#fff1f2',
+        badgeBorder: '#fecaca',
+        accentColor: '#BA1628',
+        cardBgUnread: '#fff5f5',
+        cardBorderUnread: '#fecaca'
+      };
+    case 'low_stock':
+      return {
+        svg: `<svg style="width: 17px; height: 17px; color: #c2410c;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+              </svg>`,
+        badgeBg: '#ffedd5',
+        badgeBorder: '#fed7aa',
+        accentColor: '#ea580c',
+        cardBgUnread: '#fff7ed',
+        cardBorderUnread: '#fed7aa'
+      };
+    case 'contact_form':
+    default:
+      return {
+        svg: `<svg style="width: 17px; height: 17px; color: #2563eb;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>`,
+        badgeBg: '#eff6ff',
+        badgeBorder: '#bfdbfe',
+        accentColor: '#3b82f6',
+        cardBgUnread: '#f0f7ff',
+        cardBorderUnread: '#bfdbfe'
+      };
+  }
+}
+
 /** Render notification list */
 function renderNotifications(notifications) {
   const list = document.getElementById('notif-list');
   const countEl = document.getElementById('notif-drawer-count');
-  const badge = document.getElementById('notif-badge');
+
+  updateBadge();
 
   if (!list) return;
 
   const unreadCount = notifications.filter(n => !n.read).length;
-
-  // Update badge
-  if (badge) {
-    if (unreadCount > 0) {
-      badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
-      badge.classList.remove('hidden');
-    } else {
-      badge.classList.add('hidden');
-    }
-  }
 
   // Update count label
   if (countEl) {
@@ -190,56 +333,64 @@ function renderNotifications(notifications) {
 
   if (notifications.length === 0) {
     list.innerHTML = `
-      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:12px; color:#94a3b8;">
-        <svg style="width:40px;height:40px; opacity:0.4;" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-        </svg>
-        <p style="font-size:13px; font-weight:600; font-family:'Plus Jakarta Sans',sans-serif;">You're all caught up!</p>
-        <p style="font-size:11px; text-align:center; max-width:200px; line-height:1.5;">No notifications yet. Alerts for new orders, cancellations and stock will appear here.</p>
+      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:12px; color:#94a3b8; padding: 40px 20px;">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center;">
+          <svg style="width:24px; height:24px; color:#94a3b8;" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+          </svg>
+        </div>
+        <p style="font-size:13px; font-weight:700; color: #475569; font-family:'Plus Jakarta Sans',sans-serif; margin: 0;">You're all caught up!</p>
+        <p style="font-size:11px; text-align:center; max-width:240px; line-height:1.5; color: #94a3b8; margin: 0;">No notifications yet. Real-time alerts for orders, cancellations, and low stock will appear here.</p>
       </div>
     `;
     return;
   }
 
-  const iconMap = {
-    order_submitted: { icon: '🛒', color: '#f59e0b', bg: '#fef3c7', border: '#fcd34d' },
-    order_cancelled: { icon: '❌', color: '#BA1628', bg: '#fff1f2', border: '#fecaca' },
-    low_stock:       { icon: '⚠️', color: '#d97706', bg: '#fffbeb', border: '#fde68a' },
-    contact_form:    { icon: '📨', color: '#3b82f6', bg: '#eff6ff', border: '#bfdbfe' }
-  };
-
   list.innerHTML = notifications.map(n => {
-    const theme = iconMap[n.type] || iconMap.contact_form;
+    const theme = getNotificationTheme(n.type);
     const ts = n.createdAt?.toDate ? n.createdAt.toDate() : (n.createdAt ? new Date(n.createdAt) : new Date());
     const relTime = getRelativeTime(ts);
     const isUnread = !n.read;
+    const cleanTitleText = cleanTitle(n.title);
 
     return `
       <div onclick="window.markNotifRead('${n.id}')"
         style="
-          background: ${isUnread ? theme.bg : '#fff'};
-          border: 1px solid ${isUnread ? theme.border : '#e2e8f0'};
+          background: ${isUnread ? theme.cardBgUnread : '#ffffff'};
+          border: 1px solid ${isUnread ? theme.cardBorderUnread : '#e2e8f0'};
           border-radius: 12px; padding: 12px 14px; cursor: pointer;
-          transition: box-shadow 0.2s, border-color 0.2s;
-          display:flex; gap:12px; align-items:flex-start;
+          transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
+          display: flex; gap: 12px; align-items: flex-start;
           box-shadow: ${isUnread ? '0 2px 8px rgba(0,0,0,0.06)' : 'none'};
-          position:relative;
+          position: relative;
         "
-        onmouseover="this.style.boxShadow='0 4px 14px rgba(0,0,0,0.1)'"
-        onmouseout="this.style.boxShadow='${isUnread ? '0 2px 8px rgba(0,0,0,0.06)' : 'none'}'">
-        ${isUnread ? `<span style="position:absolute;top:10px;right:10px;width:7px;height:7px;border-radius:50%;background:${theme.color};display:block;"></span>` : ''}
-        <span style="font-size:20px; flex-shrink:0; margin-top:1px;">${theme.icon}</span>
-        <div style="flex:1; min-width:0;">
-          <p style="font-weight:${isUnread ? '700' : '600'}; font-size:12px; color:#1e293b; margin:0 0 3px 0;
-            font-family:'Plus Jakarta Sans',sans-serif; line-height:1.4;">
-            ${escapeHtml(n.title || '')}
+        onmouseover="this.style.boxShadow='0 4px 14px rgba(0,0,0,0.08)';"
+        onmouseout="this.style.boxShadow='${isUnread ? '0 2px 8px rgba(0,0,0,0.06)' : 'none'}';">
+
+        ${isUnread ? `<span style="position:absolute; top:12px; right:12px; width:8px; height:8px; border-radius:50%; background:${theme.accentColor}; display:block;"></span>` : ''}
+
+        <!-- Icon badge -->
+        <div style="
+          width: 34px; height: 34px; border-radius: 10px;
+          background: ${theme.badgeBg};
+          border: 1px solid ${theme.badgeBorder};
+          display: flex; align-items: center; justify-content: center;
+          flex-shrink: 0; margin-top: 1px;
+        ">
+          ${theme.svg}
+        </div>
+
+        <div style="flex: 1; min-width: 0; padding-right: ${isUnread ? '12px' : '0'};">
+          <p style="font-weight: ${isUnread ? '800' : '600'}; font-size: 12px; color: #1e293b; margin: 0 0 3px 0;
+            font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.4;">
+            ${escapeHtml(cleanTitleText)}
           </p>
-          <p style="font-size:11px; color:#64748b; margin:0 0 6px 0; line-height:1.5;
-            font-family:'Plus Jakarta Sans',sans-serif;">
+          <p style="font-size: 11px; color: #64748b; margin: 0 0 6px 0; line-height: 1.5;
+            font-family: 'Plus Jakarta Sans', sans-serif;">
             ${escapeHtml(n.message || '')}
           </p>
-          <p style="font-size:10px; color:#94a3b8; margin:0; font-family:'Plus Jakarta Sans',sans-serif;">
+          <p style="font-size: 10px; color: #94a3b8; margin: 0; font-family: 'Plus Jakarta Sans', sans-serif;">
             ${relTime}
           </p>
         </div>
