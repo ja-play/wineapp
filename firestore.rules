@@ -6,7 +6,7 @@ service cloud.firestore {
     function getUserRole() {
       return request.auth != null && exists(/databases/$(database)/documents/users/$(request.auth.uid))
         ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role
-        : 'evaluator';
+        : 'guest';
     }
 
     function isAdmin() {
@@ -26,13 +26,13 @@ service cloud.firestore {
       allow read: if request.auth != null;
       allow create: if request.auth != null && (
         isAdmin() || 
-        (request.auth.uid == userId && request.resource.data.role == 'evaluator')
+        (request.auth.uid == userId && request.resource.data.role == 'guest')
       );
       allow update: if request.auth != null && (
         isAdmin() || 
         (request.auth.uid == userId && (
           !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']) ||
-          (request.resource.data.role == 'evaluator' && (!('role' in resource.data) || resource.data.role == 'evaluator'))
+          (request.resource.data.role == 'guest' && (!('role' in resource.data) || resource.data.role == 'guest'))
         ))
       );
       allow delete: if isAdmin();
@@ -53,8 +53,8 @@ service cloud.firestore {
 
     // Orders Collection
     match /orders/{orderId} {
-      allow read: if isEvaluator() || isDepot() || isAdmin();
-      allow create: if isEvaluator() || isAdmin();
+      allow read: if (isEvaluator() && resource.data.evaluatorUid == request.auth.uid) || isDepot() || isAdmin();
+      allow create: if (isEvaluator() && request.resource.data.evaluatorUid == request.auth.uid) || isAdmin();
       allow update, delete: if isDepot() || isAdmin();
     }
 
@@ -68,11 +68,11 @@ service cloud.firestore {
     }
 
     // Per-User Notification Inbox
-    // Users can only read/write their own notifications.
-    // Any authenticated user can write to another user's inbox (needed to broadcast notifications).
+    // Users can only read/update/delete their own notifications.
+    // Only authorized staff (evaluator, depot, admin) can write notifications.
     match /notifications/{userId}/items/{notifId} {
       allow read, update, delete: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null;
+      allow create: if request.auth != null && (isEvaluator() || isDepot() || isAdmin());
     }
   }
 }

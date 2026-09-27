@@ -85,7 +85,7 @@ exports.generateNoteDenvoi = onDocumentCreated({
       processedAt: admin.firestore.FieldValue.serverTimestamp()
     });
 
-    console.log(`Successfully generated Note d'Envoi PDF for order ${orderId}: ${publicUrl}`);
+    console.log(`Successfully generated Note d'Envoi PDF for order ${orderId}: ${signedUrl}`);
   } catch (error) {
     console.error(`Error generating PDF for order ${orderId}:`, error);
     await snapshot.ref.update({

@@ -1,4 +1,4 @@
-    import { db, auth, collection, doc, getDocs, updateDoc, onSnapshot, query, where, addDoc, serverTimestamp, onAuthStateChanged } from '../firebase-config.js';
+    import { db, auth, collection, doc, getDocs, updateDoc, onSnapshot, query, where, addDoc, serverTimestamp, runTransaction, onAuthStateChanged } from '../firebase-config.js';
     import { getShops, getUserRole, setupAuthUI } from '../auth-guard.js';
     import { escapeHtml, toProperCase } from '../utils/sanitizer.js';
     import { calculateOrderTotals } from '../utils/tax-calculator.js';
@@ -640,29 +640,6 @@
             montantHT: lineHT,
             tvaRate: TAX_CONFIG.VAT_RATE * 100
           });
-
-          // Deduct stock quantity in Firestore
-          const currentQty = (wine.stockQuantity !== undefined && wine.stockQuantity !== null && !isNaN(Number(wine.stockQuantity))) ? Number(wine.stockQuantity) : 0;
-          const nextQty = Math.max(0, currentQty - qty);
-          await updateDoc(doc(db, "wines", wine.id), {
-            stockQuantity: nextQty,
-            stockAvailable: nextQty > 0
-          });
-
-          // Low stock alert: fire if threshold configured and not alerted in last 24h
-          try {
-            const threshold = wine.stockAlertThreshold;
-            if (threshold != null && nextQty <= threshold) {
-              const lastAlert = wine.lastStockAlertSentAt;
-              const cutoff = Date.now() - 24 * 60 * 60 * 1000;
-              if (!lastAlert || new Date(lastAlert).getTime() < cutoff) {
-                await updateDoc(doc(db, "wines", wine.id), { lastStockAlertSentAt: new Date().toISOString() });
-                notifyLowStock(wine.id, wine.name, nextQty, threshold);
-              }
-            }
-          } catch (alertErr) {
-            console.warn('Low stock alert error:', alertErr);
-          }
         }
 
         const calculatedTotals = calculateOrderTotals(items, discountPercent);
@@ -686,10 +663,65 @@
           invoicePdfUrl: null
         };
 
-        const docRef = await addDoc(collection(db, "orders"), orderPayload);
+        let newOrderId = '';
+
+        // Atomic transaction: verify fresh stock, decrement stock, and create order
+        await runTransaction(db, async (transaction) => {
+          const wineUpdates = [];
+          for (const item of items) {
+            const wineRef = doc(db, "wines", item.wineId);
+            const wineSnap = await transaction.get(wineRef);
+            if (!wineSnap.exists()) {
+              throw new Error(`Wine not found: ${item.description}`);
+            }
+            const wineData = wineSnap.data();
+            const currentQty = (wineData.stockQuantity !== undefined && wineData.stockQuantity !== null && !isNaN(Number(wineData.stockQuantity)))
+              ? Number(wineData.stockQuantity)
+              : 0;
+
+            if (currentQty < item.qty) {
+              throw new Error(`Insufficient stock for "${item.description}". Available: ${currentQty} cases.`);
+            }
+
+            const nextQty = currentQty - item.qty;
+            wineUpdates.push({
+              ref: wineRef,
+              nextQty
+            });
+          }
+
+          // Apply stock deductions
+          for (const update of wineUpdates) {
+            transaction.update(update.ref, {
+              stockQuantity: update.nextQty,
+              stockAvailable: update.nextQty > 0
+            });
+          }
+
+          // Create order document
+          const newOrderDocRef = doc(collection(db, "orders"));
+          transaction.set(newOrderDocRef, orderPayload);
+          newOrderId = newOrderDocRef.id;
+        });
 
         // Fire in-app notification to Depot + Admin
-        notifyOrderSubmitted(docRef.id, orderPayload.client.name, items.length).catch(console.warn);
+        notifyOrderSubmitted(newOrderId, orderPayload.client.name, items.length).catch(console.warn);
+
+        // Low stock alerts check after successful transaction
+        for (const item of items) {
+          const wine = currentWines.find(w => w.id === item.wineId);
+          if (wine && wine.stockAlertThreshold != null) {
+            const nextQty = (wine.stockQuantity || 0) - item.qty;
+            if (nextQty <= wine.stockAlertThreshold) {
+              const lastAlert = wine.lastStockAlertSentAt;
+              const cutoff = Date.now() - 24 * 60 * 60 * 1000;
+              if (!lastAlert || new Date(lastAlert).getTime() < cutoff) {
+                updateDoc(doc(db, "wines", wine.id), { lastStockAlertSentAt: new Date().toISOString() }).catch(console.warn);
+                notifyLowStock(wine.id, wine.name, nextQty, wine.stockAlertThreshold);
+              }
+            }
+          }
+        }
 
         cart = {};
         if (discountInput) discountInput.value = 0;
@@ -699,7 +731,7 @@
         showToast(`Order submitted! Stock auto-deducted.`);
 
         setTimeout(() => {
-          window.printEvaluatorOrder(docRef.id, orderPayload);
+          window.printEvaluatorOrder(newOrderId, orderPayload);
         }, 500);
       } catch (err) {
         console.error("Order submission error:", err);
@@ -717,7 +749,15 @@
       modal.classList.remove('hidden');
 
       try {
-        const snap = await getDocs(collection(db, "orders"));
+        if (!currentUser) {
+          container.innerHTML = `<p class="text-xs text-slate-400 py-4 text-center">Please sign in to view your placed orders.</p>`;
+          return;
+        }
+        const q = query(
+          collection(db, "orders"),
+          where("evaluatorUid", "==", currentUser.uid)
+        );
+        const snap = await getDocs(q);
         evaluatorOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         evaluatorOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 

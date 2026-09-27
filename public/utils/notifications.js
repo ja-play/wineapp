@@ -53,10 +53,10 @@ export async function writeNotification(targetUids, payload) {
  */
 export async function getUserUidsByRoles(roles) {
   try {
-    const snap = await getDocs(collection(db, 'users'));
-    return snap.docs
-      .filter(d => roles.includes(d.data().role))
-      .map(d => d.id);
+    if (!roles || roles.length === 0) return [];
+    const q = query(collection(db, 'users'), where('role', 'in', roles));
+    const snap = await getDocs(q);
+    return snap.docs.map(d => d.id);
   } catch (e) {
     console.warn('writeNotification: could not fetch user UIDs', e);
     return [];

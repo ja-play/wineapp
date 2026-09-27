@@ -18,7 +18,8 @@ import {
   where,
   orderBy,
   addDoc,
-  serverTimestamp
+  serverTimestamp,
+  runTransaction
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { 
   getStorage, 
@@ -95,6 +96,7 @@ export {
   orderBy,
   addDoc,
   serverTimestamp,
+  runTransaction,
   ref, 
   uploadBytes, 
   getDownloadURL,

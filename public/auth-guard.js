@@ -48,7 +48,7 @@ export async function getUserRole(user) {
     if (userSnap.exists() && userSnap.data().role) {
       return userSnap.data().role;
     } else {
-      const assignedRole = 'evaluator';
+      const assignedRole = 'guest';
 
       await setDoc(userDocRef, {
         uid: user.uid,
@@ -61,7 +61,7 @@ export async function getUserRole(user) {
     }
   } catch (err) {
     console.warn("Failed to fetch user role from Firestore:", err);
-    return 'evaluator';
+    return 'guest';
   }
 }
 
@@ -253,7 +253,15 @@ window.handleAuthSubmit = async function(e) {
     submitBtn.disabled = false;
     submitBtn.textContent = 'Sign In';
     if (errorBox) {
-      errorBox.textContent = `Authentication error: ${err.message}`;
+      let msg = 'Authentication failed. Please verify your email and password.';
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential' || err.code === 'auth/invalid-email') {
+        msg = 'Invalid email or password.';
+      } else if (err.code === 'auth/too-many-requests') {
+        msg = 'Too many failed login attempts. Please wait a few minutes and try again.';
+      } else if (err.code === 'auth/network-request-failed') {
+        msg = 'Network connection error. Please check your internet connection.';
+      }
+      errorBox.textContent = msg;
       errorBox.classList.remove('hidden');
     }
   }
