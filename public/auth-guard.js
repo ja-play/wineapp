@@ -107,8 +107,7 @@ export function setupAuthUI(user, userRole, containerId = 'auth-bar-container') 
         </button>
       </nav>
       <!-- Mobile hamburger (< md) -->
-      <div class="flex md:hidden items-center gap-2">
-        <button onclick="window.showLoginModal()" class="btn-gold font-bold text-xs px-3.5 py-1.5 rounded-xl transition shadow">Sign In</button>
+      <div class="flex md:hidden items-center">
         <button id="mobile-menu-btn" onclick="window.toggleMobileMenu()" class="p-2 rounded-xl bg-slate-100 hover:bg-rose-50 border border-slate-200 text-slate-700 hover:text-[#BA1628] transition" aria-label="Menu">
           <svg id="mobile-menu-icon" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
         </button>

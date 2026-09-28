@@ -92,6 +92,8 @@
         initNotificationDrawer(user);
       } else {
         destroyNotificationDrawer();
+        const orderDrawer = document.getElementById('order-drawer');
+        if (orderDrawer) orderDrawer.classList.add('hidden');
       }
       if (currentWines && currentWines.length > 0) {
         renderCatalog(currentWines);
@@ -554,6 +556,15 @@
         }
       }
 
+      const orderDrawer = document.getElementById('order-drawer');
+      if (orderDrawer) {
+        if (!currentUser || totalCases === 0) {
+          orderDrawer.classList.add('hidden');
+        } else {
+          orderDrawer.classList.remove('hidden');
+        }
+      }
+
       const cartItemsContainer = document.getElementById('cart-items-list');
       if (itemsList.length === 0) {
         cartItemsContainer.innerHTML = `<div class="text-slate-500 text-xs italic">No items selected yet.</div>`;
@@ -582,7 +593,7 @@
       const panel = document.getElementById('cart-detail-panel');
       if (panel) panel.classList.add('hidden');
       const toggleText = document.getElementById('toggle-cart-text');
-      if (toggleText) toggleText.textContent = "Show Line Items ▲";
+      if (toggleText) toggleText.textContent = "▲";
 
       renderCatalog(currentWines);
       updateCartTotals();
@@ -594,10 +605,10 @@
       const text = document.getElementById('toggle-cart-text');
       if (panel.classList.contains('hidden')) {
         panel.classList.remove('hidden');
-        text.textContent = "Hide Line Items ▼";
+        if (text) text.textContent = "▼";
       } else {
         panel.classList.add('hidden');
-        text.textContent = "Show Line Items ▲";
+        if (text) text.textContent = "▲";
       }
     };
 
@@ -615,7 +626,7 @@
 
       const submitBtn = document.getElementById('submit-order-btn');
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span class="animate-spin inline-block h-4 w-4 border-2 border-slate-950 border-t-transparent rounded-full mr-2"></span> Submitting Order...`;
+      submitBtn.innerHTML = `<span class="animate-spin inline-block h-4 w-4 border-2 border-slate-950 border-t-transparent rounded-full mr-1.5"></span> Submitting...`;
 
       try {
         const discountInput = document.getElementById('cart-discount-input');
@@ -738,7 +749,7 @@
         showToast("Order submission failed: " + err.message, true);
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>Submit Wholesale Order</span>`;
+        submitBtn.innerHTML = `<span>Submit</span>`;
       }
     };
 
