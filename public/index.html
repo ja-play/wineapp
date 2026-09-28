@@ -51,6 +51,55 @@
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="output.css">
+  <style>
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #delivery-note-modal,
+      #delivery-note-modal #printable-note-container,
+      #delivery-note-modal #printable-note-container * {
+        visibility: visible !important;
+      }
+      #delivery-note-modal {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        display: block !important;
+        overflow: visible !important;
+        z-index: 9999 !important;
+      }
+      #delivery-note-modal > div {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      #printable-note-container {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: white !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+      }
+    }
+  </style>
 <script type="module" src="components/layout.js"></script>
 
   <script src="utils/storage-guard.js"></script>
@@ -198,8 +247,8 @@
 
   <!-- Evaluator Orders History Modal -->
   <div id="evaluator-orders-modal"
-    class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="relative max-w-3xl w-full bg-white rounded-2xl p-6 sm:p-7 shadow-2xl my-8 border border-slate-200 text-slate-900">
+    class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-start justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="relative max-w-3xl w-full bg-white rounded-2xl p-5 sm:p-7 shadow-2xl my-4 sm:my-8 border border-slate-200 text-slate-900">
       <div class="flex justify-between items-center pb-4 border-b border-slate-200 mb-6">
         <div>
           <h3 class="font-serif-title text-xl font-bold text-[#BA1628] flex items-center gap-2">
@@ -220,32 +269,33 @@
 
   <!-- Printable Delivery Note Modal -->
   <div id="delivery-note-modal"
-    class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
-    <div class="relative max-w-4xl w-full my-8">
-      <div class="flex justify-between items-center mb-4 no-print">
-        <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-start justify-center p-2 sm:p-4 md:p-6 overflow-y-auto">
+    <div class="relative max-w-4xl w-full my-4 sm:my-6">
+      <div class="sticky top-2 sm:top-4 z-30 bg-slate-900/95 backdrop-blur-md px-3.5 py-2.5 sm:px-4 sm:py-3 rounded-2xl mb-3 flex items-center justify-between gap-2 shadow-2xl border border-white/10 no-print">
+        <span class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5 sm:gap-2">
+          <svg class="w-4 h-4 text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
           </svg>
-          <span>Belgian Note d'Envoi Preview</span>
+          <span class="hidden sm:inline">Belgian </span>Note d'Envoi<span class="hidden md:inline"> Preview</span>
         </span>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
           <button onclick="window.print()"
-            class="btn-gold font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-lg transition flex items-center gap-2">
+            class="btn-gold font-extrabold text-xs px-3 sm:px-5 py-2 sm:py-2.5 rounded-xl shadow-lg transition flex items-center gap-1.5 sm:gap-2">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
             </svg>
-            <span>Print Delivery Note (A4)</span>
+            <span class="hidden sm:inline">Print Delivery Note (A4)</span>
+            <span class="sm:hidden">Print (A4)</span>
           </button>
           <button onclick="document.getElementById('delivery-note-modal').classList.add('hidden')"
-            class="bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs px-4 py-2.5 rounded-xl border border-slate-300 shadow transition">
+            class="bg-white hover:bg-slate-100 text-slate-800 font-bold text-xs px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-slate-300 shadow transition">
             ✕ Close
           </button>
         </div>
       </div>
 
       <div id="printable-note-container"
-        class="bg-white text-slate-900 rounded-2xl p-8 shadow-2xl border border-slate-200">
+        class="bg-white text-slate-900 rounded-2xl p-3.5 sm:p-6 md:p-8 shadow-2xl border border-slate-200">
         <div id="note-modal-content">
           <!-- Injected dynamically -->
         </div>

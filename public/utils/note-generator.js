@@ -54,11 +54,12 @@ export function generateNoteDenvoiHtml(order, options = {}) {
   const docRef = order.id ? `NE-${order.id.substring(0, 8).toUpperCase()}` : 'NE-PENDING';
 
   const bodyContent = `
-    <div class="note-denvoi-container max-w-4xl mx-auto p-4 font-sans text-slate-800">
-      <div class="flex justify-between items-start border-b-2 border-slate-300 pb-4 mb-4">
+    <div class="note-denvoi-container max-w-4xl mx-auto font-sans text-slate-800">
+      <!-- Document Header -->
+      <div class="flex flex-col sm:flex-row justify-between items-start border-b-2 border-slate-300 pb-3 sm:pb-4 mb-4 gap-3">
         <div>
-          <h1 class="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-            <svg class="w-6 h-6 text-[#BA1628]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-[#BA1628] flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M8 22h8M12 15v7M5 3h14v4a7 7 0 0 1-14 0V3z"/>
             </svg>
             <span>${escapeHtml(company.fullName || 'Aurellion Group SRL')}</span>
@@ -66,8 +67,8 @@ export function generateNoteDenvoiHtml(order, options = {}) {
           <p class="text-xs text-slate-600 mt-1">${escapeHtml(company.address || '')}, ${escapeHtml(company.country || 'Belgique')}</p>
           <p class="text-xs text-slate-600">N° TVA: ${escapeHtml(company.vatNumber || '')}</p>
         </div>
-        <div class="text-right">
-          <h2 class="text-lg font-extrabold text-[#BA1628] uppercase tracking-wide">NOTE D'ENVOI</h2>
+        <div class="text-left sm:text-right w-full sm:w-auto border-t sm:border-t-0 pt-2 sm:pt-0 border-slate-200">
+          <h2 class="text-base sm:text-lg font-extrabold text-[#BA1628] uppercase tracking-wide">NOTE D'ENVOI</h2>
           <div class="text-xs font-mono font-bold text-slate-800">N° Document: ${escapeHtml(docRef)}</div>
           <div class="text-xs text-slate-600">Date: ${escapeHtml(dateStr)}</div>
           <div class="text-xs text-slate-600 font-medium">Statut: ${order.status === 'cancelled' ? '<span class="text-[#BA1628] font-bold uppercase tracking-wider">ANNULÉ / CANCELLED</span>' : escapeHtml(order.status || 'Validé')}</div>
@@ -75,61 +76,66 @@ export function generateNoteDenvoiHtml(order, options = {}) {
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-5 text-xs">
+      <!-- Client & Depot Information -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 bg-slate-50 p-3 sm:p-4 rounded-xl border border-slate-200 mb-4 sm:mb-5 text-xs">
         <div>
           <span class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Destinataire / Client</span>
           <div class="font-bold text-sm text-slate-900">${escapeHtml(client.name || '')}</div>
-          <div class="text-slate-700">${escapeHtml(client.address || '')}</div>
+          <div class="text-slate-700 leading-snug">${escapeHtml(client.address || '')}</div>
           <div class="font-mono text-slate-600 mt-1">N° TVA: ${escapeHtml(client.vat || '-')} | N° Client: ${escapeHtml(client.clientNo || '-')}</div>
           ${client.contactPerson || client.phone ? `<div class="text-slate-700 font-medium mt-0.5">Contact: ${escapeHtml(client.contactPerson || '')}${client.phone ? ' (' + escapeHtml(client.phone) + ')' : ''}</div>` : ''}
         </div>
         <div>
           <span class="font-bold uppercase text-slate-500 text-[10px] block mb-1">Dépôt d'Expédition</span>
           <div class="font-bold text-sm text-slate-900">Dépôt Central Logistique Benelux</div>
-          <div class="text-slate-700">Wezembeekstraat 5, 1930 Zaventem</div>
+          <div class="text-slate-700 leading-snug">Wezembeekstraat 5, 1930 Zaventem</div>
           <div class="font-mono text-slate-600 mt-1">Mode: Camion Frigorifique | Commande: #${escapeHtml((order.id || '').substring(0, 12))}</div>
         </div>
       </div>
 
-      <table class="w-full text-left text-xs mb-5 border-collapse">
-        <thead>
-          <tr class="bg-slate-100 text-slate-700 uppercase font-bold text-[10px] border-b border-slate-300">
-            <th class="py-2 px-3">Code SKU</th>
-            <th class="py-2 px-3">Description du Produit</th>
-            <th class="py-2 px-3 text-center">Colisage</th>
-            <th class="py-2 px-3 text-center">Quantité (Colis)</th>
-            <th class="py-2 px-3 text-right">Prix H.TVA</th>
-            <th class="py-2 px-3 text-right">Total H.TVA</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-200 font-mono text-slate-800">
-          ${items.map(item => {
-    const desc = item.description || item.name || 'Vin de Réserve';
-    const sku = item.sku || '-';
-    const colis = item.colis || (item.caseSize ? `1x${item.caseSize}` : '1x6');
-    const qty = Number(item.qty || 0);
-    const price = Number(item.priceHT || item.priceCaseHT || 0);
-    const totalRow = Number(item.montantHT || (price * qty));
-    return `
-              <tr>
-                <td class="py-2 px-3 font-semibold text-slate-600">${escapeHtml(sku)}</td>
-                <td class="py-2 px-3 font-sans font-bold text-slate-900">${escapeHtml(desc)}</td>
-                <td class="py-2 px-3 text-center">${escapeHtml(colis)}</td>
-                <td class="py-2 px-3 text-center font-extrabold text-slate-900">${qty}</td>
-                <td class="py-2 px-3 text-right">${formatEuro(price)}</td>
-                <td class="py-2 px-3 text-right font-bold">${formatEuro(totalRow)}</td>
-              </tr>
-            `;
-  }).join('')}
-        </tbody>
-      </table>
+      <!-- Product Line Items Table with horizontal scroll on small devices -->
+      <div class="overflow-x-auto -mx-1 sm:mx-0 border border-slate-200 rounded-xl mb-4 sm:mb-5 shadow-xs">
+        <table class="w-full text-left text-xs border-collapse min-w-[520px]">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 uppercase font-bold text-[10px] border-b border-slate-300">
+              <th class="py-2.5 px-3 whitespace-nowrap">Code SKU</th>
+              <th class="py-2.5 px-3">Description du Produit</th>
+              <th class="py-2.5 px-3 text-center whitespace-nowrap">Colisage</th>
+              <th class="py-2.5 px-3 text-center whitespace-nowrap">Quantité (Colis)</th>
+              <th class="py-2.5 px-3 text-right whitespace-nowrap">Prix H.TVA</th>
+              <th class="py-2.5 px-3 text-right whitespace-nowrap">Total H.TVA</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 font-mono text-slate-800 bg-white">
+            ${items.map(item => {
+      const desc = item.description || item.name || 'Vin de Réserve';
+      const sku = item.sku || '-';
+      const colis = item.colis || (item.caseSize ? `1x${item.caseSize}` : '1x6');
+      const qty = Number(item.qty || 0);
+      const price = Number(item.priceHT || item.priceCaseHT || 0);
+      const totalRow = Number(item.montantHT || (price * qty));
+      return `
+                <tr>
+                  <td class="py-2.5 px-3 font-semibold text-slate-600 whitespace-nowrap">${escapeHtml(sku)}</td>
+                  <td class="py-2.5 px-3 font-sans font-bold text-slate-900">${escapeHtml(desc)}</td>
+                  <td class="py-2.5 px-3 text-center whitespace-nowrap">${escapeHtml(colis)}</td>
+                  <td class="py-2.5 px-3 text-center font-extrabold text-slate-900 whitespace-nowrap">${qty}</td>
+                  <td class="py-2.5 px-3 text-right whitespace-nowrap">${formatEuro(price)}</td>
+                  <td class="py-2.5 px-3 text-right font-bold whitespace-nowrap">${formatEuro(totalRow)}</td>
+                </tr>
+              `;
+    }).join('')}
+          </tbody>
+        </table>
+      </div>
 
-      <div class="flex justify-between items-start pt-3 border-t border-slate-300 mb-5">
+      <!-- Transport Conditions & Totals Breakdown -->
+      <div class="flex flex-col sm:flex-row justify-between items-start pt-3 border-t border-slate-300 mb-5 gap-4">
         <div class="text-[11px] text-slate-500 max-w-sm">
           <p class="font-bold text-slate-700 mb-1">Conditions de Transport & Réception:</p>
           <p>Conforme aux normes AFSCA de transport frigorifique et d'expédition en gros d'Aurellion Benelux.</p>
         </div>
-        <div class="w-72 bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1.5 shadow-xs">
+        <div class="w-full sm:w-72 bg-slate-50 p-3 sm:p-3.5 rounded-xl border border-slate-200 text-xs space-y-1.5 shadow-xs">
           ${discountAmount > 0 ? `
             <div class="flex justify-between text-slate-600">
               <span>Sous-total Brut H.TVA:</span>
@@ -160,13 +166,14 @@ export function generateNoteDenvoiHtml(order, options = {}) {
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-8 pt-5 border-t border-slate-300 text-xs text-slate-600">
+      <!-- Signature Blocks -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-8 pt-4 sm:pt-5 border-t border-slate-300 text-xs text-slate-600">
         <div>
-          <p class="font-bold text-slate-800 mb-8">Pour le Dépôt d'Expédition (Chauffeur):</p>
+          <p class="font-bold text-slate-800 mb-4 sm:mb-8">Pour le Dépôt d'Expédition (Chauffeur):</p>
           <p class="border-t border-slate-400 pt-1 font-mono">Date et Signature: _______________________</p>
         </div>
         <div>
-          <p class="font-bold text-slate-800 mb-8">Pour Réception Client (Magasin):</p>
+          <p class="font-bold text-slate-800 mb-4 sm:mb-8">Pour Réception Client (Magasin):</p>
           <p class="border-t border-slate-400 pt-1 font-mono">Date et Signature: _______________________</p>
         </div>
       </div>
