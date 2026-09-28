@@ -7,7 +7,7 @@ export function renderHeader(type = 'catalog') {
   else if (type === 'contact') badgeText = 'Contact Us';
 
   return `
-    <header class="header-theme text-white sticky top-0 z-40 w-full">
+    <header class="header-theme text-white sticky top-0 z-40 w-full relative">
       <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
         <div class="flex items-center gap-3">
           <a href="index.html" class="flex items-center gap-3 group">
