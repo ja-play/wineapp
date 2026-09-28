@@ -70,12 +70,12 @@ export function setupBarcodeScanner({
     const isLowStock = isDepot && stockQty < 10 && stockQty > 0;
     const borderClass = isLowStock ? 'border-amber-300 shadow-md' : 'border-slate-200';
     const stockColorClass = isLowStock ? 'text-amber-800 animate-pulse' : 'text-[#BA1628]';
-    const imgSource = found.imageUrl || found.image || 'images/34172 DGB Oude kaap_Cab Merlot.png';
+    const imgSource = found.imageUrl || found.image || 'no-image.svg';
 
     resContainer.innerHTML = `
       <div class="bg-white border ${borderClass} rounded-2xl p-6 shadow-md flex flex-col md:flex-row gap-6 items-center">
         <div class="w-32 h-40 bg-slate-50 p-2 rounded-xl border border-slate-200 flex items-center justify-center relative">
-          <img src="${escapeHtml(imgSource)}" alt="${escapeHtml(found.name || '')}" class="h-full object-contain" />
+          <img src="${escapeHtml(imgSource)}" alt="${escapeHtml(found.name || '')}" class="h-full object-contain" onerror="this.onerror=null;this.src='no-image.svg';" />
         </div>
 
         <div class="flex-1 space-y-2">

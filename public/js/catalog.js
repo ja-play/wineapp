@@ -403,7 +403,7 @@
         return `
           <div class="card-theme card-theme-hover rounded-2xl overflow-hidden flex flex-col group ${!isAvailable ? 'opacity-75' : ''}">
             <div class="relative overflow-hidden cursor-pointer bg-[#F8F9FA] flex items-center justify-center h-52 p-4 border-b border-[#E2E8F0] group-hover:bg-[#FFF0F2] transition" onclick="window.openModal('${w.sku}')">
-              <img src="${w.imageUrl || w.image || 'images/34172 DGB Oude kaap_Cab Merlot.png'}" alt="${w.name}" class="h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md" />
+              <img src="${w.imageUrl || w.image || 'no-image.svg'}" alt="${w.name}" class="h-full object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-md" onerror="this.onerror=null;this.src='no-image.svg';" />
               <span class="absolute top-3 left-3 bg-white/90 text-[#1E242B] border border-[#E2E8F0] text-xs px-2.5 py-0.5 rounded font-mono font-semibold">${w.vintage || '2024'}</span>
               <span class="absolute top-3 right-3 text-[11px] px-2.5 py-0.5 rounded font-mono font-bold border ${stockBadgeClass}">
                 ${stockBadgeText}
@@ -825,7 +825,8 @@
     window.openModal = function (sku) {
       const wine = currentWines.find(w => w.sku === sku);
       if (!wine) return;
-      modalImg.src = wine.imageUrl || wine.image || 'images/34172 DGB Oude kaap_Cab Merlot.png';
+      modalImg.src = wine.imageUrl || wine.image || 'no-image.svg';
+      modalImg.onerror = function () { this.onerror = null; this.src = 'no-image.svg'; };
       modalImg.alt = wine.name || 'Wine';
       modalTitle.textContent = wine.name || 'Wine';
       modalCaption.textContent = `SKU: ${wine.sku}`;
