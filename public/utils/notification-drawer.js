@@ -23,6 +23,7 @@ import {
 let _userId = null;
 let _notifications = [];
 let _unsubscribe = null;
+let _prevUnreadCount = -1;
 
 // Clean leading emojis or symbols from titles so double icons never appear
 function cleanTitle(title) {
@@ -30,44 +31,9 @@ function cleanTitle(title) {
   return String(title).replace(/^[\p{Extended_Pictographic}\uFE0F\u200D\s]+/u, '').trim();
 }
 
-/** Render/mount the bell button in the navigation header */
-export function renderNotifBell() {
-  if (!_userId) return;
-
-  // Prefer dedicated slot in setupAuthUI, fallback to auth-bar-container
-  let container = document.getElementById('notif-bell-container');
-  if (!container) {
-    container = document.getElementById('auth-bar-container');
-  }
-
-  if (!container) {
-    // Retry once header/auth-bar is ready
-    const observer = new MutationObserver(() => {
-      const target = document.getElementById('notif-bell-container') || document.getElementById('auth-bar-container');
-      if (target) {
-        observer.disconnect();
-        renderNotifBell();
-      }
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-    return;
-  }
-
-  // If bell already exists inside this container, just update badge
-  let bellBtn = document.getElementById('notif-bell-btn');
-  if (bellBtn && container.contains(bellBtn)) {
-    updateBadge();
-    return;
-  }
-
-  // Remove any orphaned portal button elsewhere
-  document.getElementById('notif-bell-portal')?.remove();
-
-  const bellWrapper = document.createElement('div');
-  bellWrapper.id = 'notif-bell-portal';
-  bellWrapper.style.cssText = 'display: inline-flex; align-items: center; margin-right: 4px;';
-  bellWrapper.innerHTML = `
-    <button id="notif-bell-btn" type="button" onclick="window.toggleNotifDrawer()"
+function createBellMarkup() {
+  return `
+    <button type="button" class="notif-bell-btn" onclick="window.toggleNotifDrawer()"
       aria-label="Notifications"
       title="Notifications"
       style="
@@ -94,48 +60,92 @@ export function renderNotifBell() {
         <path stroke-linecap="round" stroke-linejoin="round"
           d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
       </svg>
-      <span id="notif-badge"
+      <span class="notif-badge"
         style="
           display: none;
           position: absolute;
           top: -4px;
           right: -4px;
-          min-width: 17px;
-          height: 17px;
-          padding: 0 4px;
+          min-width: 18px;
+          height: 18px;
+          padding: 0 4.5px;
           background: #BA1628;
           color: #ffffff;
-          font-size: 9.5px;
+          font-size: 10px;
           font-weight: 800;
-          border-radius: 9px;
+          border-radius: 9999px;
           border: 2px solid #ffffff;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+          box-shadow: 0 2px 5px rgba(0,0,0,0.22);
           font-family: 'Plus Jakarta Sans', sans-serif;
+          line-height: 1;
+          transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         ">
         0
       </span>
     </button>
   `;
+}
 
-  // Prepend to container so it sits in front of the role badge
-  container.prepend(bellWrapper);
+/** Render/mount the bell button in the navigation header (both desktop & mobile slots) */
+export function renderNotifBell() {
+  if (!_userId) return;
+
+  const targetContainers = [
+    document.getElementById('notif-bell-container-desktop'),
+    document.getElementById('notif-bell-container')
+  ].filter(Boolean);
+
+  if (targetContainers.length === 0) {
+    const fallback = document.getElementById('auth-bar-container');
+    if (fallback) targetContainers.push(fallback);
+  }
+
+  if (targetContainers.length === 0) {
+    // Retry once header/auth-bar is ready in DOM
+    const observer = new MutationObserver(() => {
+      const target = document.getElementById('notif-bell-container-desktop') ||
+                     document.getElementById('notif-bell-container') ||
+                     document.getElementById('auth-bar-container');
+      if (target) {
+        observer.disconnect();
+        renderNotifBell();
+      }
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return;
+  }
+
+  targetContainers.forEach(container => {
+    let existingBtn = container.querySelector('.notif-bell-btn, #notif-bell-btn');
+    if (!existingBtn) {
+      const bellWrapper = document.createElement('div');
+      bellWrapper.className = 'notif-bell-portal';
+      bellWrapper.style.cssText = 'display: inline-flex; align-items: center; margin-right: 4px;';
+      bellWrapper.innerHTML = createBellMarkup();
+      container.prepend(bellWrapper);
+    }
+  });
+
   updateBadge();
 }
 
 window.renderNotifBell = renderNotifBell;
 
 function updateBadge() {
-  const badge = document.getElementById('notif-badge');
-  if (!badge) return;
-  const unreadCount = _notifications.filter(n => !n.read).length;
-  if (unreadCount > 0) {
-    badge.textContent = unreadCount > 99 ? '99+' : String(unreadCount);
-    badge.style.display = 'inline-flex';
-  } else {
-    badge.style.display = 'none';
-  }
+  const badges = document.querySelectorAll('.notif-badge, #notif-badge');
+  if (badges.length === 0) return;
+  const unreadCount = _notifications.filter(n => n.read === false || !n.read).length;
+  badges.forEach(badge => {
+    if (unreadCount > 0) {
+      badge.textContent = unreadCount > 99 ? '99+' : String(unreadCount);
+      badge.style.display = 'inline-flex';
+    } else {
+      badge.style.display = 'none';
+      badge.textContent = '0';
+    }
+  });
 }
 
 /** Inject drawer panel and backdrop into document.body */
@@ -437,8 +447,18 @@ export function initNotificationDrawer(user) {
   );
 
   _unsubscribe = onSnapshot(notifQuery, (snapshot) => {
+    const isFirstLoad = _prevUnreadCount === -1;
     _notifications = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     renderNotifications(_notifications);
+
+    const currentUnread = _notifications.filter(n => n.read === false || !n.read).length;
+    if (!isFirstLoad && currentUnread > _prevUnreadCount) {
+      const newest = _notifications.find(n => n.read === false || !n.read);
+      if (newest && typeof window.showToast === 'function') {
+        window.showToast(`🔔 ${cleanTitle(newest.title)}`);
+      }
+    }
+    _prevUnreadCount = currentUnread;
   }, (err) => {
     console.warn('Notification listener error:', err);
   });
@@ -449,7 +469,8 @@ export function destroyNotificationDrawer() {
   if (_unsubscribe) { _unsubscribe(); _unsubscribe = null; }
   _userId = null;
   _notifications = [];
-  document.getElementById('notif-bell-portal')?.remove();
+  _prevUnreadCount = -1;
+  document.querySelectorAll('.notif-bell-portal, #notif-bell-portal').forEach(el => el.remove());
   document.getElementById('notif-drawer')?.remove();
   document.getElementById('notif-backdrop')?.remove();
 }
